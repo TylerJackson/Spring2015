@@ -1,0 +1,1262 @@
+CSE 7349 Data and Network Security Lecture Notes
+
+---------------------------------------------------------
+
+Data and Network Security Lecture 1 Notes
+
+Dr. Nair
+-best contact through email
+- nair@lyle.smu.edu
+-office hours MW 1-2 PM or by appointment
+
+--------------------------------------------------------
+
+Data and Network Security Lecture 2 Notes
+
+Software Security Current Events
+-DDos attacks over holiday on Sony
+
+University Networks are vulnerable
+-have to be somewhat open, but still have sensitive information
+
+Cryptography
+-Terminology
+-Cryptology - the art and science of making and breaking secret codes
+-cryptography - making secret codes
+-cryptanalysis - breaking secret codes
+-crypto - all the above
+
+-cipher or cryptosystem is used to encrypt the plaintext
+-result of encryption is ciphertext
+-we decrypt ciphertext to recover plaintext
+-a key is used to configure a cryptosystem
+-a symmetric key cryptosystem uses the same key to encrypt as to decrypt
+-a public key cryptosystem uses a public key to encrypt and a private key to decrypt (sign)
+
+Crypto Designs
+-Basic assumption
+	-the system is completely known to attacker
+	-only the key is secret
+-aka Kerchoff's Principle
+	-crpyto algorithms are not secret
+-why do we make this assumption?
+	-experience has shown that secret algorithms are weak when exposed
+	-secret algorithms never remain secret
+	-better to find weaknesses before hand
+
+Cryptanalysis
+-cryptosystem is secure if best known attack is to try all keys (exhaustive key search)
+-cryptosystem is insecure if any shortcut attack is known
+-by this definition an insecure system might be harder to break than a secure system!
+
+One-time pad encryption
+plaintext XOR key = ciphertext
+-key has to be same size as plaintext
+-stream cipher
+-more efficient in hardware
+-no integrity (no signature), can always repudiate
+	-MiM attack could intercept message, and change key so that message says what you want
+
+-in order to decrypt one-time pad, the receiver needs the key
+-this is a large key to transmit-
+-if you have a way to transport the key securely than just use that for message
+-in general, the key needs to be much shorter than message
+
+Taxonomy of Cryptography
+-symmetric key
+	-same key for encryption as for decryption
+	-stream ciphers
+		-bit patterns come in and encrypt as they are read in
+	-block ciphers
+		-take a block and encrypt it
+-public key
+	-two keys, one for encryption (public), and one for decryption (private)
+	-digital signatures - nothing comparable in symmetric key crypto
+	-can authenticate using PKI, b.c. of non-repudiation
+-hash algorithms
+	-good for integrity
+	-good hash means if change only 1 bit then different hash value
+
+Data Encryption Standard
+-DES developed in 1970s
+-based on IBM Lucifer cipher
+-U.S. gov't standard
+-DES development was controvercial
+	-NSA was secretly involved
+	-Design process was not open
+	-Key length was reduced
+	-subtle changes to Lucifer algorithm
+
+DES Numerology
+-DES is a Feistel Cipher
+	-64 bit block length
+	-56 bit key length
+	-16 rounds
+	-48 bits of key used each round (subkey)
+-Each round is simple (for a block cipher)
+-Security depends primarily on S-boxes
+	-each S-boxes maps 6 bits to 4 bits
+-could strengthen DES by using 3DES encrypt with first key, decrypt with a second key, and re-encrypt with the original key
+	-3DES has 128 bit key
+
+	DES
+-complexity is 2^55
+-Feistel Cipher (16 rounds)
+	-can't affect this or S-Box
+-Meet in the Middle attack for 2 DES encryptions in succession with different keys
+	-collect a plain text and ciphertext from the end
+	-brute force the ciphertext after the first DES box for all 2^56 K1 possibilities
+	-brute force the plaintext from the second DES box using all 2^56 K2 possibilities
+	-then using the cipher text from box 1 and plaintext from box2 find matches
+	-so it is complexity 2^56
+-known plaintext attack- you know a small piece of plaintext and the corresponding ciphertext
+	-can determine key from this maybe
+	-your email address in an email
+-lunchtime attack
+	-someone left their system logged in, so you generate a ciphertext using their system
+
+	3DES
+-both people have to use 3DES or it won't work
+-in order to turn a 3DES into DES just set K1 = K2
+
+Confusion and Diffusion
+-Cipher needs to completely obscure statistical properties of original message
+-Diffusion - dissipates statistical structure of plaintext over bulk of cipher text
+-confusion - makes relationship between ciphertext and key as complex as possible
+
+-avalance effect
+	-concept that a change in 1 bit will lead to large changes in the ciphertext
+	-with round function easy, because your 1 bit error will increase more and more each round
+
+Electronic Code Book
+-message broken into independent blocks which are encrypted
+-each block is a value which is substituted, like a codebook, hence name
+-each block encoded independently of the other blocks C_1 = DES_K1 (P_1)
+-uses: secure transmission of single values
+-problem is same plaintext always results in same ciphertext
+-repeated key in other words
+
+Advantages and limitations of ECB
+-repetitions in message may show in ciphertext
+	-if aligned with message block
+	-messages that change very little, which become a code-book analysis problem
+-weakness due to encrypted message blocks being independent 
+-main use is sending a few blocks of data 
+
+Cipher Block Chaining (CBC)
+-take ciphertext from previous block and XOR with plaintext of block 2 and then encrypt block 2 and so on and so forth
+-use an IV to XOR with initial plaintext
+-IV needs to be known by receiver
+
+--------------------------------------------------------
+
+Data and Network Security Lecture 3 Notes
+
+Current Events
+
+if attack will cause you to lose more than $10,000 then FBI will pick up the case
+
+Singapore is going to start agency like NSA
+
+-look at blackboard for links to sec current events
+
+Google alerts for cyber security
+-Google News
+
+
+Cipher Block Chaining Continued
+-error in 1 cipher bit results in 2 plaintext bit errors, but that is all, it won't get propagated further
+
+Cipher FeedBack Mode (CFB)
+-use schemes so that you can encrypt smaller amounts of data
+-use 8 bits at a time
+-if trying to use DES
+	-add dummy bits (padding)
+-so you can still use DES, but you are still transmitting 64 bits, unecessarily using the bandwidth
+-these kind of schemes help wit this problem
+-Process
+	-IV -> encrypt it using key K and DES
+	-using first S-bits (8 in this case) of the encrypted IV and XOR with plaintext
+		-result is cipher
+	-then feed this 8 bit ciphertext back to far right of initial register and push 8 bits off the left end, so that the IV changes each time
+-this still chains the encryption blocks, but doesn't require you to ship any padding bits
+-the error will propagate through for each plain text until the error bit is off the IV 
+	-so if our IV is 64 bits as it is in this case (B.C. we are using DES) then there would be 9 plain text errors
+-if an error in C1, then P1 is wrong and 
+
+Output FeedBack
+-similar to Cipher Feedback, but the error doesn't propagate through
+-Process
+	-start with 64 bit IV and encrypt using DES and your key
+	-take the first S-bits from this encrypted IV and XOR with the plaintext
+		-the result is the ciphertext for the first 8 bits
+	-the difference is that instead of passing on the ciphertext to the next IV and pushing the left 8 bits off, we will use the encrypted IV from the previous encryption as the IV for the start of the next encryption
+		-so the 2nd encryption will encrypt the IV for the second time using your key and DES
+-if there is an error in the ciphertext of 1 it won't matter, because it is the encrypted IV that gets propagated
+
+Counter (CTR) mode
+-similar to OFB but encrypts counter value rather than any fed back value
+-Must have a different key and counter value for every plaintext block (never reused)
+ C1 = P1 XOR O1
+ O1 = DES_K1(1)
+-uses high-speed network encryptions
+-Process
+	-take a 64 bit counter and encrypt it using key and DES
+	-then whatever output is, XOR with plaintext
+	-then increase counter, and repeat for next plaintext block
+-powerful because can encrypt multiple blocks at once so can use parallel programming
+	-block encryption is not dependent on previous block's plaintext
+	-all the IV from the counters that get encrypted using key can be precomputed
+
+-AES History
+-in 1999 NIST said 3DES should be used
+	-168 bit key length, same algorithm as DES
+-3DES has drawbacks
+	-algorithm is sluggish in software
+	-only uses 64 bit block size
+
+AES
+-128 bit or more key
+-when being created said it needed to be more computationally complex, and faster than DES and 3DES
+-diffusion and confusion
+-substitution -> confusion
+-mixed rows and cols -> diffusion
+-more rounds -> more confusion
+-secure, because best known attack is exhaustive key search, which is computationally infeasible giving computing capacity
+
+Difference b.w. stream cipher and block cipher
+-stream cipher encrypts as it comes in, while block cipher buffers data into blocks, encrypts, and then send
+-any block encryption scheme can be used as a stream cipher
+
+Rule for Onetime Pad?
+-never reuse key
+
+Block vs Stream
+-Block ciphers
+	-process plaintext in relatively large blocks (64 for DES)
+	-the same function is used to encrypt successive blocks -> memory less
+-Stream ciphers
+	-process plaintext in small blocks
+	-the encryption function may vary as plaintext is processed -> have memory
+	-sometimes called state ciphers since encryption depends on not only the key and plaintext, but also the current state
+
+One-time pad
+-provably secure
+	-key generated randomly and independently - no integrity checks
+	-key as long as plaintext
+	-must never reuse stream key
+		-if you reuse the key
+	-P1 XOR K1 P2 XOR K2 .... Pn XOR K1
+	-attackers know there isn't an exhaustive set of keys
+	-(P1 XOR K1) XOR (Pn XOR K1)
+		= P1 XOR Pn
+-stream cipher
+
+Pseudo Random Generators
+-compromise to computationally secure
+	-instead of random, use pseudo random sequence based on a short key
+	-the generated stream must be:
+		statistically random (knowing part of seq. not enough)
+-PRG may be controlled just by key influencing
+	-next-state function (output feedback mode)
+	-output function (counter mode)
+-PRG may be controlled both by data and key:
+	-output function (cipher feedback mode)
+-pseudo random should have same number of 0s and 1s
+
+Linear Feedback Shift Registers
+-LFSRs
+	-well-suited to hardware implementation
+	-can produce sequences of large period
+	-can produce sequences wth good statistical properties
+-in a simple feed back during a left shift, whatever bit gets bumped off the left end will move to the first bit on the right
+
+confusion means relationship between key and output and plaintext and output is completely uncorrelated
+
+diffusion means statistics about ciphertext is completely removed-> no patterns
+
+-take multiple LFSRs and combine them using nonlinear combination function to get your pseudo random sequence
+	-balanced, non-linear, correlation immune
+
+RC4
+-used in WEP (WEP was replaced by WPA-2)
+-1 of most popular stream ciphers 
+-start with all combinations of 8 bits in a state machine 
+	-when you get 8 bits you use that corresponding state machine and then the bits related to that state machine change
+
+WEP
+-RC4
+-key length 40, IV length = 24
+-take message and add CRC (to protect and correct burst errors)
+-then it goes into keysteam = RC(IV,K)
+-IV attached to Cipher Text
+
+Public Key Cryptography
+-key is easily computed from the private key and other information about the cipher (a polynomial time (P-time) problem)
+-however, knowing the public key and public description of the cipher, it is still computationally infeasible to compute the private key (an NP-Complete problem)
+-public-key may be distributed to anyone wishing to communicate securely with its owner
+	-secure distribution of the public-key is a non-trivial problem
+
+Merkle's Puzzle
+-one of the first public-key system to be described
+-idea
+	-A selects 1 million keys and 1 million puzzles to encode with them
+	-sends to B 1 million encoded puzzles
+	-B selects a random puzzle and brute force it to get the key (takes almost 2 minutes)
+	-Encrypt the string with the key and send to A
+	-A encrypts the string with million keys to find which key B selected
+	-what is the complexity for the eavesdropper?
+
+
+--------------------------------------------------------
+
+Data and Network Security Lecture 4 Notes
+
+Diffie-Hellman Key Exchange
+-public information
+	-p is a prime number
+	-g is a generating element of Z_p
+-Alice's 
+	-private key: a
+	-public key: g^a mod p
+-Bob's
+	-private key: b
+	-public key: g^b mod p
+
+-given g and p and g^a mod p it is very hard to solve for a
+- key exchange
+	-alice obtains g^b and computes 
+		(g^b)^a = g^(ab) mod p = k_s
+	-bob otains g^a and computes 
+		(g^a)^b = g^(ab) mod p = k_s
+	-Alice and Bob have agreed upon key k_s
+	-The well-known man-in-the-middle attack exploits the lack of authentication
+
+Man-in-the-middle
+	-passive attack
+		- wire tap
+		-difficult to detect, dangerous
+	-active attack
+		-intercept signal, modify, and resend
+		-easier to detect 
+	-for this example, Eve creates a secret with Alice that is g^ae and creates a secret with Bob that is g^be
+
+RSA
+-Rivest, Shamir, Adleman in 1977
+-best known and widely regarded as most practical public-key scheme
+-based on exponentiation in a finite field over integers modulo a prime
+-Security relies on the difficulty of calculating factors of large numbers
+
+RSA Setup
+-first, ecah user generates their public/private key pair by:
+	-Selecting 2 large primes at random (-100 digit), p, q
+	-Selecting at random the encryption key e, where e<N, gcd(e,phi(N)) = 1
+	-solving the following congruence to find the decryption key d
+	e,d = 1 mod phi(N) and 0<=d<=N
+-public encryption key = {e,N}
+-private decryption key = {d,p,q}
+gcd= greatest common denominator
+phi(N) = the number of numbers less than N that are relatively prime to N
+	-relatively prime means greatest common factor is 1
+
+N = pq
+phi(N) = (p-1)*(g-1)
+choose e s.t. e and phi(N) don't have common factors
+-and e*d = 1
+
+RSA
+-to encrypt message M compute
+	-> C = M^e mod N
+-to decrypt C compute
+	-> M = C^d mod N
+-recall that e and N are public
+-if attacker can factor N, he can use e to easily find d since ed = 1 mod (p-1)(q-1)
+-factoring the modulus breaks RSA
+-it is not known whether factoring is the only way to break RSA
+-> M^e should be much larger than N
+-cube root attack on RSA
+
+Elliptic Curve Cryptography
+-"elliptic curve" is a cryptosystem
+-a different way to do the math in public key system
+-elliptic curve versions DH, RSA, etc.
+-elliptic curves may be more efficient
+	-fewer bits are needed for same security
+	-but the operations are more complex
+
+Key Distribution
+
+Where to put Encryption?
+-Link level
+	-vulnerable links equipped with encryption devices on both sides
+	-needs large number of devices
+	-needs decryption to perform routing
+	-end nodes of each link will have a shared key
+	-easier to share keys with neighbors
+		-communicating only to physical neighbors
+	-node 1 doesn't care where packet is going, b.c. only care that it is going to node 2
+		-so you can encrypt header and body of packet, b.c. you don't need to see where it is going
+-end to end
+	-carried out at the end systems
+	-can encrypt only the data portion and not the header
+	-one key between start and finish
+	-can't encrypt the header of the packet
+	-never in between will encryption happen
+-link level disadvantage
+	-whole plaintext is available in between nodes
+-end to end disadvantage
+	-subject to traffic analysis
+-end to end is more attractive logistically b.c. you only care about the end being able to decrypt
+-a sys admin might like link level more b.c. back end encrypted more
+
+Key Distribution
+-most important in secure transmission
+-options (b.w. A and B)
+	-a selects a key and physically delivers it to B
+	-a trusted third party key distribution center (KDC) selects a key and physically delivers it to A and B
+	-if A and B already have a viable key, it can be used to distribute a new key
+	-if A and B have a secure link to KDC, can receive the key through that channel
+
+Using public key authority to communicate
+-A requests B's public key from public key authority
+	-encrypts this request with a timestamp and public key authority's public key
+-public key authority decrypts the request using its private key
+-public key authority responds to A with B's public key, and encrypts it with a timestamp and A' public key
+-A decrypts the response with its private key
+-Now A has B's public key and sends B a message with a nonce and encrypts it using B's public key
+-if it is really B then B decrypts the message with its private key
+-B then responds to A with the original nonce, and a second nonce and encrypts it with A's public key
+	-he got A's public key in the same way that A got B's public key
+-Since A is actually A, it decrpyts the message from B using its private key
+-it then sends the second nonce back to B encrypted using B's public key, so that B knows it is really A
+-B decrypts the message with his private key, and now they are authenticated
+
+-reason for timestamps is to prevent replay attack, and to allow you to keep track of responses with requests
+
+replay attack? not sure if this is right
+-if someone compromised B's public key, and B knows that then B changes his public key.  However A doesn't know, so when A requests B's public key, Eve intercepts it and sends back to old public key for B
+-Then A encrypts with the old public key, and Eve intercepts that message again, and can then decrypt it
+
+Exchange of public-key certificates
+-A sends public key to certificate authority, and authority repsonds with certificate (has timestamp, id, and public key) encrypted with authority's private key
+-B can get a certificate for its public key as well
+-then when A and B want to certificate they can just exchange signed certificates
+	-faster than PKI b.c. don't need to contact PK authority every time
+-security risk, b.c. certificate could get compromised
+
+-with PKI you can get confidentiality, authenticity, or both
+
+4 way handshake ??
+-know how man in the middle attack could happen
+-A sends a nonce to B encrypted with his public key
+-A responsd with the 
+
+-if A sends message to B and signs iwht A's private key
+	-authenticity
+-if A sends a message to B and signs iwht B's public key
+	-confidentiality
+-if A sends  amessage to B and signs with A's private key, and then encrypts with B's public key 
+	-confidentiality and authenticity
+
+Public-Key infrastructure (PKI)
+-public key infrastructure (PKI) consists of all pieces needed to securely use public key cryptography
+	-key generation and management
+	-certificate authorities
+	-certificate revocation (CRLs), etc.
+-no general standard for PKI
+-various "trust models"
+-may have numerous trusted certificates from numerous CAs
+-come up with secure infrastructure that can be used like a power system
+	-same power from every outlet in house
+	-same security from every authority
+
+
+--------------------------------------------------------
+
+Data and Network Security Lecture 5 Notes
+
+Web of trust
+-like transitive trust property
+-20 people I trust trust someone so I will trust them
+
+Message Authentication
+-verify that messages come from the alleged source unaltered
+	-authentication requirements
+	-authentication functions
+-MAC (mess. auth code)
+
+Authentication Requirements
+-masquerade
+	-noone can pretend to be someone else
+	-if someone says this is from me then we need to be able to verify this
+-content modification
+	-insertion, deletion, transposition, modification of message contents
+-sequence modification 
+	-insertion, deletion, reordering of sequenced messages
+-timing modification
+	-delay, replay
+-repudiation
+	-denial of message transmission or receipt
+
+Authentication Functions
+-message encryption
+	-ciphertext itself serves as authenticator
+	-if A sends message to B then A can encrypt with their shared secret key, and then B can decrypt with A's public key (this doesn't provide non-repud)
+	-encryption for authenticity alone is overkill
+	-A could encrypt with secret key in PKI and B decrypt with pub key of A to get authentication and non-repud
+-message authentication code
+	-public function combines message and secret key into fixed length value
+	-take last round of a function and encrypt it with secret key
+-hash function
+	-public function maps message into fixed length value
+	-if 1 bit changes then the hashed value will change
+		-hopefully
+	-if matching hash, then most likely message is good
+	-sign the hash
+	-encrypting hash of message is faster, b.c. message is fixed size, so encryption is faster
+	-if you are only worried about authenticating then you can compare 2 encryptions and never have to decrypt
+
+Message Authentication Code (MAC)
+-cryptographic checksum
+	-if any bits flipped, the checksum would change
+	-easy to attack
+	-just have to have an equal offset for every change you make
+-mixes message with (shared) secret key to produce a fixed size block
+-Assurances:
+	-message has not been altered
+	-message is from alleged sender
+	-message sequence is unaltered (requires internal sequencing)
+-MAC algorithm need not be reversible
+	-can just encrypt and compare
+
+CRC 
+-checks for burst errors
+-check sums with polynomials (a little harder to trick than linear check sum)
+
+Why use MACs
+	-why not just use encryption
+-clear-text always clear
+	-
+-MAC might be cheaper
+	-if you encrypt all binaries then it will be slow when hard drive loads it up b.c. has to decrypt everything
+	-instead could just use integrity check using MACs
+		(just want to make sure Word is Word Chrome is Chrome)
+-Broadcast
+	a message is sent out, anyone can use it but they must verify message is correct
+	-1 computer could verify and if any other messages have that MAC then it is a good message
+-Authentication of executables
+-architectural flexibility
+-separation of authentication check from message use
+	-must decrypt before using if it was encrypted
+	-now a days, you can start using it and after x clock cycles you can begin decrypting it, and 99% of time it is good so you saved some time, otherwise shut it down
+-prolong the period of protection
+
+Attacks on MACs
+-if k<= n, one round should suffice
+-other attacks are possible depending on the MAC algorithm
+E.g. suppose C_k(M) = DES(k X1 XOR X2...Xm)
+		-H is the XORs and then the hash is encrypted using DES
+	-replace X by Y for i<m
+	-Calculate Ym to produce the right checksum
+		-Ym = Y1 XOR Y2 XOR... XOR Ym
+
+		so now message is 
+		 Y1  Y2  Y3  Y_strange
+
+		 Y_strange = Y1 XOR Y2 XOR Y3 XOR XM
+	In other words you can create any message you want, and then make the last value (the hash from the original message, m)
+
+One-way Hash Functions
+-converts a variable size message M into fixed size hash code H(M)
+-Can be used with encryption for authentication
+	-E(M || H)
+	-M || E(H)
+	-M || H(M || K)
+	-E (M || signed H) gives confidentiality
+	-M || H(M || K)
+	-E(M || H(M || K))
+
+Reverse Hash Chain
+-have a hash chain and start form the back, so that people can not work backwards
+-without H1 they can't get any other Hashes
+-this is all assuming Hash is 1 way
+
+Hash Requirements
+-H is a weakly collision resistant: given x, it is computationally infeasible to find any x' s.t. H(x) = H(x')
+	-find someone that has same birthday as you
+-H is strongly collision resistant: it is computationally infeasible to find any x and any y s.t. H(x) = H(y)
+	-find odds of anyone having the same birthday as anyone else
+-one-way property is essential for authentication
+-weak collision resistance is necessary to prevent forgery
+-strong collision resistance is important for resistance to birthday attack
+
+
+
+--------------------------------------------------------
+
+Data and Network Security Lecture 6 Notes
+
+Current Events
+
+Anthem
+-insurance company used phishing to get access to employee's computer and stole like 80 million client information
+-risk is attackers will just hold onto their stolen information for a few years and then due an attack
+-they are required to provide credit monitoring for 2 years to the people who got the id stolen
+	-not enough
+
+Hashes and Birthdays
+-if h(x) is N bits, then 2^N different hash values are possible
+-sqrt(2^N) = 2^(N/2)
+-therefore, hash about 2^(N/2) random values and you expect to find a collision
+-Implication: secure N bit symmetric key requires 2^(N-1) work to "break" while secure N bit hash requires 2^(N/2) work to "break"
+
+Birthday attack (cont'd)
+
+sender sends a message m with a hash
+-receiver will get the message with the hash, compute the hash in real time, and compare the 2 hashes, and if they are = then he knows the message is fine
+-an attacker could try all the different message combinations that would give u that specific hash
+	-this would take 2^N tries however
+-Ex:
+	sender wants to send dallas is better than boston
+		-sends message with hash and signs hash
+			-you get integrity (hash) and authenticity b.c. of signature
+	an attacker wants to vary message with something that gets the same hash (call these Ms) and he will also have bad messages that change the meaning
+	-then he will calculate the hashes of these messages
+		M1-h		h'-B1
+		M2-h		h'-B2
+		M3-h		h'-B3
+		.			.
+		.			.
+		.			.
+		MK-h		h'-BK
+
+	-want to find a case where the hash of M = the h' of B
+		-odds of this are 2^(N/2) instead of 2^N
+	-when this happens the sender is presented with the good message M to sign which he does b.c. the meaning is the same
+		-now the attacker will replace the good message with the bad message, but keeps the same signed hash
+		-the receiver will be able to verify the authenticity of the message, even though the attacker changed the message
+-probability of having 2 people in the room with the same birthday?
+	-need 23 people to have a probability higher than 50%
+	-where as if you were trying to find someone in the room with a specific birthday you would need many more people in the room (for it to be 50% chance or better)
+
+Popular algorithms
+-MD5, SHA-1,SHA-2,SHA-3
+
+MD5
+-cracked, but difficult
+-still useful for basic things where an attack with strong computing power is not likely
+-Message Digest by Ron Rivest
+-algorithm takes a message of arbitrary lenght and produces a 128-bit digest
+-the resulting digest is the unique "fingerprint" of the original message
+-hash is faster than encryption 
+-How it works
+	-take message, add pad bits
+		-have 64 bits at the end
+		-so with the message and pad bits, the total message is always a multiple of 512
+		-512 - 64 = 448
+
+	Message 	Pad block 	64 bits
+
+	-the 64 bits is just the length of the message in 64 bits
+	-the whole thing should
+	-always add a pad block
+	-after adding the pad block and the 64 bits then the whole thing should be a multiple of 512
+	-then chop entire thing into 512 bit blocks
+	Ex:
+		message is 1024 bits
+		512 bits | 512 bits | Pad block | 64 bits
+		in this case the pad block is 448 bits
+
+		message is 1012 bits
+		512 bits | 500 bits | pad block | 64 bits
+		Pad block in this case is 460 bits
+-pad is always a 1 followed by 0s
+-max length of the message is therefore 2^64 bits
+	-if message is longer than this then the 64 bits might just be the last 64 bits of the actual length
+-good news with hashes is you don't need to get the message back
+	-all you need is a system so that someone can regenerate hash to validate its value
+-so once you have blocks of 512 bits then each one is put through MD5.
+	-the 128 bit results of the first block is used as input to the hash of the second block 
+	-the 128 bit results of the second block is used as input to the hash of the third block etc. etc
+	-the 128 bit result of the last block is the digest
+
+SHA-1 
+-cracked
+-similar process to MD5
+-160-bit digest instead of 128 like MD5
+-a little more resistance than MD5
+-input is processed in 512-bit blocks
+-2^80 computations for b-day attack
+	-2^64 computations required for MD5 b-day attack
+
+now people use SHA-2 and SHA-3 to be super secure
+
+Compression vs. Hashing
+-compressing the media to reduce the number of bits to represent it
+	-lossless though, meaning you don't lose any of the information during compression
+	-when you reverse it you have the original media
+-hashing is lossy, meaning you can't ever get the original message from the hash
+
+HMAC
+-developing a MAC derived from a cryptographic hash code
+-motivations
+	-generally execute faster in software than symmetric block cipher
+	-no export restrictions from US or other countries for cryptographic hash code
+Ex:
+	Message  | H
+	-no restrictions b.c. not using a key
+	-no authentication though w.o key
+
+	Message | E(H)
+	-this has integrity and authentication
+	-there were restrictions when this was created that said key has to be 48 bits or less if encrypting
+		-wanted to find a way to have a longer key without encrypting
+
+	Message | K | H
+	-key is not public, but is secretly shared with receiver
+	-basically just add a salt
+-so you take a key, compliment half the bits and xor it with an input pad (ipad) and attach this to front of message- then you get Hash version 1
+-then compliment the second half of the bits from your key and XOR them with an output pad (opad) and add this onto the front of your hash version 1
+	-this result is your HMAC
+
+SSL
+-compresses, and then encrypts messages sent
+	-this is because adding MACs and stuff adds length so compress
+-could compress first so that encryption is faster
+	-can't compress something that is already encrypted b.c. a good encryption scheme creates a random pattern of bits which can't be compressed
+	-compression uses the pattern of the bits, so if they are random it wouldn't work
+
+How do you share a secret with someone without just giving them the secret, but still prove you knew the secret?
+	-Ex: here is a ?, give me the answer
+		-instead of giving him the answer I give him some other information
+			-just by looking, he can not tell if I actually knew the answer at all, but later I could prove that I knew the answer based on the information I sent
+	-hash the answer and send it to him
+		-then send the answer later, and if it hashes to the same hash that I had sent then you know I had the correct answer at the time
+
+layers we will talk about
+
+Application(combination of 3 layers)(App, Pres, Session)
+	-sending files securely
+	-KERBEROS
+Transport
+	-TCP security
+	-SSL
+Network
+	-IP
+	-IPSEC
+Data (Link, MAC)
+	-802.11
+	-Ethernet
+	-mac here is media access control
+Physical
+	-fiber cuts
+	-jamming
+	-attack on nodes
+
+Bridge protocols to connect b.w. layers that can also be attacked
+
+
+--------------------------------------------------------
+
+
+Data and Network Security Lecture 7 Notes
+
+Current Events
+Google Doc Space
+-if you do security testing, you get 2 GB more space
+
+DDOS attack on Netherlands gov't website
+
+Simple Demultiplexor (UDP)
+-Unreliable and unordered datagram service
+-adds multiplexing
+-no flow control
+-endpoints identified by ports
+	-servers have well-known ports
+-header format
+-optional checksum
+	-pseudo header
+	-UDP header + data
+-connection less
+	-information in packet tells datagram where to go
+-no flow control
+	-no logical connection b.w. source and dest.
+	-packets can arrive in different seq. then when they were sent
+-no error control
+	-if a packet gets lost
+		-buffer on router is full and packet gets dropped
+		-router fails
+		-router sent something but link failed
+-very fast and cheap
+-if not super important that message gets delivered
+-diff. from IP in the sense that it is still a transport protocol
+-transport level datagram
+	-trying to connect b.w. 2 ports on transport level
+
+TCP
+-most widely used transport protocol
+-reliable data delivery by using IP unreliable datagram delivery
+	-IP provides no processing, it just forwards packets
+		-best efforts delivery
+-compensates for loss, delay, duplication, and similar problems in Internet components
+-Reliable delivery is high-level. Familiar model for construction of applications.
+-connection oriented
+	-when something is lost it can be detected and retransmitted
+-end to end
+-supports flow control
+-transmitting end and receiving end need to go at same speed
+-major difference b.w. datagram and connection oriented
+	-no need for ACK in datagram
+	-don't need to wait for receiver to be read in datagram, you just send when you're ready
+	-timing required to not overload receiver
+-3 way handshake
+	-Active Participant (client) sends SYN to Passive participant (server) with a sequence number X
+	-Server responds with SYN + ACK and a new sequence number Y and ACK = X + 1
+	-client then sends a response back to server ACK with Acknowledgement = y + 1
+	->purpose of sequence number is to make sure they are in order (necessary for flow control, or trying to determine if packets get lost)
+		-they are random numbers to start and then keep increasing
+			-need to use random # to make sure the protocol does not fail
+			-if everyone starts at seq. #0 then there would be a lot of sequences starting at seq # 0
+			-makes it easier to distinguish b.w. different connection requests
+	-SYN flood is used as a DoS attack
+
+
+IP for Data Delivery
+-TCP uses IP for data delivery (like UDP)
+-endpoints are identified by ports
+-allows multiple connections on each host
+-IP treats TCP like data and does not interpret any contents
+-Internet routers only look at IP header to forward datagrams
+-TCP at destination interprets TCP messages
+
+
+TCP uses segments (data) and needs to be put through IP packets
+-each layer just wraps the data into a bigger envelope with more headers and flags
+
+
+In TCP
+-modularity is at byte level
+-will be dealing with byte streams
+
+TCP segment format
+
+bits 0-15 is SrcPort	
+bits 16-31 is DstPort
+32 bit Sequence #
+32 bit Acknowledgement #
+Hdr Len | 0 | Flags | Advertised Window
+Checksum | UrgPtr
+Options (variable)
+Data
+
+the advertised window is to tell the sender how many more packets can be received at the receiver end
+	-this is the flow control
+	-dest can tell src to slow down if buffer advertisement is full
+
+piggy back acknowledgment
+-ACK is included in every packet you send
+-idea is don't use a new or separate packet just to send an Acknowledgement
+-save network bandwidth
+-each individual ACK would include the header as well which is overhead
+-could just piggy back onto a message getting sent by sending the ACK as well as the message
+
+TCP Flow Control
+-TCP uses sliding window for flow control
+-Receiver specifies window
+	-called window advertisement
+	-specifies which bytes in data stream can be sent
+	-carried in the segment along with the ACK
+-sender can transmit any bytes, in any size segment, between last acknowled byte and within window size
+-could send packets and wait for ACK till sending the next packet
+	-stop and wait
+	-poor bandwidth utilization but very reliable
+-could send as many packets as possible
+	-good bandwidth utilization but very unreliable
+-Sliding window is a middle ground
+	-say window is 10 packets
+	-send 10 packets at once, and don't send 11th packet until ACK for first packet is received
+		-when it is received window slides one
+-if window size is 1 then it is like the first case (stop and wait)
+
+Protocol Suites
+			  MIME
+			  	|
+-BGP FTP HTTP SMTP TELNET     SNMP
+  |	  |   | 	|	  |		   |
+
+  		TCP					   UDP
+  		 |						|
+  		 |						|	ICMP IGMP OSPF RSVP
+  		 |						|	 |	   |	|	|
+  		 |						|	 |	   |	|	|
+
+  		 		IP
+-IP is the base protocol that all of these are built on top of
+
+
+Internet Design Principles (Original)
+-make sure it works
+-keep it simple
+-exploit modularity (layers)
+-expect heterogeneity
+-think about scalability
+-consider performance and cost
+
+Unfortunately security was not an important consideration when these were being created
+
+Internet Protocol (IP)
+-Protocol Stack
+	Application
+	Transport (TCP, UDP)
+	IP
+	Network (MAC, Physical)
+
+	H1            R1                R2       R3      H8
+	TCP		---IP---		  ---IP--	---IP-     TCP
+	IP 		|		|		 |		|	|	 |	   IP
+	ETH -- ETH 		FDDI----FDDI	PPP-PPP  ETH--ETH
+
+
+
+IP Packet format
+32 bits
+Version | IHL | Type of Service   | Total Length
+
+	Identification                | Fragmented Offset
+  Time to live |  Protocol        | Header checksum
+  				Source Address
+  				Destination Address
+  				Options (0 or more words)
+
+-src address included for 
+	-reliability (who sent it, and make sure they aren't lying)
+	-quenching 
+		-if packet is circulating for way to long sender can stop it from circulating
+-time to live
+	-Network could get saturated with circulating packets that can't find their destination
+	-this will tell router to remove packets
+	-it is a counter for the number of hops
+		-everytime there is a hop it gets decremented and when it is zero it gets removed from network
+-header checksum
+	-do a checksum for header as opposed to header for whole message
+	-similar to wearing a helmet while riding a bike
+		-protect the most important thing
+	-if the header is changed even 1 bit then it could be sent to the wrong destination
+-fragment offset
+	-?? next class we will talk about it
+
+
+--------------------------------------------------------
+
+
+Data and Network Security Lecture 8 Notes
+
+Midterm - March 25th
+
+Current Events
+bunch of banks got attacked
+
+Service Model
+-Connectionless (datagram based)
+    -can transmit whatever you have whenever you have it
+-Connection oriented
+    -hand shake required
+    -flow control and error control
+-best effort delivery (unreliable service)
+	-packets are lost
+	-packets are delivered out of order 
+	-duplicate copies of a packet are delivered
+	-packets can be delayed for a long time
+
+Fragmentation and Reassembly
+-necessitated by heterogeneous collection of networks
+-every network has its own maximum transmission unit (MTU) (For example, Ethernet 1500 bytes, FDDI 4500 bytes)
+-IP has to fit inside the payload of the link layer frames (thus smaller than the max packet size: or ATM networks it ahs to fit inside the CSPDU, further segmentation and reassembly are transparent to IP)
+=Host can choose any size it wants, reasonable to select the MTU of immediate network
+-To enable reassembly at the receiver, each fragment carries identity
+-if any of the fragments do not arrive, the destination discards the arrived fragments
+-there is no provision for fragment recovery
+
+Fragmentation Example
+
+Eth frame- can accomodite 1400 bytes-> then goes to FDDI which has a max size bigger than ethernet so no big deal-> then goes to PPP  where max size is 512
+	-the packet gets fragmented into 3 packets
+	-then it goes back to ethernet but doesn't get reassembled till the receiver
+-at receiver, once all fragments are received it reassembles the packet and passes on to TCP
+	-if it doesn't get all fragments after a while it drops all the packets
+-when fragmented, fragment flag gets set to 1 for all fragments but last
+-keep the same message ID so it can group the fragments together
+	-uses the offset to know the order of the fragments
+-if a fragment isn't received than TCP requests for retransmission
+
+IP Addresses
+-IP 4 -32 bits
+	-2^32 addresses
+-IP 6 -128 bits
+	-2^128 bits
+-packets will be shipped to destination and when it gets there it should look for destination based on IP
+-Routing algorithm to generate route
+-if network flag is small then few networks, but large number of hosts and vice versa
+
+Use a subnet mask to determine which bits are network Id and which are used for host ID
+Ex: 
+	192.28.67.12
+	-could have first three section represent the subnet mask
+	-if your subnet mask = first couple sections in packet address must match
+
+Address Translation ARP 
+-physical interface of the node understands only the addressing scheme of that particular network
+-one approach is to put the physical addr in the host part of the IP address inefficient, if not impossible
+-ARP enables each node to build a table of mappings 
+b.w. IP addresses and link-levl 
+-Ethernet uses broadcasting to find a destination for the product.  
+-maps physical MAC address to IP address
+
+    
+Error Repeating (ICMP)
+-Internet control message protocol
+-companion protocol where reports certain error or 
+ conditions
+
+
+IntraDomain Routing Protocols
+-Routing information Protocol (RIP):
+	-distributed along with BSD
+	-Uses distane vector algorithm
+	-routers send messages advertising their distance to other networks
+	-uses a link cost of 1, thus tries to find out minimum hop distance and do not worry about the traffic level or link speed
+	-sends the message in every 30 sec. 
+	-valid distances are 1-15 and 16 is infinity
+-good news spreads fast, bad news spreads slow
+	-information about successful paths comes back to sender very fast
+-In IP routing always use shortest path
+	-doesn't insure quality of service (might be congested or really slow)
+-Tunnel means add a header to message
+
+
+Network Address Translation (NAT)
+-can have a few physical IP addresses, and then 50+ internal IP addresses
+-packets come to NAT-it translates it to correct address
+-they use the port # in conjunction with your IP address
+
+Dynamic Host Configuration Protocol
+-scalable
+-when you connect you go through the DHCP to get your dynamic IP address
+-it dynamically allocates IP addresses
+
+MAC Layer
+-Medium Access Control
+	-aloha, slotted aloha, CSMA, CSMA/CD, CSMA/CA
+-Ethernet
+	-uses CSMA/CD
+
+Aloha
+-whenever had something to transmit it transmits
+-waits for acknowledgement to confirm
+-if anyone sends something at the same time as me then there is interference and I will not get ACK
+	-retransmit
+	-< 30 percent efficiency
+Slotted Aloha
+-can only transmit something at the beginning of a time slot
+-increases efficiency a lot, because now interference can only occur at the beginning of a transmission vs. at anytime during the transmission
+-either no interference at all or 100% interference
+
+CSMA
+-carrier sense multiple access
+-before you transmit you monitor network to make sure no one is trying to send something as well
+-if they are not then you send
+-can be collisions because transmission time has lag time for when 2 could send at once
+
+CSMA/CD
+-CSMA but now you wait for collision and monitor it
+-you wait a random amount of time and then try to retransmit
+
+SMU network
+-Multiple networks connected through bridges
+-some automated protocols (STP) spanning tree protocols
+	-spanning tree connects all networks but gets rid of loops
+-bridges go through an election process to determine who root bridge is going to be
+	-send packets to the rest of the network and claim you have the lowest bridge id so that you can be the root bridge
+		-all packets come through you
+-bridges use a forwarding table to figure out where all the packets should go
+	-when a frame comes it gets broadcast to all ports
+	-bridge doesn't know where B is, but it takes A's frame and broadcasts it to all ports
+	-when B sends its response to A, the bridge knows where A is
+	-the bridges go through a learning algorithm where it keeps track of where ports its received packets from are
+-can attack this aspect
+	-send lots of spurrious packets saying that they are coming from this and this ID
+	-when it receives a packet and doesn't know where to send it it will broadcast it
+		-if its broadcasting every packet it slows down the network (DoS attack)
+
+Repeaters
+
+Bridge and Switch and Hub used synonymously
+-each ethernet device is connected to a hub
+	-max speed you can switch at with a hub is max
+-if the devices our connected with out a hub it slows down switch speed (3 devices, 1/3 speed)
+
+-------------------------------------------------------
+
+ Data and Network Security Lecture 9 Notes
+
+ reasons for so many attacks
+ -social engineering, reporting is slow
+
+ Repeaters, Hubs, Bridges, Switches, Routers, and Gateways
+ -Bridge-> mac layer device connected multiple lans
+ 	-aka switch- layer 2 device
+ -router is layer 3 device
+-repeater-repeats the protocol information
+		-whether you use copper or fiber, at some point the signal will wane
+		-it repeats the information 
+-as you move high layer to lower layers you add headers
+and tails
+
+Virtual LANs
+-when multiple LAN segments you use bridges
+-if 100s of LANs a company would like to have separation b.w. these LANs
+-intead of having multiple physical LANs, you have 1 LAN with multiple LANs on it
+	-have more headers
+
+The Application Layer
+-DNS - Domain Name system namespace
+	-.com .io .gov .edu , etc..
+-assume trying to connect to a host that has never been visited before
+	1. Try to access cs.cme.edu
+	2. Go to Root bridge and ask for translation on how to get there
+	3. Bridge sends back info on getting to .edu server
+	4. .edu sends back info on how to get to princeton server
+	5. princeton server sends back information on how to get to IP of cs
+-really slow, so use a DNS cache to keep track of these visited IPs
+	-IPs can change, so the cache needs to be refreshed at some point
+-DNS poisoning
+	-if the IP gets translated to the wrong IP then they get redirected to my site, I have them authenticate, steal there info and then redirect them to correct site (pharming)
+
+-When you go to a Starbucks, an attacker can create a base station on their computer that sounds like Starbucks wifi
+	-then when you connect they can monitor all your packets and steal your bank statements
+	-use VPN to avoid this
+
+E-mail Protocol
+-everyone has mailbox
+-mail server for the company
+	-all mail for whole company goes through server
+-asynchronous 
+	-can send information to anyone at anytime
+-sending use SMTP (protocol)
+-receiving you use POP3
+-still sends body in ASCII characters
+
+now we have MIME encoding
+-like base 64 coding
+	-taking a random binary pattern into ASCII format
+	-main protocol will only use ASCII-> some systems can't handle binary, but they can all handle ASCII
+-take 24 bits at a time and divide that into 6 equal parts that will be read as an ASCII character
+-will codes 6 bits in 4 groups (64 ?)
+
+-email could be sent 80 miles and then get to our mail server and they encrypt it for the last mile
+-if someone is trying to attack you directly they will monitor the last mile of traffic coming into you
+	-if this is encrypted you are protected
+-if someone is just randomly looking at network to get any juicy info in general they will still get it
+
+-To send an email encrypted all the way through use PGP
+	-provides end-to-end protection by encrypting whole payload
+	-uses PKI
+	-not uses as much b.c. heavy duty
+	-doesn't work unless both parties are using PGP
+
+-if you want 
+
+HTTP
+	-run on top of TCP
+	-client server go through TCP handshake
+	-then make HTTP request and response
+	-old HTTP had to reestablish connection every time request is made
+	-now their is persistent connections
+-stateless protocol
+	-doesn't keep any history of what you did before or after
+	-makes it highly scalable
+	-cookies allow connection to expedited
+-in-band
+	-using same band or channel used for voice
+
+FTP
+-stateful
+-out-of-band
+	-using a dedicated signal different than band used for voice
+-built on top of TCP
+-should only use SFTP b.c. FTP is not secure at all
+
+
+Kerberos
+-authentication protocol
+	-symmetric key
+-a TTP gets a ticket to get key
+-then go to server to get the ticket
+-information is sent to you encrypted
+-stateless
+	-very scalable
+-every time somebody wants something the server encrypts it in its own key
+-mostly used by local systems
+
+2 parties
+A wants to Authenticate to B
+If secret key
+1. A sends nonce to B
+2. B responds to A with encrypted nonce and a second encrypted nonce
+3. A responds to B with decrypted second nonce
+4. B says OK lets connect
+
+Using a TTP-public key
+-both A and B will use TTP to get public keys
+
+Using a TTP-symmetric key
+-all connections will happen with keys b.w. nodes and TTP
+-A says to TTP I want to connect to B
+-TTP responds to A with a key encrypted using Bs Public key
+-A encrypts this with the key they will share using its private key and sends it to B
+-B sends this to the TTP which can decrypt it using As public key and send it to B
+	-B can decrypt original message and now they both have shared key
+-vulnerable to Replay attack
+	-use timestamp 
+
+In slides Read through RPC (remote procedure call)
+-built on top of UDP
+-one of most vulnerable protocols
+
+Familiarize yourself with wireless protocols
+Host vs SSID vs base station
+How do you make wireless secure
+-have auth password
+	-if 1 person loses password then everyone has to use the new password
+RC4
+
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 10 Notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

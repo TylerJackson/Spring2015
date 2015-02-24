@@ -1,0 +1,1698 @@
+CSE 7331 Data Mining Lecture Notes
+
+--------------------------------------------------------
+
+Data Mining Lecture 1 Notes
+
+Labs = 75% of grade
+-when labs are due, no class that week, but you have 2 periods to just work on the lab
+-high expectations
+-comments, analysis, conclusion
+-no late labs
+In Class Assignment = 25% of grade
+-5 assignments at 5% each
+
+-Dr Larson, Professor Larson, prefers Eric
+
+-Email Name, department, grad/ugrad
+-something true/false
+
+What is Data Mining?
+-non-trivial extraction of implicit, previously unknown, and potentially useful information from data
+-Exploration and analysis by automatic or semi-automatic means over large quantities of data in order to discover meaningful patterns
+
+What is not Data Mining?
+-looking up phone number in directory, or querying a DB or web search engine
+
+What is Data Mining?
+-certain names are more prevalent in certain US locations (O'brien, O'Rurke, O'Reilly... in Boston area)
+-group together similar documents returned by search engine according to their context (e.g. Amazon rainforest)
+-an algorithm that can group articles by looking at text and throwing them in a different bin accordingly
+
+
+Data Mining Tasks
+-Prediction
+	-use some variables to predict unknown or future values of other variables
+-Description
+	-find human-interpretable patterns that describe the data
+-Tasks
+	-Classification (predictive)
+	-Regression (predictive)
+	-Deviation Detection (predictive)
+	-Clustering (descriptive)
+	-Association Rule Discovery (descriptive)
+	-Sequential Pattern Discovery (descriptive)
+
+icaggle
+
+Classification
+-Given a collection of records (training set)
+	-each record contains a set of attributes, one of the attributes is the class
+-find a model for class attribute as a function of the values of other attributes
+-Goal: previously unseen records should be assigned a class as accurately as possible
+
+Classification: Application 1
+-Direct Marketing
+-Goal: Reduce cost of mailing by targeting a set of consumers likely to buy a new cell-phone product
+Approach:
+	-use the data for a similar product introduced before
+	-(buy, dont buy) decision forms the class attribute
+	-Collect various demographic, lifestyle, and company-interaction related information about all such customers
+-More data the better
+
+Classification: Application 2
+-Sky Survery Cataloging
+-Goal: To predict class (star or galaxy) of sky objects, especially visually faint ones, based on the telescopic survey images (from Palomar observatory)
+	-3000 images with 23,040 x 23,040 pixel/image
+Approach:
+	-segment the image
+	-measure image attributes (features) - 40/object
+	-model this class based on these features
+	-success story: could find 16 new high red-shift quasars, some of the farthest objects that are difficult to find
+
+Regression
+-predict a value of a given continuous valued variable based on the values of other variables
+-Examples:
+	-predicting sales amounts of new product based on advertising expenditure
+	-predicting wind velocities as a function of temperature, humidity, air pressure, etc.
+	-predicting lung function as a function of gender, weight, height
+
+Clustering Definition
+-given a set of data points, each having a set of attributes, and a similarity measure among them, find clusters such that
+	-data points in one cluster are more similar to one another
+	-data points in separate clusters are less similar to one another
+-similarity measures:
+	-Euclidean Distance if attributes are continuous.
+	-Other Problem: specific measures
+
+Clustering: Application
+-Document Clustering:
+	-Goal: To find groups of documents that are similar to each other based on the important terms appearing in them
+	-Approach: to identify frequently occurring terms in each document. Form a similarity measure based on the frequencies of different terms.
+	-Gain: Information retrieval can utilize the clusters to relate a new document or search term to clustered documents
+-Clustering Points:
+	-3204 Articles of Los Angeles Times
+-Similarity Measure
+	-How many words are common in these documents (after some word filtering)
+
+Association Rule Discovery: Definition
+-Given a set of records each of which contain some number of items from a given collection:
+	-produce dependency rules which will predict occurrence of an item based on occurrences of other items
+-supermarket shelf management
+	-Goal: Identify items that are bought together by sufficiently many customers .
+	-Approach: Process the point-of-sale data collection with barcode scanners to find dependencies among items.
+		-if a customer buys diapers and milk, then is very likely to buy beer
+		-so, don't be surprised if you find six-packs stacked next to diapers
+
+Types of Data and Categorization
+
+What is data?
+-Collection of objects and their attributes
+-an attribute is a property or characteristic of an object
+	Examples: eye color of a person, temperature, etc.
+-a collection of attributes describe an object
+
+Table Data
+Rows=> referred to as objects, records, points, samples, cases, entities, instances, etc.
+
+Cols=> referred to as Attributes, variables, fields, characteristics, features
+
+Types of Attributes
+-Different types of attributes
+	Nominal
+		Examples: ID numbers, eye color, zip codes
+		-like categories, there isn't an order
+	Ordinal
+		Examples: rankings (e.g. taste of potato chips on a scale from 1-10), grades, height in (tall, medium, short)
+		-order
+	-Interval
+		-Examples: calendar dates, temperatures in Celsius or Farenheit
+	-Ratio
+		-Examples: temperature in Kelvin, length, time, counts
+
+Properties of Attribute Values
+-the type of an attribute depends on which of the following properties it posseses
+	-Distinctness:  =, !=
+	-Order: 		< >
+	-Addition: 		+ -
+	-Multiplication: */
+
+	Nominal- distinctness
+	Ordinal- distinctness and order
+	Interval- distinctness, order, and addition
+	Ratio- all 4 properties
+
+			Attribute
+			Level		Tranformation		Comments
+		 	
+		  _	Nominal		Any Permutation		Would 
+		 |				of values 			reassigning
+Discrete-								all employee ID
+		 |								# make a diff.?
+		 |								
+		  - Ordinal		an order of 	An attribute
+		  				preserving 		encompassing
+		  				change of 		notion of good,
+		  				values. i.e.	better, best can
+		  				new = f(old)	be represented
+		  				where f is a 	equally well by
+		  				monotonic 		the values (1,2,
+		  				function		3) or (.5,1,10)
+
+		  	_Interval	new_value = a*	Thus, farenheit
+		   |			old_value + b 	and Celsius 
+Continuous-				where a,b are 	temperature 
+		   |			constants		scales differ in
+		   |							terms of where
+		   |							their zero value
+		   |							is and the size
+		   |							of a unit (
+		   |							degree)
+		   |
+		   	-Ratio		new_value=a*	Length can be 
+		   				old_value		measured in 
+		   								meters or feet
+
+Types of data sets
+-Record
+	-tables, frequency lists
+-Graph
+-Ordered
+	-spatial data, temporal data, sequential data
+
+----------------------------------------------------------------------------------------------------------------
+
+Data Mining Lecture 2 Notes
+
+1.5 hours for in class assignment.  Turn in what you got
+
+Labels and Feature Vectors-> MachineLearning Algorithm
+
+Data Quality Problems
+-noise and outliers
+	-remove as much as possible
+-missing values
+	-replace or ignore
+-duplicate data
+	-clean entries or merge
+
+Outliers
+	-outliers are data objects with characteristics that are considerably different than most of the other data objects in the data set
+
+Missing Values
+	-Reasons for missing values
+		-information is not collected (e.g. people decline to give their age and weight)
+		-Attributes may not be applicable to all cases (e.g. annual income for children)
+		-UCI ML Repository: 90% of repositories have missing data
+	-Handling missing values
+		-eliminate Data objects
+		-impute missing values
+			-Stats-means,median,mode
+			-cluster data without values and then take means,medians,and modes of the clusters
+		-ignore the missing value during analysis
+		-replace with all possible values (talk about later)
+
+Data Representation
+-intervals -> floats
+-ratio -> float
+-ordinal -> integer
+-nominal -> boolean/integer (binary nominal),
+			dictionary, one hot encoding
+
+Bag of Words model
+-separate out words as their own separate column and include term frequency, or inverse doc frequency
+
+Feature hashing
+-have a hashing function h(x) = y
+-multiple words mapped to one feature (want to minimize collisions)
+-example- take sume of all letters and modulo it by 8
+
+-slide 43 lecture 2 has Panda tutorials
+
+Make sure to have these installed
+-pandas, anaconda or whatever
+-matplotlib
+-seaborn
+-mpld3
+
+--------------------------------------------------------
+
+Data Mining Lecture 3 Notes
+
+What is data exploration?
+-A preliminary exploration of the data to better understand its characteristics
+-key motivations of data exploration include
+	-Helping to select the right tool for preprocessing or analysis
+	-making use of human's abilities to recognize patterns
+		-fact: people can recognize patterns not captured by data analysis tools. Visualization is the key
+
+Techniques used in Data exploration
+-in Exploratory Data Analysis (John Tukey)
+	-the focus was visualization 
+	-Clustering and anomaly detection were viewed as exploratory techniques 
+	-In data mining, clustering anomaly detection are major areas of interest, and not thought of as just exploratory
+-in our discussion of data exp, focus on 
+	1. Summary Statistics
+	2. Visualizations
+
+Summary Statistics
+	-numbers that summarize data
+		mean -location
+		standard deviation - spread
+	-most summary stats can be calculated in a single pass
+
+Measures of location
+-mean and median
+-mean is most common used
+-mean is sensitive to outliers
+-thus, median or trimmed mean is also commonly used
+
+Measures of Spread: Range and Variance
+-Range is the difference b.w. the max and min
+-variance or st. dev. is the most common measure of spread
+	variance(x) = (s_x)^2 = 1/(m-1)SUM(x_i - x_bar)^2
+-however, this is also sensitive to outliers, so that other measures are often used
+	AAD(x) = 1/m * SUM(abs_val(x_i - x_bar))
+
+Skewness, kurtosis
+-Comparison of the tails of a distribution
+-negative skew is skew left
+-positive skew is skew right
+
+skewness(x) = 1/N * SUM((x_i - x_bar)/st.dev)^3
+
+kurtosis -> skewness but the 4th power instead of the third
+		 -> how peaked your data is
+
+Frequency and Mode
+-the frequency of an attribute value is the percentage of time the value occurs in the data set
+	attribute gender, and a representative population,
+	the gender female occurs 48.2% of the time
+-the mode of an attribute is the most frequent attribute value
+-the notions of frequency and mode are typically used with categorical data
+
+Percentiles
+-for continuous data percentiles is usually more meaningful
+-give an ordinal or continuous attribute 
+	the pth percentile is x_p means that p percent of the data is < x_p
+-50th percentile x_50% is the median
+-how efficient is one percentile calculation
+	sorted array = O(1) unsorted array = O(N*logN)
+
+Percentiles: approximate
+-many times it is more useful to use an approximation of the percentile to avoid sorting time
+-for data that fits in memory this usually is overkill: just sort
+-1 solt-> sub sample the data
+	-not good for percentiles close to 0 or 100
+-for data that is too large to fit in memory, look at T-Digest
+
+Data Preprocessing
+-aggregation
+	-combining 2 or more attributes (or objects) into a single attribute (or object)
+-purpose
+	-data reduction
+		-reduce the # of attributs or objects
+	-change of scale
+		-cities aggregated into regions, states, countries, etc.
+	-more "stable" data
+		-aggregated data tends to have less variability
+
+Mapping data to a new space
+	-fourier transform
+	-wavelet transform
+-map to a different space 
+	-take it to a space with different representation on the axes
+	-instead of time vs. value, change to freq. vs value
+
+Discretization using class labels
+-minimize within interval entropy of class distributes
+-break up data based on groupings and assign a new attribute to each group -- probably nominal if no order
+
+Discretization without using Class labels
+-can use intervals, which would turn continuous data into discrete data
+-can do this in pandas with cut command
+	cut(dataframe,var,[intervals])
+
+Attribute Transformation
+-a function that maps the entire set of values of a given attribute to a new set of replacement values s.t. each old value can be identified with one of the new values
+	-simple functions x^k, log(x), e^x, abs_val(x)
+	-standardization and normalization
+	-polynomial and interaction variables
+
+attribute transformation in python slide 21 lecture 3
+
+Data visualization
+-Visualization
+	-conversion of data into a visual or tabular format so that the characteristics of the data and the relationships among data items or attributes can be analyzed or reported
+-visualization of data is one of the most powerful and appealing techniques for data exploration
+	-humans have developed ability to analyze large amounts of information that is presented visually
+	-can detect general patterns and trends
+	-can detect outliers and unusual patterns
+
+Representation
+-need to map information to a visual format 
+-data objects, their attribtues, and the relationships among data objects are translated into graphical elements such as points, lines, shapes, and colors.
+-Example:
+	-objects are often represented as points
+	-their attribute values can be represented as the position of the points or the characteristics of the points (e.g. color, size, shape)
+	-if position is used, then the relationships of points, i.e. whether they form groups or a point is an outlier, is easily perceived
+
+Arrangement is really important for humans
+-is the placement of visual elements within a display
+-can make a large difference in how easy it is to understand the data
+
+Selection (people do not think in > 3D)
+-need to eliminate or de-emphasize certain objects or attribtues
+-selection may involve choosing a subset of attributes
+	-dimensionality reduction is often used to reduce the number of dimensions to 2 or 3 
+	-alternatively, pairs of attribtues can be aggregated
+-selection may also involve choosing a subset of objects
+	-a region of the screen can only show so many points
+	-can sample, but want to preserve points in sparse areas
+
+Visualization Techniques: Histograms
+-Histogram
+	-distributions of values of a single variable
+	-divide the values into bins and show a bar plot of the # of objects in each bin
+	-the height of each bar indicates the number of objects
+	-shape of histogram depends on the number of the bins
+	-basically a frequency plot
+
+Two-dimensional histograms
+-estimate the joint distribution of the values of 2 attributes
+-ex: petal width and petal length
+-tells you correlation
+
+Visualization Techniques: Box plots
+-box plots
+	-John Tukey
+	-another way of displaying the distribution of data
+	-outliers as dots, whiskers at 10th and 90th percentiles, bottom box at 25th percentile, line in box at 50th percentile, and top box at 75th percentile
+	-connected to violin plot
+	-box plot will hide bimodality
+-can have multiple box plots on same graph
+	-allows you to compare attributes
+
+Visualization Techniques: Scatter Plots
+-Scatter plots
+	-2D scatter plots most common, but can have 3D scatter plots
+	-often additional attributes can be displayed by using the size, shape, and color of the markers that represent the objects
+	-it is useful to have arrays of scatter plots can compactly summarize the relationships of several pairs of attributes
+
+Edward Tufty
+Hans Rosling
+
+Matplotlib
+-python plotting utility
+	-has low level plotting functionality
+	-highly similar to Matlab and R for plotting
+-extended for visually be more beautiful by 
+	-Seaborn: standard data visualization group
+
+-read about PCA in your book (appendix B)
+
+
+--------------------------------------------------------
+
+Data Mining Lecture 4 Notes
+
+groupings used in lecture 3
+-class (1,2,3)
+-age (child, adult, senior)
+-gender( male, female)
+
+seaborn demo
+-correlation plot b.w. siblings and spouses
+-violin plot -shows distribution
+-box plot - survival with each plot being a category
+-pair grid - smooth version of histogram, joint distribution 
+-facet grid
+-correlation plot organized by survival
+
+integrating with D3
+-makes plots html interactive
+	-zoom in, move around in plot
+	-javascript code generated in python
+-if you can use mplD3 then use it
+
+Curse of Dimensionality
+-when dimensionality increases (# of attributes increases), data becomes increasingly sparse in the space that it occupies
+-definitions of density and distance b.w. points, which is critical for clustering and outlier detection, becomes less meaningful
+	-more features, means distance b.w. points is less meaningful
+-exponential more points as you increase dimensions
+
+Dimensionality Reduction
+-purpose: -avoid curse of dimensionality
+		  -reduce amount of time and memory required by data mining algorithms
+		  -allow data to be more easily visualized
+-techniques: -principle component analysis (Karl Pearson)
+			 -discriminant analysis
+			 -Others: supervised and non-linear techniques
+
+Dimensionality Reduction: PCA
+-goal is to find a projection that captures the largest amount of variation in data
+-plot 1 attribute vs. other
+-find an attribute that would follow closely to something like a best fit line of the plot
+-eigenvectors of covariance matrix
+-make data set zero mean and then take covariance between attributes
+-higher covariance means more correlation
+-take first eigenvector of covariance matrix (corresponds to the highest eigen value)
+-then project the data points onto the eigen vector
+	-represent the data as if it had one attribute
+	-if EigenVector = [.85 .52] then .85*att1 + .52*att2
+
+Karhunen-Loeve Transform
+-take data points and multiply them by eigenvectors in PCA
+
+Dimensionality Reduction: Randomized PCA
+-problem: PCA on all that data can take a while to compute 
+	-what if the # of dimensions is gigantic?
+		-Actually that's okay: there are iterative algorithms for finding the largest eigenvalues that scales well with the number of data dimensions, but not the number of instances
+		-except iterative solutions doesn't scale if the amount of data you have is huge
+	-what if the # of instances is gigantic?
+-what if we construct the covariance matrix with a subsample of the data?
+	-by randomly sampling from the dataset, most of the time we get something representative of the PCA for the entire dataset
+
+Dimensionality Reduction: LDA
+-PCA tell us variance explained by the data in different directions, but it ignores class labels
+-is there a way to find "components" that will help with discriminate b.w. the classes?
+
+	arg max  SUM differences b.w. classes
+	   comp. ----------------------------
+			 SUM variance w.in classes
+
+-called Fisher's discriminant
+-...but we need to solve this using Lagrange multipliers and gradient-based optimization
+-which we wont get to for 2-3 weeks
+
+-PCA tries to give you a component in the direction of the greatest variance
+-LDA tries to look at the classes
+-differences b.w. classes is calculated by trying to separate the mean value of each feature in each class
+-linear discriminant analysis:
+	-assume the covariance in each class is the same
+-Quadrature DA:
+	-estimate the covariance for each class
+
+Dimensionality Reduction: non-linear
+-sometimes a linear transform is not enough
+-but nonlinear algorithms tend to be pretty unstable or slow
+-though many exist: non-linear PCA, ISOMAP, Manifold
+-A powerful non-linear transform has seen a resurgence in past decade: kernel PCA
+	-apply a transformation on each of your data points, take them into this higher dimensional space, and then do PCA on it
+
+-------------------------------------------------------
+
+Reviewed this material a second time for Assignment 1
+-mostly syntax from demos
+
+
+Assignment 1 Notes
+
+Summary Statistics using Pandas
+
+//import pandas
+
+import pandas as pd
+
+//load in the data to the data frame
+df = pd.read_csv('csv path')
+
+//grabs first 5 rows 
+df.head()
+
+//grabs last 5 rows
+df.tail()
+
+//can also load in from a database
+import sqlite3
+con = sqlite3.connect('data/heart_disease_sql')
+df = pd.read_sql('SELECT * FROM heart_disease', con)
+df.head()
+
+//to access a column in dataframe
+df.age
+df('age')
+
+//to remove a column
+del df('site')
+
+df.describe()
+-summary statistics
+	-count (# of records)
+	-unique (# of unique)
+	-top (most frequent thing occurring)
+	-freq (freq of most common)
+-treats all of these as nominal values
+
+//to replace any ? marks in the data set with NaN (not a number)
+//use numpy here just to get that nan value
+import numpy as np
+df = df.replace(to_replace = '?', value=np.nan)
+
+//impute the values for everything that was missing
+//fillina means fill everything thats NaN
+//df.median creates a new dataframe with the median of each column
+//so this replaces all NaNs with the corresponding median
+df_imputed = df.fillina(df.median())
+
+//some of these are numeric
+numeric_features = ('age','rest_blood_press','cholesterol')
+
+//go through each numeric feature columns
+//get the values in matrix form and then return them as a float
+for feat in numeric_features:
+	df[feat] = df[feat].values.astype(np.float)
+
+//if there is numeric data then it will take precedence over categorical for describe
+df.describe()
+
+//can now do something similar with categorical data
+//this will take number data and make sure it is categorical
+categ_features = ['is_male','chest_pain', 'high_blood_sugar'(etc)]
+
+for feat in categ_features:
+	df[feat] = pd.Categorical(df[feat].values.astype(np.float))
+
+
+//make one series nbased on the data
+//df[numeric_features] will create a new data frame 
+//with only those attributes
+//then get the mean of all those and save it to 
+//series_mean
+
+series_mean = df[numeric_features].mean()
+
+//do same with categorical for median
+
+series_median = df[categ_features].median()
+cat_series = dp.concat((series_median,series_mean))
+
+cat_series
+
+//now it will replace the categ attributes with the median and the numeric values will be replaced with the mean
+df_imputed = df.fillna(value=cat_series)
+
+//can grab particular data really easy
+//if class value is missing throw that record out
+//can get some very quick summary statistics for someone who doesn't have heart disease
+df_imputed[df_imputed.has_heart_disease==0].describe()
+
+//can also group by with pandas
+//says when someone has heart disease value = x then the median of the other attributes are y
+df_imputed.groupby(by='has_heart_disease').median()
+
+//this basically groups 1-4 together
+//either has heart disease or doesn't and find the averages of all the other values based on if they do or don't have heart disease
+df_imputed.groupby(by=df_imputed.has_heart_disease>0).mean()
+
+//could do a group by major blood vessels then look at has_heart_disease to see if it is a classifier for someone who has heart_disease
+df_imputed.groupby(by=df_imputed.major_vessels>2).mean()
+
+//one hot encoded variables using get_dummies
+tmpdf = pd.get_dummies(df_imputed['chest_pain'],prefix='chest')
+tmpdf.head()
+
+//get one hot encoding for all categorical variables
+//pd.concat([*]) will concatenate all values inside *
+//[** for col in categ_features] ->says for each col in categ_features do **
+one_hot_df = pd.concat([pd.get_dummies(df_imputed[col],prefix=col) for col in categ_features], axis=1)
+
+
+Data Visualization using Pandas
+
+
+Histograms
+-petal width, petal length, sepal width
+-split continuous variables into bins on x-axis
+
+2D Histograms
+-have one attribute on x, another on z, and count on y
+-shows correlation between 2 attributes
+
+Box Plots
+-have a plot for each attribute on x axis and values on y
+
+violin plots
+-estimation of distribution
+-more meaningful for data if data has 2 values with high frequency
+-box plot hides bimodality
+
+Scatter plots
+-2D scatter plots most common
+-could also do scatter plot matrices
+-show scatter plot of 5 attributes vs. 5 attributes
+
+Visualization Iris Correlation Matrix
+-arranged by class
+
+Parallel Coordinates 
+-take attributes on the x axis and values on y axis and connect between classes with a line
+-then can have each class use a different color
+-can see how attributes are correlated to their class and how each class is correlated to the other classes
+
+//get all data types
+df.types
+df.info
+
+//percent of individuals that died on the titanic
+float(len(df[df.Survived==0]))/len(df)*100
+
+//gets number of people that survived in each class
+// number of people in each class
+// percentage of people that survived in each class
+df_grouped = df.groupedby(by='Pclass')
+print df_grouped.Survived.sum()
+print '------------------------'
+print df_grouped.Survived.count()
+print '------------------------'
+print df_grouped.Survived.sum() / df_grouped.Survived.count()
+
+//break up a continuous variable into intervals
+//creates a new attribute in df called age_range
+//rows with NaN will get skipped by aggregate stats
+ df['age_range'] = pd.cut(df.Age,[0,16,65,1e6],3,labels=['child','adult','senior'])
+
+//can do df.age_range.describe()
+
+//group by class and age range
+//print out % of people that survived based on their class and age range
+df_grouped = df.groupby(by=['Pclass','age_range'])
+print "Percentage of survivors in each group:"
+print df_grouped.Survived.sum() / df_grouped.Survived.count() * 100
+
+//use aggregation to impute values
+
+df_grouped = df.grouby(by=['Pclass','SibSp'])
+
+//takes the median value for each attribute when it is grouped by class and sibling and fills in the NaN with that value
+df_imputed = df_grouped.transform(lambda grp: grp.fillina(grp.median()))
+df_imputed[['Pclass','SibSp']] = df[['Pclass','SibSp']]
+
+%matplotlib inline
+
+
+BAR GRAPH
+//plot the survival rate based on groups
+import matplotlib.pyplot as plt
+df_grouped = df_imputed.grouby(by=['Pclass','age_range'])
+survival_rate = df_grouped.Survived.sum() / df_grouped.Survived.count()
+survival_rate.plot(kind='barh')
+
+//cross-tabulate is good to get groupings
+//cross tabulate the df_imputed by the class and 
+//age_range
+//breaks down class and age range based on if you 
+//survived or not
+survival = pd.crosstab([df_imputed['Pclass'],df_imputed['age_range']],df_imputed.Survived.astype(bool))
+
+//Can see a stacked bar graph
+//divides count by sum to get rate
+survival_rate = survival.div(survival.sum(1).astype(float),axis=0)
+survival_rate.plot(kind='barh', stacked=True, color=['black','gold'])
+
+//above was for the survived rate
+//can do count of people that survived instead with sex 
+//and class groupings
+//if your yellow bar is big then a lot of your group 
+//survived
+survival_counts = pd.crosstab([df_imputed['Pclass'],df_imputed['Sex']],df_imputed.Survived.astype(bool))
+survival_counts.plot(kind='bar',stacked=True, color=['black','gold'])
+
+
+BOX PLOT
+
+//plot price of fare based on class
+//have a box plot for each value of class, with the range of fares shown on the y axis
+df_imputed.boxplot(column='Fare', by= 'Pclass')
+
+//subplots
+vars_to_plot_separate = [['Survived','SibSp','Pclass'],['Age'],['Fare']]
+plt.figure(figsize=(10,6))
+
+for index, plot_vars in enumerate(vars_to_plot_separate):
+	plt.subplot(len(vars_to_plot_separate)/2,2,index+1)
+	ax = df_imputed.boxplot(column=plot_vars)
+plt.show()
+
+
+Scatter Matrix
+
+from pandas.tools.plotting import scatter_matrix
+
+ax = scatter_matrix(df,figsize=(15,10))
+-diagonal is histogram
+
+Parallel Coordinates
+
+from pandas.tools.plotting import parallel_coordinates
+
+df_sub = df[['Is_Grtr_50','Age','Hrs_Per_Week']]
+df_normalized = (df_sub-df_sub.min())/(df_sub.max()-df_sub.min())
+parallel_coordinates(df_normalized,'Is_Grtr_50')
+
+Simplifying with Seaborn
+
+import seaborn as sns
+cmap = sns.diverging_palette(220, 10, as_cmap=True)
+
+Correlation Plot
+sns.set(style='darkgrid')
+
+f, ax = plt.subplots(figsize=(9,9))
+
+sns.corrplot(df,
+			annot=True,
+			sig_stars=True,
+			diag_names=True,
+			cmap=cmap,
+			ax=ax)
+f.tight_layout()
+
+Violin Plot
+
+pal = sns.cubehelix_palette(40, rot=-.5, dark=.3)
+sns.violinplot(df_imputed[['Age','Hrs_Per_Week']], color=pal, groupby=df.Is_Grtr_50.sdfadaf)
+
+Factor Plot
+
+sns.factorplot('Age_range','Fare','Survived',df,
+				kind="box",
+				palette="PRGn")
+
+Pair Grid
+
+sns.set(style="white")
+
+-uses kernel density estimation
+g = sns.PairGrid(df,diag_sharey=False)
+g.map_lower(sns.kdsplot, cmap="Blues_d")
+g.map_upper(plt.scatter)
+g.map_diag(sns.kdsplot,lw=3)
+
+Facet Grid
+
+sns.set(styles='darkgrid')
+ 
+g= sns.FacetGrid(df, col="age_range", row="Sex", margin_titles=True)
+g.map(plt.hist, "Survived", color="steelblue", lw=0)
+
+
+Integrating with D3
+
+import mpld3
+
+sns.set(style="darkgrid")
+
+g = sns.FacetGrid(df, col="age_range", row="Sex", margin_titles=True)
+g.map(plt.hist, "Survived", color="steelblue", lw=0)
+
+mpld3.display()
+-don't use it for box plots or violin plots
+
+-------------------------------------------------------
+
+Data Mining Flipped Module 1 notes
+
+Linear Regression
+
+set of instances X used to predict output y
+
+vectors
+X(1)	X(2)	 X(3)  .... X(M)
+x(1)_1						x(M)_1
+x(1)_2 ...
+x(1)_3						.
+.							.
+.
+.
+x(1)_N 						x(M)_N
+
+trying to predict y(1) y(2)...y(M)
+-try to find eq. that maps y to x
+-in linear regression this is a linear eq.
+
+yhat(1) = W'X(1) -> dot product of these 2 variables
+
+W = w_1
+	w_2
+	w_3
+	w_4
+
+add in bias term  w_0
+-data becomes 
+
+X(1)	X(2)	 X(3)  .... X(M)
+x(1)_0						x(M)_0
+x(1)_1						x(M)_1
+x(1)_2 ...
+x(1)_3						.
+.							.
+.
+.
+x(1)_N 						x(M)_N
+
+W = w_0
+	w_1
+	w_2
+	w_3
+	w_4
+
+set all of x(.)_0 = 1
+
+want to make yhat(1) as close to y(1) as possible
+
+sum_i(y(i) - yhat(i))^2 = J -> objective function
+-want to minimize this
+-adding squared difference minimizes the error if we assume it only has Gaussian error
+
+J(w) = sum_i(y(i) - W'x(i))^2
+
+y(i) = W'x(i) + eps_x
+				(error term)
+				assume its Gaussian
+
+if Gaussian it will have normal distribution 
+-0 mean and some variance sigma^2
+	N(0,sigma^2)
+
+if we add a Gaussian distribution on then y(i) now also follows a Gaussian distribution with
+N(W'x(i),sigma^2)
+-average is increased variance stays the same
+
+P(y(i) | x(i),W,sigma) = 
+	
+		  1 					(y(i) - W'x(i))^2
+  __________________  * exp(-  ___________________ )
+  sqrt(2*pi*sigma^2) 				2* sigma^2
+
+Tot Prob = Prod_i(P(y(i) | x(i),W,sigma))
+
+-want to maximize the Tot Prob	
+-take ln of tot prob. It will change tot prob, but W will stay the same
+
+					  	1
+ArgMax_W( sum_i ( ln( _______))                
+                )
+ 			
+ ArgMax_W(
+ 		Sum_i(
+ 		
+ 		    1 	 			  (y(i) - W'x(i))^2
+ ln( __________________ ) -  ___________________ 
+      sqrt(2*pi*sigma^2) 		2* sigma^2
+
+      		 )
+      	)
+
+Argmax_W does not depend on term with ln so we can just ignore that term completely
+
+ 		  		   1			
+ ArgMax_W( -  ____________ * sum_i (y(i) - W'x(i))^2
+      		   2* sigma^2
+      	 )
+
+      	 or 
+      	 	   1
+ArgMin_W( ____________ * sum_i (y(i) - W'x(i))^2
+      	   2* sigma^2
+      	 )
+
+Maximizing total probability is Max likelihood estimation (MLE)
+-assumes noise source is Gaussian distributed noise
+
+Regression Objective Function Solution
+
+Added the 1/2 in that we took from ArgMin 
+	-we don't know anything about sigma so ignore it?
+
+J(w) = 1/2*sum_i(y(i) - W'x(i))^2
+
+y = y_1    X = <------(x(1))'-------->
+	y_2		   <------(x(2))'-------->
+	y_2		   <------(x(3))'-------->
+	.		   			.
+	.		   			.
+	.		   			.
+	y_M		   <------(x(M))'-------->
+					N+1 columns
+	
+	W = w_0
+		w_1
+		.
+		.
+		.
+		w_m
+
+		XW = W'x(1)  = yhat
+			 W'x(2)
+			 W'x(3)
+			 .
+			 .
+			 .
+			 W'x(M)
+
+remember want to minimize error between y and yhat
+
+rewrite J(w) as
+
+	J(w) = .5 * ( XW - y)'(XW - y)
+
+normally to minimize a function you take derivative and set to 0
+
+matrix equivalent of taking derivative is taking gradient
+	-partial derivatives of J w.r.t w
+
+Aside---------
+d.dw((alpha*W -y)(alpha*W-y))
+	-use product rule
+	= 2*alpha*(alphaW - y)
+
+matrix equivalent
+
+grad.W(XW -y)'(XW-y) = 2X'(XW-y)
+
+End Aside-------
+
+grad.W (J(W)) = .5*2*X'(XW-y)
+
+set = to 0
+
+	0  = X'XW - X'y
+	X'XW = X'y
+	multiple both sides by inverse of X'XW
+
+	W = (X'X)^-1 * X'y
+
+	-this is the optimal sol't for our W vector for linear regression
+
+
+X is matrix M x (N+1)
+
+X'X  is matrix N+1 x N+1
+-as # of instances grows, the complexity of taking inverse doesn't matter (still have a matrix of N+1 x N+1)
+-as N gets really big this calculation gets really complicated
+-N is attributes, M is rows
+
+Steepest Descent
+
+W = w_0
+	w_1
+	.
+	.
+	.
+	.
+	w_N
+	a W for each attribute 
+
+	lets say W = w_0
+				 w_1
+
+	draw a 2d representation of what a 3d vector would look like in space
+
+Steepest Descent
+	dot with circles around it
+	-from the dot anywhere is uphill
+	-we have a guess outside the circles
+	-we want to make a decision s.t. each jump is the steepest direction down in relation to next inner circle
+	-iteratively update w to be in the steepest direction
+
+W_j := W_j + alpha d.dW_j (J(w))
+
+-alpha adjusts size of each jump in valley
+-want to calculate d.dW_j (J(w))
+
+d.dW_j (J(w)) = .5 * sum_i ( d.dW_j((y(i) - W'x(i))^2))
+-take derivate ...
+
+	= sum_i (y(i)-W'x(i))x(i)_j
+
+insert into W_j
+
+W_j := W_j - alpha * sum_i (y(i)-W'x(i))x(i)_j
+
+alpha = learning rate
+-in code
+W = W - alpha * sum_i (y(i)-W'x(i))x(i)
+	 
+-can use steepest descent to optimize J(W) to solve for coefficients of W
+
+if W starts overlearning
+	-meaning highly dependent on 1 or 2 parameters of X
+	-overlearning based on sample and it won't generalize as well as it could
+	-can adjust by also minimizing sum_j((W_j)^2)
+
+Ridge Regression
+J(w) = 1/2*sum_i(y(i) - W'x(i))^2 + roe*sum_j((W_j)^2)
+
+slightly different minimum value by using smaller W
+
+
+Linear Regression to Classification
+
+-redefine y values from continuous numbers to a set
+	y = {0,1} binary
+
+binary classification problem
+
+now
+	yhat(i) = g(W'x(i)) => {0,1}
+	-g just maps those values into 0 and 1
+	-dirac delta
+
+	if g(W'x) < 0 then yhat = 0
+	   g(W'x) >= 0 then yhat = 1
+
+J(w) = 1/2*sum_i(y(i) - g(W'x(i)))^2
+
+-update function is same
+
+W_j := W_j + alpha d.dW_j (J(w))
+
+
+d.dW_j (J(w)) = sum_i((y(i) - g(W'x(i))) 
+									*d.dW_j(g(W'x(i)))
+					 )
+	= sum_i((y(i) - g(W'x(i))) * 			   |
+						x(i)_j(d.dthet(g(thet))|      )
+			)								   |
+											thet=W'x(i)
+-saying find the derivate of the dirac delta function
+-normally just ignore the d.dthet in this function
+	-which is the dirac delta
+
+d.dW_j (J(w)) = sum_i((y(i) - g(W'x(i))) * x(i)_j
+
+
+Logistic Function
+
+yhat(i) = g(W'x(i))
+-use a better equation for g in g(theta)
+				1
+g(theta) = ________________
+			1+ exp(-theta)
+-logistic function
+-theta is a scalar
+
+				1
+g(W'x) = ________________
+			1+ exp(-W'x)
+
+d.dW_j(g(W'x)) = -g(W'x(i))(1 - g(W'x(i)))x(i)_j
+
+
+				learning rule
+			 |---------------------|	
+
+W_j := W_j - sum_i((y(i) - g(W'x(i))) *
+
+				g(W'x(i))(1-g(W'x(i)))x(i)_j
+				|--------------------------|
+					back propagation
+
+optimal values of W when g is sigmoid function
+-easier to use with Steepest Desecent
+
+
+Logistic Regression
+-Classification algorithm
+-not regression
+
+still got a binary classification problem
+yhat = {0,1}
+						1
+P(yhat =1 | x,W) = _______________
+					1 + exp(-W'x)
+
+							1
+P(yhat=0 | x,W) = 1 -  _______________
+						1 + exp(-W'x)
+
+Want to maximize probabilities given instances we have
+-similar to before
+
+Define total probability given our instances and the model parameters
+
+L(W) = prod_for all y=1 (P(y(i)=1 | x(i),W)) * 
+	   prod_for all y=0 (P(y(i)=0 | x(i),W))
+
+MLE
+
+ARGMAX_W (L(W))
+
+
+
+-------------------------------------------------------
+
+Data Mining Lecture 8 Notes
+
+-lec 5,6 he was gone
+-lec 7 was jus inclass assignment
+
+
+W' is the line mapping x(1) to y
+
+then we used g(W'x(i)) > alpha
+with alpha being the splitting point- median maybe
+
+-how do we figure out what weights are so that this is a good classification
+
+Demo Logistic Regression
+
+import numpy as np
+
+#vector from -5 to 5 with 100 points
+x1 = np.linspace(-5,5,100)
+x2 = np.linspace(-5,5,100)
+
+#turnthese into a grid so you can graph them
+x1, x2 = np.meshgrid(x1,x2)
+
+# w for this case is [4 2]
+yreg = 1 / (1 + np.exp(-(4*x1+2*x2)))
+
+#when features are axes you're in the feature space
+#drawing a line -> < line is class 0, > is class 1
+#alpha here is .5
+
+-------------------------
+-the weights tell you where the cliff is 
+
+L(W) = Prod_y(i)=1 (P (y(i)=1 | x(i),W)) *
+	   Prod_y(i)=0 (P (y(i)=0 | x(i),W))
+
+MLE	 = Prod_i ( P(y(i)=1| x(i),W)^y(i) *
+	 			P(y(i)=0| x(i),W)^(1-y(i))
+	 		  )
+
+ln(L(W)) = l(W) = sum_i( y(i)*ln(P(y(i)=1)) + 
+						(1-y(i))*ln(P(y(i)=0))
+						)
+
+
+l(W) is a contour plot
+-choose initial value for w and choose direction of steepest descent (gradient)
+-don't need to worry about local minima with logistic regression - there is 1 optimal value
+
+grad_W (l(W)) = d.dW_1(l)
+				d.dW_2(l)
+
+:= is preceded by
+W := W + alpha * grad_W (l(W))
+
+l(W) = sum_i (y(i)* ln(g(x(i))) + (1-y(i))*ln(1-g(x(i))
+											 )
+			 )
+			 			   1
+d.dW_j(l) = sum_i(y(i)* _______ * d.dW_j(g(x(i))) +
+						g(x(i))
+
+				  	  (1-y(i))
+					____________ *d.dW_j(1-g(x(i)))
+
+				 	 (1-g(x(i)))
+				 )
+			    1
+g(x(i)) = ______________  
+		  1+exp(-W'x(i))
+
+d.dW_j(g(x(i))) = g(x(i))*(1-g(x(i)))*(-x(i)_j)
+
+plug these into above equation and cancel
+
+d.dW_j(l) = sum_i ( y(i)*(1-g(x(i)))*(-x(i)_j) + 
+					(1 - y(i))*g(x(i))*x(i)_j
+				  )
+
+= sum_i( (g(x(i)) - y(i))x(i)_j )
+
+-this is the direction we need to move with each jump
+
+-now plug into update equation
+
+W := W + alpha sum_i( (g(x(i)) - y(i))x(i)_1 )
+			   sum_i( (g(x(i)) - y(i))x(i)_2 )
+			   			.
+			   			.
+			   			.
+			   sum_i( (g(x(i)) - y(i))x(i)_N )
+
+W := W + alpha* X'(g - y)
+
+g is the vector of outputs when x(i) is used
+
+y is what you are trying to predict (target)
+
+g and y are column vectors
+
+X' is the stacked instances (each instance is a row)
+-> X'(g-y) is a column vector
+
+
+c = {1 ..... C_T}
+
+saying c can go from 1 to C_T -1
+P(y(i)=c | x(i),W) =  exp(W'_c x(i))
+					 _________________
+					  1 + sum_(c'->C_T-1)of 
+					  			(W'_c'*x(i))
+					  		  )
+
+					W_(c=1)
+					W_(c=2)
+				W =	.			each W_c_i is N long
+					.
+					.W_(c=C_T-1)
+
+p(y(i)=C_T | x(i),W) = 				1
+						___________________________
+						1+ sum_(c=1->c_T-1) of
+						exp(W'_c * x(i))
+
+l_new(W) = l(W) - b*sum_j( (W_j)^2)
+					|--------------|
+					  Regularize
+
+
+W := W + alpha*X'*(g(x) - y) 		BATCH
+
+W := W + alpha*(g(x(i)) - y(i))x(i)
+
+Stochastic gradient descent
+-keep trying jumps till you get a correct one, and will slowly zero in on minimum
+-combine with batch to make more stable
+
+Mini-Batch
+ W:= W + alpha* X'_sub(g(x_sub) - y(sub))
+
+More Demo-------------------
+
+#class weight is how important a class is
+from sklearn.linear_model import LogisticRegression
+from sklearn.datasets import load_iris
+
+ds = load_iris()
+
+#default c = 1
+obj = LogisticRegression()
+
+obj.fit(ds.data[:75],ds.target[:75])
+
+ysub = ds.target[76:len(ds.data)
+feat_sub = ds.data[76:len(ds.data)
+yhat = obj.predict(feat_sub)
+
+sum(yhat == ysub)
+
+
+
+
+-----------------------------
+
+Assignment 2 Notes
+-take data set we already had 
+-use logistic regression use fort vector machine on it
+-vary parameters in each and see how well you can classify the data and interpret it
+
+
+-------------------------------------------------------
+
+Data Mining Lecture 9 Notes
+
+
+Support Vector Machines
+
+x(i) = x(i)_1
+	   x(i)_2
+
+Want to find the equation for the line that falls in the middle of the 2 clusters
+
+Have W that will be perpendicular to this line and will go through the data
+
+-take the dot product of a data point and W and if the scalar value is < C then 0, if it is >= C then 1
+w . x(i) >= c then class + 
+			  else class -
+
+w . x(i) + b >= 0
+y(i) = + => 1
+y(i) = - => -1
+
+w . x(i) + b >= 0, when  y(i) = 1
+			 < 	0, when y(i) = -1
+
+y(i)*(w . x(i) + b) >= 0
+
+w has 1 entry for each attribute 
+
+w = w_1
+	w_2
+						   W
+Margin = (x(+) - x(-)) . _____ 
+						 ||W||
+
+
+x(+)W + b >= 0
+x(+)W + b >= alpha
+-(x(-)W + b) = alpha
+x(+)W = alpha -b
+-x(-)W = alpha + b
+
+Plug into margin
+				  1
+(x(+)W - x(-)W)* ____
+				 ||W||
+
+alpha-b + alpha + b
+
+  						1
+(alpha-b + alpha + b)* _____
+				 	  ||W||
+
+ 2*alpha
+_________ = MARGIN
+ ||w||
+
+ MINIMIZE ||W|| 
+
+ Want this MINIMIZE .5||W||^2 to be true s.t. 
+ -y(i)*(Wx(i) + b) <= 0
+
+
+min f(W) s.t. g_i(w) <= 0
+
+Primal
+
+min_W Max_alpha_i f(W) + sum_i (alpha_i*g_i(W))
+-maximize with respect to alpha_i and then minimize w.r.t W
+
+
+DUAL
+max_alpha_i Min_W f(W) + sum_i (alpha_i*g_i(W))
+-minimize w.r.t W and then maximize w.r.t alpha_i
+
+
+Dual = max_alpha_i Min_W .5||W||^2 - 
+					sum_i(alpha_i*y(i)*(W*x(i) + b))
+
+grad_b(duel) = sum_i(alpha_i * y(i)) = 0
+grad_w(duel) = 0 = W - sum_i(alpha_i * y(i) * x(i))
+				W = sum_i(alpha_i * y(i) * x(i))
+
+DUAL = .5(sum_i(alpha_i * y(i) * x(i)))*
+		 (sum_j(alpha_j * y(j) * x(j))) - 
+		 (
+		  (sum_i(alpha_i * y(i)*b)) +
+		  (sum_i(alpha_i * y(i) * x(i))) *
+		  ((sum_j(alpha_j * y(j) * x(j))))
+		 )
+
+	 = .5 sum_i (sum_j( 
+	 			  alpha_i*alpha_j*y(i)*y(j)*x(i).x(j))
+	 			      )
+	 			)
+	 	- sum_i (sum_j( 
+	 			  alpha_i*alpha_j*y(i)*y(j)*x(i).x(j))
+	 			      )
+	 			) 
+	 = - .5sum_i (sum_j( 
+	 			  alpha_i*alpha_j*y(i)*y(j)*x(i).x(j))
+	 			      )
+	 			) - sum_i( alpha_i^2)
+
+-most of the alphas = 0
+-once you know alphas you can figure out W and then you can figure out b
+
+W*x(test) + b = sum_i (alpha_i * y(i)*<x(i),x(test)>)+b
+-don't need to know x's
+-just need to know what the <x(i),x(test)> is 
+
+zeta(i) is distance from W that a data point is
+
+Dual + C* sum_i ( (zeta_i^2) )
+					|
+				  slack
+want to minimize slack as much as possible
+
+zeta(i)*(x(i)W + b) >= 0
+-set the value of C -> says how much you value the zetas
+-zeta is some value greater than 0 for each instance
+
+
+phi(x(i)) takes x(i) from one dimension and puts it in another
+
+= -.5 sum_i(sum_j(alpha_i*alpha_j*y(i)*y(j)*
+					<phi(x(i)),phi(x(j))> + epsilon
+
+DEC = sum_i(alpha_i*y(i)*<phi(x(i)),phi(x(test))> + b)
+Func
+
+Aside----------------
+q = 1
+	sqrt(2)*q
+	q^2
+
+<q,q> = 1 + 2qq' + q^2(q')^2
+	  = (1 + qq')^2 = Kernel
+
+-----------------------------
+
+K(q,q') = (1 + qq')^K
+			polynomial
+
+K(q,q') = exp(-||q-q'||^2 *lambda)
+				Radial basis
+
+C -> how much you care about slack variables
+-if you make it zero it means you don't care about slack variables
+-try .1, 1, 10
+-make it bigger if you want fewer slack variables
+
+
+
+-------------------------------------------------------
+
+Data Mining Lecture 10 Notes
+
+
+Assignment 2 Due Saturday 
+
+create logistic regression model and complex vector support model that classifies your model
+-discuss advantages of 1 model over the other by analyzing results
+-separate your data into testing and training
+	-80% training, 20% testing
+-go in and look at the weights from logistic regression and determine the importance of different features
+-go in and determine where the support vectors are, and what they look like
+-determine how useful your model is to interested parties
+	-how would they use it
+
+
+Demo Notes---------------------------------
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv('data/titanic.csv')
+
+#use numbers for labels so that it creates an ordinal 
+#attribute
+df_imputed['age_range'] = pd.cut(df_imputed.Age,[0,16,24,65,1e6],4,labels=[0,1,2,3]) 
+
+df_imputed.age_range = df_imputed.age_range.astype(np.int)
+
+#objects in a pandas dataframe - categorical
+
+#set up 1 hot encoding for categorical data with more
+# than 2 unique
+tmp_df = pd.get_dummies(df_imputed.Embarked,prefix='Embarked')
+df_imputed = pd.concat((df_imputed,tmp_df),axis=1)
+
+#make sure this is also numerical
+df_imputed['IsMale'] = df_imputed.Sex=='male'
+df_imputed.IsMale = df_imputed.IsMale.astype(np.int)
+
+#clear out old Sex and Embarked since we replaced them
+
+#create new variable
+df_imputed['FamilySize'] = df_imputed.Parch + df_imputed.SibSp
+
+#Training and Testing Split
+#randomly go in and grab 80% of data
+
+from numpy import random as rd
+ y = df_imputed['Survived'].values
+ del df_imputed['Survived']
+ X = df_imputed.values
+
+#total number of instances
+ N = len(df_imputed)
+permuted_indices = rd.permutations(N)
+
+N_eighty_percent = int(0.8*N)
+
+x_train = X[permuted_indices[:N_eighty_percent]]
+x_test = X[permuted_indices[N_eighty_percent:]]
+
+y_train = y[permuted_indices[:N_eighty_percent]]
+y_test = y[permuted_indices[N_eighty_percent:]]
+
+
+from sklearn.linear_model import LogisticRegression
+
+#get object
+#l2 is the mean squared error of our output
+lr_elf = LogisticRegression(penalty='l2', c=1.0, class_weight=None)
+
+#train object
+lr_elf.fit(x_train,y_train)
+
+#get test set 
+#gives output on test data from the model we trained
+y_hat = lr_elf.predict(x_test)
+
+from sklearn import metrics as mt
+
+#wanna test our predicted y values (y_hat) against y
+acc = mt.accuracy_score(y_test,y_hat)
+
+#gives accuracy and tendency of confusing 2 classes
+#with eachother
+#scoring and precision recall
+#for later assignments we should do this many times 
+#as the permutation matrix will vary each time
+conf = mt.confusion_matrix(y_test,y_hat)
+print acc
+print conf
+
+
+#interpret the weights
+for coef, name in zip(lr_elf.coef_.T, df_imputed.columns):
+	print name, 'has an importance of ', coef[0]
+
+#the largest magnitude of weight is the most important
+#attribute to the model
+#if negative weight then it is negatively associated to survival
+
+from sklearn.preprocessing import StandardScaler
+
+#scale attribute by the training set
+scl_obj = StandardScaler()
+scl_obj.fit(x_train)
+x_train_scaled = scl_obj.transform(x_train)
+x_test_scaled = scl_obj.transform(x_test)
+
+#train the model just as before
+#can play around with c value
+lr_elf = LogisticRegression(penalty='12',c=0.05)
+lr_elf.fit(x_train_scaled,y_train)
+
+y_hat = lr_elf.predict(x_test_scaled)
+
+from sklearn import metrics as mt
+
+acc = mt.accuracy_score(y_test,y_hat)
+
+#gives accuracy and tendency of confusing 2 classes
+#with eachother
+#scoring and precision recall
+#for later assignments we should do this many times 
+#as the permutation matrix will vary each time
+conf = mt.confusion_matrix(y_test,y_hat)
+print 'accuracy', acc
+print conf
+
+#sort these attributes and spit them out
+zip_vars = zip(lr_elf.conf_.T,df_imputed.columns)
+zip_vars.sort(key = lambda t: np.abs(t[0]))
+for conf, name is zip_vars:
+	print name, "has importance of", coef[0]
+
+from matplotlib import pyplot as plt
+%matplotlib inline
+
+weights = pd.Series(lr_elf.conf_[0],index=df_imputed.columns)
+weights.plot(kind='bar')
+
+
+Support Vector Machines
+
+from sklearn.svm import SVC
+
+#cost multiplied the sum of Zs (slack variables)
+#kernel= linear means no kernel
+#higher kernel means transform data into higher degree
+svm_elf = SVC(C=1.0, kernel='linear', degree=1, gamme=0.0)
+svm_elf.fit(x_train_scaed, y_train)
+
+y_hat = svm_elf.predict(x_test_scaled)
+
+acc = mt.accuracy_score(y_test, y_hat)
+conf = mt.confusion_matrix(y_test,y_hat)
+print 'accuracy', acc
+print conf
+
+print svm_elf.support_vectors_.shape
+print svm_elf.support_.shape
+print svm_elf.n_support_
+
+print svm_elf.coef_
+weights = pd.Series(svm_elf.coef_[0],index=df_imputed.columns)
+weights.plot(kind='bar')
+
+df_support = df_imputed.iloc(svm_elf.support_,:)
+df_support['Survived'] = y(svm_clf.support_)
+df_imputed['Survived'] = y
+df_support.info()
+
+from pandas.tools.plotting import boxplot
+
+#group support data set by survived and original data set by survived
+df_grouped_support = df_support.groupby(['Survived'])
+df_grouped = df_imputed.groupby(['Survived'])
+
+vars_to_plot = ['Age','PClass','IsMale','FamilySize']
+
+for v in vars_to_plot:
+	plt.figure(figsize=(10,4))
+	#plot support vector stats
+	plt.subplot(1,2,1)
+	ax = df_grouped_support[v].plot(kind='kds')
+	plt.legend(['Perished', 'Survived'])
+	plt.title(v+' (Support)')
+
+	#plot original distribution
+	plt.subplot(1,2,2)
+	ax = df_grouped[v].plot(kind='kds')
+	plt.legend(['Perished','Survived'])
+	plt.title(v+' (Original)')
+
+#this says there is a lot of variablity in the original data, but not a lot b.w. classes 
+-the tough cases where there isn't a lot of variability where you are trying to predict
+
+Gradient Based Alternatives
+lecture at 1 hour
+
+
+-------------------------------------------------------
+
+Data Mining Flipped Module 2 Lecture Notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

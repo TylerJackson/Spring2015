@@ -1,0 +1,1422 @@
+CSE 7320 Artificial Intelligence Lecture Notes
+
+
+--------------------------------------------------------
+
+Artificial Intelligence Lecture 1 
+
+mee-hah-ella
+
+mihaela@smu.edu
+iridon.mihaela@gmail.com
+
+email her with
+Name
+Graduate/Undergraduate
+Education/background/currentresearchtopic
+programming skills
+data structures, algorithms, OOP?
+any particular interests in AI?
+why are you taking this course?
+
+A.I. 
+What machines think?
+robots?
+playing chess?
+searching for information?
+the movie A.I.?
+alan turing automata transcendence
+machines that read and speak
+language translations
+computer animation
+learning
+
+nanorobotics
+-cure diseases in the blood
+
+chess playing robot beat chess grandmaster Garry Kasparov in May 1997
+
+swarming flocking steering technology
+lord of the rings 
+matrix
+
+Automatic Speech Recognition (ARS)
+Raymond Kertzwild
+
+Turing Test
+-Ultimate AI challenge
+
+AI
+-math
+-philosophy
+-cybernetics
+-economics
+-psycology
+-neuroscience
+-economics
+-physics
+-linguistics
+
+superintelligence
+
+
+What is AI
+-the field of research that attempts to emulate human intelligence in a machine
+
+Artificial->machine
+Intelligence->?
+	-learning
+	-reasoning
+	-ability to manipulate symbols
+
+Dissecting AI
+-thinking---		
+			humanly and rationally
+-acting-----
+
+rationality
+-doing the right thing knowing what I know
+
+intelligent system
+-system that perceives its environment and takes actions which maximizes its chance of success
+
+Turing Test approach
+-can machines think? can they behave intelligently?
+-use a human interrogator to determine if it is a human or a machine
+-make it 5 minutes without interrogater being able to tell
+Requirements
+-NLP (english communication)
+-knowledge representation
+-automated reasoning (to answer questions)
+-machine learning(adapt, detect patterns)
+
+Total Turing Test:(video-perception)
+	-computer vision (perceive objects)
+	-robotics (manipulate objects, move)
+
+problem with turing test:
+-not reproducible, constructive, or amenable to mathematical analysis
+
+Turing test extra credit
+-convince the examiner he is a machine
+
+----------------------------------------------------------------------------------------------------------------
+
+Artificial Intelligence Lecture 2 Notes
+
+Thinking Humanly: Cognitive Modeling Approach
+-1960s "cognitive revolution": information-processing psychology replcaed prevailing belief of behaviorism
+-requires scientific theories of internal activities of the brain
+	-what level of abstraction? "knowledge" or "circuits"?
+	-how to validate?
+		-requires:
+		-1.) predicting and testing behavior of human subjects (top down) or
+		-2.) Direct identification from neurological data (bottom up)
+-both approaches (roughly, Cognitive Science (McCarthy) and Cognitive Neuroscience) are now distinct from AI
+-both share with AI the following characteristic:
+	-the available theories do not explain (or produce) anything resembling human-level general intelligence
+
+Thinking Rationally: The Laws of Thought
+-Normative (or prescriptive) rather than descriptive
+-Aristotle: What are correct argument/thought processes?
+	-fueled by logic
+-direct line through mathematics and philosophy to modern AI
+-Problems:
+	1.) Not all intelligent behavior is mediated by logical deliberation
+	2.) What is the purpose of thinking? What thoughts should I ahve out of all the thoughts (logical or otherwise) that I could have?
+
+Acting Rationally: the Rational Agent approach
+-rational behavior: doing the 'right' thing
+-the right thing: that which is expected to maximize goal achievement, given the available information
+-Doesn't necessarily involve thinking - e.g. blinking reflex - but thinking should be in the service of rational action
+-Aristotle (Nicomachean Ethics):
+	-every art and every inquiry, and similarly action and pursuit, is thought to aim at some good
+
+Rational Agents
+-an agent is an entity that perceives and acts 
+-this course is about designing rational agents
+-abstractly, an agent is a function from percept history to actions:
+	f: P* -> A
+-for any given class of environments and tasks, we seek the agent (or class of agents) with the best performance
+-Caveat: computational limitations make perfect rationality unachievable
+	-> design best program for given machine resources
+
+History of AI
+-been ups and downs
+
+AI Applications
+-AI effect
+	-as soon as AI successfully solves a problem, the problem is no longer a part of AI
+	-Deep Blue ('97)
+		-intelligent or use brute force computation
+	-AI s whatever hasn't been done yet
+-Roomba 
+-IVR: TTS, ASR
+		-> text to speech, speech recognition
+
+State of the Art
+-autonomous planning and scheduling:
+	-NASA's Remote Agent
+-Game Playing:
+	-IBM's Deep Blue and Watson
+-autonomous control:
+	-Google Self-Driving Car
+	-ALVINN computer vision system (car steering)
+-medical diagnosis
+	-expert physician level in some areas of medicine
+-logistic planning
+	-DART (transportation, Persian Gulf crisis '91)
+-Robotics:
+	-HipNav (microsurgery)
+-Language Understanding and problem solving:
+	-PROVERB
+
+the Universality of AI
+-knowledge-based systems
+-expert systems
+-pattern recognition
+-automatic learning and reasoning
+-natural-language processing/understanding (NLP)
+-robotics, computer vision
+-...
+	-AI systematizes and automates intellectual tasks and is therefore potentially relevant to any sphere of human intellectual activity
+
+at the forefront of AI
+-Raymond Kurzweil
+-Noam Chomsky
+	-professor of linguistics at MIT
+-Roger Shank
+	-former professor at Yale (director of Yale AI project)
+-Austin Tate
+-David Touretzky
+-Judea Pearl
+
+Go over slide 28 lecture 2
+
+Reading Assignment
+-Chapter 1 from textbook
+-Raymond Kurzweil: (online)
+	-the Age of Intelligent Machines, Chapter One: The Roots of Artificial Intelligence:
+	-www.kurzweilai.net/the-age-of-intelligent-machines-chapter-one-the-roots-of-artificial-intelligence
+Optional
+-Daniel Dennett: (online @ kurzwelai.net)
+	-The age of intelligent machines: Can machines think?
+		-http://www.kurzweilai.net/the-age-of-intelligent-machines-can-machines-think-3
+-http://www.kurzweilai.net/ebooks/the-age-of-intelligent-machines
+
+Additional Topics: Recursion
+-Computational Thinking
+	-Jeanette Wing- Carnegie Mellon
+	-Computational thinking: CT
+		-thinking like a computer scientist
+		-thinking recursively and algorithmically
+		-a fundamental skill used by everyone by mid 21st century, enabled by computing and computers
+		-abstraction and modeling of data
+			-multiple layers (relationships)
+			-analysis and organization
+		-automation
+			-mechanizing the abstraction layers and the relationship among them
+			-an algorithm, a Turing machine, a tangible device, a software system -or the human brain
+
+More about CT's concerns
+-how difficult is this problem and how best can I solve it?
+	-theoretical computer science gives precise meaning to these and related questions and their answers
+-C.T. is thinking recursively
+-C.T. is reformulating a seemingly difficult problem into one which we know how to solve (Reduction, embedding, transformation, simulation)
+-C.T. is choosing an appropriate representation or modeling the relevant aspects of a problem to make it tractable
+-C.T. is interpreting code as data and data as code
+-C.T. is using abstraction and decomposition in tackling a large complex task
+-C.T. is judging a system's design for its simplicity and elegance
+-C.T. is prevention and detection and recovery from worst-case scenarios through redundancy, damage containment, and error correction
+-C.T. is taking an approach to solving problems, designing/modeling systems, and understanding human behavior that draws on concepts fundamental to computer science
+
+Linked Data Structures and Recursion
+-why study Linked DS and Recursion together?
+	-define soemthing in terms of what is being defined
+-recursive method/function/subroutine:
+	-in its implementation, it is calling itself directly or indirectly
+-linked data structure
+	-an object contains a link to another object that belongs to the same class (data type)
+		-the class is used in its own definition
+
+Recursion
+-Recursive definition
+	-uses the concept/thing that is being defined as part of the definition
+		-A "directory" is a logical component/unit of the file-system (managed on the disk by the OS) that contains files, other directories, (or is empty).
+		-a "set" is a collection of elements, which can be other sets
+		-the "prime" numbers can be defined as consisting of:
+			-2, the smallest prime
+			-each positive integer which is not evenly divisible by any of the primes smaller than itself
+		-"GNU" = a recursive acronym for "GNU's Not Unix"
+
+Recursive vs. Circular Definition
+-recursion has base case
+-circular definition has no base case
+
+Greedy Algorithms
+-making the best choice (locally) at each step
+-iterative approach to reducing the problem
+	-TSP: at each step visit the nearest unvisited city
+-Notable examples: 
+	-minimum spanning trees (Kruskal, Prim)
+	-shortest path (Dijkstra)
+-problem with Greedy apprach:
+	-most of the time will fail to find the globally optimal solution, b.c. they usually do not operate exhaustively on all the data
+
+Dynamic Programming
+-for problems with overlapping sub-problems and omptimal substructures
+	-mathematical programming == optimization
+	-programming = finding an acceptable plan of action (scheduling of events)
+-at each step make decisions based on all the decisions made in the previous stage
+	-memorize states/steps/solutions to sub-problems
+-may reconsider the previous choices (path to a solution)
+-Examples:
+	-shortest path
+	-fibonacci sequence
+
+Divide and Conquer -> recursion
+-recursively breaking down a problem into two or more sub-problems of the same (or related) type, until these become simple enough to be solved directly 
+-efficient algorithm implementation:
+	-E.g. sorting (quick sort, merge sort)
+	-suitable for parallel execution/processing
+-powerful tool for solving conceptually difficult problems
+	-tower of Hanoi puzzle
+-disadvantage
+	-recursion is slow
+		-overhead of repeated subroutine calls
+		-storing intermediate results on the stack
+
+Recursion simplifed via examples
+-2 parts
+	-solve easy problems in 1 step (base case)
+	-divide hard problems into smaller problems, and then solve smaller problems
+
+-How do you study a text book?
+A (1) Read the book on day 1, and (2) read it again 
+	each day of the semester
+B (1) if you have reached the end of the book you are 
+	done, else (2) study one page, then study the rest of the book
+C (1) Divide the book in 2, and (2) study each half
+D (1) Cram all the pages in one horrible session, and 
+	(2) forget everything the next night
+
+B is recursive
+
+How can you drunk an entire keg of root beer?
+A (1) take one swallow, then (2) take another swallow
+B (1) If the keg is empty do nothing, otherwise (2) 
+	take one swaller, then drink the rest of the keg
+C (1) take one enormous gulp, and (2) wish you hadn't
+D (1) drink one key, and (2) drink another keg
+
+B is recursive
+
+Triangular #s T_n = Sum k = 1 + 2 + 3+..+ (n-2)+(n-1) + n = n(n+1)/2 = (n^2 + n)/2 
+
+T(1) = 1
+T(2) = 1 + 2 = T(1) + 2 = 3
+T(3) = 1 + 2 + 3 = T(2) + 3 = 6
+T(N) - N + T(N-1)
+
+c#
+-static class means not storing a state at the class level
+-slide 16 lecture 3 Recursion & Iteration:Triangular #s
+
+Other Recursive examples
+-factorial
+-A^B
+-Fibonacci series
+-reverse a list or a string
+-count elements in a list (length of the list)
+-find the MAX/MIN value in a list/array
+-traverse a linked list/tree
+-add the numbers in a list
+-return the nth element in a list
+-find the depth of a tree
+-permutations
+-binomial coefficients
+
+LISP Concepts
+-download LISP 
+
+Programming Paradigms
+-OOP (C#,C++,Java)-> objects
+-Procedural (C, Pascal) -> procedures
+-Logic Programming (Prolog) -> predicates
+-Functional (LISP, ML, Haskell) -> functions
+
+-OOP & Procedural -> imperative
+	-"how to"
+	-Goal = implicit, Algorithm= explicit
+-Functional and Logic -> declarative
+	-"what is"
+	-Goal = explicit, Algorithm = implicit
+
+Programming Paradigm
+-treats computation = evaluation of mathematical functions; avoids state and mutable data
+-contrast to imperative programming style
+	-statements that change a program state
+-Lisp, ML, Scheme, Mathematica
+-Lambda Calculus
+	-model for functional programming
+-functions that accept other functions as parameters
+
+About LISP = LISt Processing Language
+-second-oldest high-level programming language
+-Dialects
+	-Common LISP; Scheme
+-Data structures 
+	-linked lists (incl. source code)
+-GNU CLISP
+	-common LISP:
+		-high level, general-purpose, object-oriented, dynamic, functional programming language
+	-CLISP
+		-an ANSI Common Lisp implementation
+		-current version 2.49
+		-download from www.clisp.org
+
+LISP fundamental data structures
+-numbers
+	-integers
+	-floating points
+	-ratios
+-symbols
+-lists
+
+Numbers
+	-integer, rational, real, and complex
+		5
+		-24
+		PI
+		3/4
+		1.722e-15
+		#c(1.722e-15 0.75)
+	-Integer: a sequence of digits "0" through "9" optionally preceded by a plus or minus sign
+	-predicate functions in lisp NUMBERP, ODDP, EVENP, ZEROP
+		-return true or false
+
+Symbols
+	-any sequence of letters, digits, and permissible special characters that is not a number
+	FOUR -> symbol
+	4 -> integer
+	+4 -> integer
+	+ -> symbol
+	R2D2 -> symbol
+	7-11 -> symbol
+
+True is T
+False is Nil
+
+Primitive functions built into Common LISP
+-NOT predicate
+	-reutrns NIL for every input except NIL
+-Predicates 
+	-input anything
+	-output:T/Nil
+-truth functions
+	-input T/Nil
+	-output: T/Nil
+
+Errors
+-wrong input type
+-wrong number of arguments
+-division by zero
+
+Lists
+-lists can represent anything
+	-sets
+	-tables
+	-graphs
+	-english sentences
+	-functions
+-2 forms
+	-printed form / representation
+	-internal form
+
+List examples and Representations
+-list = chain of cons cells
+-a cons cell has 2 pointers
+-1 to data
+-1 to next element in list
+-last points to nil instead of next element
+
+Nested Lists
+-nested lists
+-well-formed = properly balanced parentheses
+
+Lists can be compared using =
+-compares if elements are equal
+
+CAR and CDR
+-primitive operations on linked lists
+-Cons cells
+	-composed of 2 pointers
+	-in first implementation has 4 parts, 2 of which were
+		-ADDRESS part (15-bit)
+		-DECREMENT part (15-bit)
+-CAR: contents of Address register
+-CDR: Contents of Decrement Register
+-May be combined in various ways
+	-CADR, CAAR, CDDR, CADAR, C{[A|D]}R
+	-CAR & CDR applied to NIL = NIL
+
+CAR/CDR exercise
+	L = ((A B)(C D)(E F))
+	-length = 3
+	-first element is list not atom
+	-CAR returns first element
+	-CDR everything but first element of List
+	-read letters from right to left of function
+	function 		result
+	CAR 			(A B)
+	CDR 			((C D)(E F))
+	CDDR			((E F))			-CDR of CDR
+	CADR 			(C D)			-CAR of CDR
+	CDAR 			 				-CDR of CAR
+	CADAR			B 				-CAR of CDR of CAR
+	CDDAR			
+
+Proper list
+Dotted List
+-Dotted pair 
+
+Eval Notation
+-Unifying the notation for functinos and ata 
+	-f(x,y): f(x,g(y))
+-in LISP, functions are data
+-EVAL:
+	-Evaluate Lisp expressions to compute the result 
+	-Expression: function + input arguments
+	-(+ 2 3) -> 5 (EVAL notation)
+	-(oddp (+ 2 3)) -> T
+	-(/(* 2 11)(+ 1 6)) -> 22/7
+
+EVAL rules
+-numbers, T, NIL evaluate to themselves
+-Lists:
+	-the first element of the list specifies a function to be called. The remaining elements specify arguments to the function. The function is called on the evaluated arguments
+-Symbols
+	-evaluate to the value of the variable it refers to
+-Quoted objects
+	-evaluate to the object itself without the quote
+
+form
+-what you type to the LISP interpreter
+-LISP interpreter does the following
+	-reads a form
+	-evaluates the form read
+	-prints the result
+	-READ-EVAL-PRINT loop
+-Form:
+	-ATOM (a symbol, an integer, a string)
+		-evaluated immediately
+	-LIST
+		-first element = a function; evaluates args first
+
+-LISP saves its most recent 3 results
+>* gets last result
+>** gets second to last result
+
+Numeric Functions
+-sqrt,abs, mod, round, expt, sin,cos,tan...
+
+List Construction functions
+-Cons
+	-(cons first list)
+	-(cons 2 '(5 7)) -> (2 5 7)
+	-(cons (car L) (cdr L)) -> L
+-Append
+	-(append 11 12 ..) -> (11 12 ..)
+	-(append '(1 2) '(3 4)) -> (1 2 3 4)
+	-(append '(1 2) 3) -> (1 2 . 3)
+	-(cons '(1 2) '(3 4)) -> ((1 2) 3 4)
+-List
+	-(list e1 e2 ..) -> (e1 e2 ..)
+	-(list 1 2 3) -> (1 2 3)
+
+Four ways to make a list
+- '(alpha beta omega)
+- (list 'alpha 'beta 'omega)
+- (cons 'alpha '(beta omega))
+- (append '(alpha beta) '(omega))
+-> (ALPHA BETA OMEGA)
+
+-stack operations push and pop as well
+
+-equalities do value type comparisons
+-logical predicates And, or , not
+
+
+--------------------------------------------------------
+
+Artificial Intelligence Lecture 3 Notes
+
+-first test for empty list
+-then see if first element is atom then make it base case and do recursive function for rest of list
+-then if first element is a list, then apply recursive for first element, and then for the rest of the list
+
+CAR CDR exercises will be on test
+
+Logical Predicates
+- (and t t)
+	T
+- (and t t nil t)
+	NIL
+- (and 1 2 3 4)
+	4
+- (or t nil)
+	T
+- (or 'george nil 'harry)
+	george
+
+-or will stop at first true it evaluates
+-and will stop at first false it evaluates, or evaluate all the way through
+
+* in assignment we will not be using setq or let
+
+defining functions (defun)
+-defun functino-name (arguments) body
+- (defun double (n) (*n 2))
+- (defun triple (n) (+ n n n))
+> (defun bar (x); a function w/multiple statements in
+		(setq x(*x3)); its body- it will return the val
+		(setq x(/x 2));returned by its final statement
+		(+ x 4))
+
+BAR
+> (bar 6)
+13
+
+-if its recursive then somewhere in the body you invoke the binding
+
+Lambda-binding 
+	-if the variable appears in the argument list of a function
+
+-setq assumes whatever follows - set quotation
+- set 'x(* x 3) sort of thing
+
+Conditional Logic
+-if 
+	-(if condition then-result else-result)
+	-(if (=7(+ 2 4)) 'yes 'no)-> NO
+	-(if 4 5 6) -> 5 (Nil = false, everything else =T)
+		-> if 4 then return 5 otherwise return 6
+		-> 4 doesn't evaluate to nil so it is "true"
+-Cond
+	-multiple if-then-else conditional operator
+	-(cond (test1 result1)
+		   (test2 result2)
+		   ...
+		   (testN resultN))
+	-COND example: colorOf
+
+AND & OR -> Conditionals
+-not functions
+	-they are not required to evaluate every clause
+-can be used to halt evaluation
+(defun positivenumberp(x))
+	(and (numberp x)(plusp x)))
+-Define Logical AND:
+(defun logical-and (x y)(and x y t))
+	-> Will return only T or Nil
+
+More conditionals: when & unless
+-used instead of "if" without then or else clause
+-allow any number of statements in body
+(WHEN test 
+		body)
+-if test == nil -> NIL
+-Else -> eval BODY and return
+		last evaluated form
+(UNLESS test
+		body)
+-if test == T -> NIL
+-Else -> eval BODY ...
+>(when t 3)
+3
+>(when nil 3)
+NIL
+>(unless t 3)
+NIL
+>(unless nil 3)
+3
+-(when x a b c) is equivalent to (if x(progn a b c))
+-when x is true do the body, otherwise return nil
+-unless x is true do the body, otherwise return nil
+
+Arrays
+-make-array
+	-creates an array; initially all elements are nil
+	-array indices start at 0
+-Aref
+	-accesses the elements of the array created with make-array
+>(make-array '(3 3))
+#2a((NIL NIL NIL)(NIL NIL NIL)(NIL NIL NIL))
+>(aref * 1 1)
+NIL
+> (make-array 4);1D arrays dont need the extras ()-s
+#(NIL NIL NIL NIL)
+
+Two functions
+-remember ' means symbol not a function
+
+ 	(defun call-up (caller callee)
+ 		(list 'hello callee 'this 'is
+ 			caller 'calling))
+
+ 	How many arguments does this function require? What are the names of the arguments? What is the result of (CALL-UP 'FRED 'WANDA)?
+ 	-2 arguments
+ 	-returns "hello Wanda this is FRED calling"
+
+ 	Here is a variation on the CALL-UP function from the previous problem.  What is the result of (CRANK-CALL 'WANDA 'FRED)?
+
+ 	(defun crank-call (caller callee)
+ 		'(hello callee this is caller calling))
+ 	-this returns
+ 		(hello callee this is caller calling)
+
+Exercise: Recursive list length
+-in-built function: list-length
+	(list-length '(A B C))
+	3
+
+	(defun recursive-list-length (L)
+		"A recursive implementation of list-length."
+		(if (null L)
+			0
+			(+ 1(recursive-list-length (rest L)))))
+
+flat list and want to do summatio recursively
+
+list l = (a b c ...)
+ a + sum(b c ....)
+ 	b + sum(c...)
+ 		c + sum(d...)
+
+ car(l) = a , and rest = cdr(l)
+
+-t here just means all other cases (like a default for switch statements)
+(defun summation n(L)
+	(cond ((null L) 0)
+		  (t (+ (car L)(summation( cdr L))))
+	)
+)
+
+> (summation '(1 2 3 4 5))
+-quotes is so that it knows the list isn't a function
+
+-what about hierarchical lists though
+ S(L) = car(L) + SUM(cdr(L))
+ -need to change car(L) to make it work for hierarchical list
+
+ (defun summationHier (L)
+	(cond ((null L) 0)
+		  ((atom (car L)) (car(L) + summationHier(cdr(L))))
+		  (t (+ (summationHier(car L))(summationHier(cdr L))))
+	)
+)
+
+(cons 2 '(3))
+(2 3)
+
+(defun myFlt (L)
+	(cond ((null L) nil)
+		  ((atom(car L)) (cons (car L)(myFlt(cdr L))))
+		  (t (append (myFlt (car L)) (myFlt (cdr L))))))
+
+remember cons is just a list with 1 element
+
+reverse
+-minute 1:20 lecture 3
+
+depth
+ (defun depth(L)
+ 	(cond ((null L) 0)
+ 		  ((atom L) 0)
+ 		  (t (max (+ 1(depth (car L))(depth(cdr L)))))
+ 		  ))
+
+(dribble "filepath for it to go to")
+(load "file path...")
+(dribble)
+minute 1:49 lecture 3
+
+
+the KB, The Einstein Puzzle
+
+
+Functional Programming with the .NET Framework
+
+Programming Paradigms
+-OOP (C#,C++,Java) -> objects
+-Procedural (C, Pascal) -> procedurals
+-Logic Programming (Prolog) -> Predicates
+-Functional (LISP, ML, Haskell, F#) -> functions
+
+-OOP & Procedural -> imperative
+	-"How to"
+	-GOAL = implicit, ALGORITHM = explicit
+-functional and logic -> declarative
+	-"What is"
+	-GOAL = explicit, ALGORITHM = implicit
+
+About functional programming
+-programming paradigm
+	-treats computation = evaluation of mathematical functions; avoids state and mutable data
+	-contrast to imperative programming style
+		-statements that change a program state
+	-Lisp,ML,Scheme, Mathematica
+-lambda calculus
+	-model for functional programming
+	-functions that accept other functions as parameters
+	-function abstraction and application using variable binding and substitution
+
+Functional Programming in .NET
+-C#: LINQ 
+	-declarative syntax
+	-less errors
+	-conciseness of code
+-first-class functions : functions as data
+	-functions can be passed around b.w. methods
+	-functions can be stored in a variable
+	-can return functions from a method
+
+C# .NET
+-multi-paradigm
+-strongly typed
+	-imperative
+	-declarative
+	-functional
+	-OO
+	-Generic
+
+Functional Support in C#
+-anonymous delegates 
+	-functions w.o names (in line functions also)
+-lambda expressions
+-what are delegates?
+	-function pointers (event target)
+-what is lambda calculus?
+	-Expressing computation based on function abstraction and application using variable binding and substitution
+
+Lambda Expressions
+-anonymous functions
+-used to create delegates or expression trees
+-functions as data: input or output
+-used in LINQ query expressions
+-Lambda operator: =>
+-(x,y,...) => f(x,y,...)
+-Ex:
+	x => x*x or (x) => x*x
+	() => btn1.Click()
+
+-interface has no implementation
+-abstract class can have virtual methods that can be overrided
+	-abstract methods have to be overrided
+
+Delegate example
+
+private delegate vodi HelloWorldDel(string s);
+private readonly HelloWorldDel _myDel = n=> Console.WriteLine("Hello {0}", n);
+
+public void HelloWorld()
+{
+	_myDel("World");
+}
+
+Func<int, bool> myFunc = x => x==5;
+-last argument type is always return type
+bool result = myFunc(4);
+	-returns false because 4 != 5
+
+int [] numbers = { 4 , 1, 3, 4 6, 2 ,3 ,5};
+int oddNumbers = numbers.Count(n => n%2 == 1);
+-counts only those for which this condition holds true
+
+LINQ
+
+Query syntax
+var existingPlanTypes = (from s in searchResults.
+								   DentalPlanTypes
+						where s.Name.Equals(	
+								dentalPlanType.Name)
+						select s);
+
+if (existingPlanTypes.Count().Equals(0))
+{
+	searchResults.DentalPlanTypes.Add(dentalPlanType);
+}
+
+Order sql server executes queries
+FROM
+WHERE
+GROUP BY
+HAVING
+SELECT
+ORDER BY
+
+
+Extension Methods Syntax
+var enumNames = Enum.GetNames(typeof (PreferenceTypeEnum)).Where(x => x.StartsWith("ReportsToIncludeFor"));
+List<State> stateCodes = new List<State>();
+
+if (enumNames != null) //should never be null
+	enumNames.ToList().ForEach(x => stateCodes.Add(new State() {Code = x.Substring(x.Length -2)}));
+
+Anonymous Types and Type Inference
+var quoteDetail = (from c in ctx.Quote 
+					where c.quoteID == quoteId
+					select new { c.brokerid })
+					.FirstOrDefault();
+	-new for anonymous types
+	-var shows compile-time type inference
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 4 Notes
+
+
+Intelligent Agents
+
+Overview 
+-Rational Agents, Environments
+-Good behavior: Rationality
+-PEAS
+	-Performance, Environment, Actuators, Sensors
+-Agent Programs (the structure of agents):
+	-simplex reflex agents
+	-model-based reflex agents
+	-goal-based agents
+	-utility-based agents
+	-learning agents
+
+Rational Agents
+-Successful agents-> agents that can reasonably be called intelligent
+-Agents
+-Environments
+-Coupling b.w. agents and environments
+-Rational Agent
+	-one that behaves as well as possible
+-basic agent designs (skeletons)
+
+Agents and Evironments
+-Agent interacts with environments via:
+	-sensors-> perception (P*)
+	-Actuators-> action (A)
+-Agent:
+	-humans
+	-robots
+	-soft-bots
+	-thermostats
+-Assumption
+	-an agent can perceive its own actions (but not always the effects)
+
+Percept & Percept sequence
+-Percept:	
+	-at time t: the agent's perceptual inputs
+-Perceptual sequence:
+	-the complete history of everything the agent has ever perceived (entire percept history)
+-Agent function: describes agent's behavior:
+	f: P* -> A
+-Agent Program
+	-implementation of f
+	-runs on a physical platform/architecture
+-Ex:
+	-Vacuum-cleaner world
+
+Vacuum-cleaner world
+-Percepts
+	-location
+	-contents
+	-e.g. [A, Dirty]
+-Actions
+	-left
+	-right
+	-suck
+	-NoOp
+-Tabulating the agent function:
+	-infinite -> impose a limit on percept sequence
+
+Can come in a table format
+ 
+ 	Percept, sequence 		|		Action
+ 	[A, Clean]				|		Right
+ 	[A, Dirty]				| 		Suck
+ 	[B, Clean] 				| 		Left
+ 	[B, Dirty] 				| 		Suck
+ 	[A, Clean] 				| 		Right
+
+ what is the right function? (agent good/bad)
+ Can it be implemented in a small agent program?
+
+Good Behavior
+-Agent -> Actions -> Environment -> States
+-A rational agent: 
+	-one that does the right thing
+-the right thing
+	-what causes the agents to be more successful
+-measures of success = ?
+-Fixed performance measure evaluates the environment sequence:
+	-one point per square cleaned up in time T
+	-One point per clean square per time step, minus one per move
+	-Penalize for > k dirty squares
+
+Performance Measures
+-General Rule:
+	-design performance measures according to what one actually wants in the environment, rather than how one thinks how the agent should behave
+-not easy to select a performance measure
+-philosophical implications
+
+Rationality; Rational Agent Definition
+-What is rational at any given time depends on:
+	-performance measure (criterion of success)
+	-Agent's a priori knowledge of the environment
+	-The actions the agent can perform 
+	-Agent's percept sequence to date
+-A rational agent chooses whichever action maximizes the expected value of the performance measure given the percept sequence to date
+
+Omniscience, Perfection, Clairvoyance
+-Rational != Omniscient
+	-omniscience: the agent knows the actual outcome of its actions and can act accordingly (not realistic)
+	-percepts may not supply all relevant info
+-Rational != Perfect
+	-perfection: maximize actual performance
+	-Rational: maximize expected performance
+-Rational != clairvoyant
+	-action outcomes may not be as expected
+-> Rational != successful
+
+Rationality - Characteristics
+-Information gathering
+	-actions targeted to modify future percepts
+-Exploration
+	-when the environment is unknown (initially)
+-Learning
+	-From Perceptions
+-modifying and augmenting the agent's prior knowledge about the environment
+-when the environment is completely known a priori
+	-> no need to perceive and learn
+-autonomy
+	-the agent should learn to compensate for partial or incorrect prior knowledge (of the environment)
+
+PEAS
+-PEAS
+	-PErformance
+	-Environment
+	-Actuators
+	-Sensors
+-to design a rational agent, we must first specify the task environment:
+	-the "problem" to which a rational agent is the "solution"
+	-different "flavors" -> affects the design for the agent program
+
+Example: Automated Taxi Driver
+-Performance Measure??
+	-safety, destination, profits, legality, comfort,..
+-Environment
+	-freeway, pedestrians, weather
+-Actuators
+	-steering, accelerator, brake, horn, speaker/display
+-Sensors
+	-video, accelerometers, gauges, engine sensors, keyboard, GPS, microphone/keyboard
+
+-This is describing a Task environment
+	-practices at the end of chapter 2
+
+Example: Internet Shopping AGent
+-Performance Measure
+	-Price, quality, appropriateness, efficiency
+-environment
+	-current and future WWW sites, vendors, shippers
+-actuators
+	-display to user, follow URL, fill in form
+-sensors 
+	-html pages
+		-text, graphics, images
+
+Environments
+-Real vs. artificial (e.g. keyboard inputs and character output on a screen)
+-what matters is the complexity of the relationship among:
+	-the agent behavior
+	-the percept sequence generated by the environment
+	-the performance measure
+-software agents (softbots = s/w robots)
+	-exist in rich/unlimited domains (e.g. Internet, flight simulator)
+
+Environment Types
+-Fully observable vs. partially observable
+	-fully observable: if the agents sensors give it access to the complete state of the environment at each point in time
+-Deterministic vs. stochastic
+	-deterministic: if the next state of the environmet is completely determined by the current state and action executed by the agent
+	-partially observable-> may appear stochastic
+	-only consider the point of view of the agent
+	-Strategic: deterministic except for the action of other agents
+-Episodic vs. Sequential
+	-episodic: the agent's experience is divided into atomic episodes (perceive + perform a single action); conveyor-belt robot
+	-sequential: (chess, taxi driving) short term actions can have long-term consequences
+-static vs. dynamic
+	-dynamic: if the environment can change while the agent is deliberating
+	-semi-dynamic: the agent's performance score is changing, but not the environment (e.g. chess with a clock)
+-discrete vs. continuous
+	-applied to:
+		-state of the environment
+		-time handling
+		-percepts and actions of agent
+-single agent vs. multi-agent
+	-which entities msut be viewed as agents?
+		-Distinction: Whether B's behavior is best described as maximizing a performance measure whose value depends on agent A's behavior
+		--> competitive vs. cooperative
+
+Examples
+			solitaire  backgammon internet   taxi
+								  shopping   driver
+Observable 		yes 	 yes 		no  	 no
+Deterministic   yes		 no 		partly   no
+Episodic        no  	 no 		no 		 no
+Static          yes   	 semi 		semi 	 no
+Discrete        yes 	 yes  		yes 	 no 
+Single-agent    yes 	 no 		yes      no
+								  (except 
+								  auctions)
+				real world
+Observable 		 partially
+deterministic 		no
+episodic 			no
+Static 				no
+Discrete  			no
+Single-agent 		no
+
+Agent Programs
+-Agent function vs. Agent program
+	-input for agent function
+		-the entire percept history
+	-input for agent program
+		-the current percept
+-table-driven-agent (simplest agent)
+	-doomed to failure (huge table sizes)
+-key challenge for AI:
+	-how to write programs that produce rational behavior from a small amount of code rather than from large number of table entries
+
+Agent Types
+-Job of AI: design the agent program
+	-implementation of the function mapping percepts to actions
+	-Runs on a given architecture
+		-a computing device with physical sensors and actuators
+-agent = architecture + program
+-four basic types in order of increasing generality:
+	-simple reflex agents
+	-reflex agents with state
+	-goal-based agents
+	-utility-based agents
+-all these can be turned into learning agents
+
+Reflex-Vacuum Agent
+function REFLEX-VACUUM-AGENT ([location, status])
+	return action
+ if status = Dirty then return Suck
+ else if location = A then return Right
+ else if location = B then return Left
+-Action = f(current_percept)
+-condition-action rule:
+	-if car-in-front-is-braking then initiate-braking
+	-same for humans
+		-innate reflexes + learned rules
+
+Simple Reflex Agents
+function SIMPLE-REFLEX-AGENT (percept) returns action
+ state<- INTERPRET-INPUT (percept)
+ rule <- RULE-MATCH(state, rules)
+ action<- RULE-ACTION [rule]
+ return action
+
+ a simple reflex agent works by:
+ -finding a rule whose condition matches the current situation (as defined by the percept)
+ -doing the action associated with that rule
+
+ Issue with Simple Reflex Agents
+ -simple, but very limited intelligence
+ -environment must be fully observable!
+ 	-the agent works only if the correct decision can be made on the basis of only the current percept
+ -infinite loops
+ 	-to avoid: randomize agent actions
+ 	-randomized behavior of the right kind can be rational in some multi-agent environments
+ 	-in single-agent environments, randomization is usually not rational
+
+Model-Based Reflex Agents
+-If environment is partially observable:
+	-keep track of the part of the world it can't see now-> maintain internal state
+		-internal state depends on percept history
+-model of the world:
+	-knowledge about "how the world works"
+	-information about how the world evolves independently of the agent
+	-information about how the agent's actions affect the world
+
+Model-Based Reflex Agent: Structure
+-function REFLEX-AGENT-WITH-STATE(percept)
+								returns action
+ 	static: state, a description of the current world state rules, a set of condition-action rules
+	action, the most recent action, initially none
+ 	state<- UPDATE-STATE (state, action, percept)
+ 	rule<- RULE-MATCH (state, rules)
+ 	action<- RULE-ACTION[rule]
+ 	return action
+
+Goal-Based Agents
+-Goal:
+	-information that describes situations that are desirable (e.g. taxi driver :: being at the passenger's destination)
+
+More on Goal-Based Agents
+-can be easy
+	-1 action -> goal satisfied
+-or complex:
+	-agents may have to consider long sequences of twists and turns to find a way to achieve the goal
+	-search
+	-planning
+
+Utility-Based Agents
+-taxi driver example
+	-destination = goal
+	-multiple action sequences to achieve goal:
+		-some are quicker, safer, more reliable, cheaper..
+	-goals-> "happy" vs. "unhappy" states
+	-a more general PM: how happy will I be?
+	-if a state is preferred to another state -> the state has a higher utility for the agent
+-Utility function:
+	-maps a state(sequence of states) onto a real number (= the degree of happiness)
+		-useful when goals are conflicting or when there is uncertainty in achieving a goal (it weights the likelihood of success against the goal's importance)
+
+Utility based function: structure
+-the agent choose the action that leads to the best expected utility:
+	- = average over all possible outcome states,
+	 weighted by the probability of the outcome
+
+Learning Agents
+-learning-> advantages
+	-don't need to write so much code (current state of the art: build learning machines and then teach them)
+	-allows agents to operate in initially unknown environments and to become more competent than its initial knowledge alone might allow
+
+Learning Agents: Components
+-learning element
+	-makes improvements
+	-uses feedback from critic
+-performance element
+	-selects external actions
+	-(previously the entire agent)
+-critic
+	-tells the learning element how well the agent is doing w.r.t a fixed performance standard
+-problem generator
+	-suggests exploratory actions that will lead to ne and informative experiences
+
+F#.NET
+-strongly typed
+-multi-paradgim
+	-functional
+	-imperative
+	-OO
+-Don Syme
+-2005: 1.x
+-2010: 2.0
+-2012: 3.0
+-2013: 3.1
+-took a litlt from c#, Scala, Erlang, OCaml, Haskell, Python
+
+Main Features
+-strongly typed
+-unrivaled type inference
+-default immutability
+-functions as data
+-pattern matching
+-partial applications
+-F# lists
+-Pipelining
+->highly expressive, concise, predictable code
+
+F# Projects and Writing F# Code
+-Creating an F# project in VS.NET
+-Order of files w.in a project matters
+-top-down evaluation -> no folders allowed
+-recursive type definition - must be explicit
+-whitespace matters: indentation instead of {}
+	-no TABS! -> Configure VS.NET appropriately
+-Code organization
+	-namespaces
+	-modules
+-F# file extensio: .fs (compiled into .dll/.exe)
+
+Application entry point
+[<EntryPoint>]
+let main argv = 
+	//init code
+	0
+-implicit return values (no need for "return")
+-expressions are everywhere (syllogism below)
+	-all expressions return a value
+	-functions are expressions 
+	-Ergo: all functions return a value
+
+F# demo
+-Visual F#
+-> F# Application
+namespace MyFirstNS
+open MyLib
+open System
+
+module MyMain =
+
+	[<EntryPoint>]
+	int main argv =
+		printfn "%n" argv
+		let v = 3
+		let f1 a (b : int64) = 
+			a + b + f1
+
+		f2 2L 3L 4L |> printfn "The result is %d"
+		c * (f1 a b)
+
+		Console.ReadLine() |> ignore
+		0
+
+//click on project and add new source file
+//then add this to project with namespace keyword
+
+module RandLib = 
+	open System
+	let rand = Random(DateTime.Now.Millisecond)
+	let getRandStd () = 
+	printfn "Enter the total number of students:"
+	let totalStr = Console.ReadLine()
+	// returns tuple with true/false, and the total
+	let couldParse, total = Int32.TryParse(totalStr)
+	if not couldParse
+		then "Invalid integer number"
+		else let rnum = rand.Next(total) + 1
+			sprintf "Student Number picked = %d" rnum
+
+F# interactive
+> #help;;
+
+>#load @"C:\dafsdfasdf\Program.fs";;
+
+
+F# Fundamentals
+-Default IMmutability
+	-purpose: To avoid unwanted Side Effects = 
+		-System state (program data) can change at any time
+-Bindings 
+	-let, do, use
+-Let Bindings:
+	-Associate names with values
+	-let a = 1
+	-let mySum ab = a + b
+	-let res = mySum 3 4
+
+F# Types
+-Full range of CLI types
+-primitives (bool int string float)
+-Aggregate types: class, struct, union, record, enum,...
+-Built-in Types: tuples, lists, arrays, sequences, records, discriminatd unions
+-generic types
+-function type: parameter and return type
+-objects, interfaces, delegates
+-type abbreviations: type aliases
+-Collection types: list, array, seq, Map set
+
+F# Type Inference
+-C#: var
+-Due to top-bottom evaluation, the type inference is much more powerful than in c#
+-F# may seem a dynamically typed language, but it is NOT
+	-both C# and F# are statically typed 
+-type annotations: sometimes needed
+
+List
+	let l = [1;2;3]
+Array
+	let a=[|1;2;3|]
+Sequence
+	let s = seq{1 .. 3}
+
+[for i in 1..10 -> i] |> printfn "3. List of first 10: %A"
+[for i in 1..10 do if i % 2 = 0 yield i] |> printfn "4. Listof first even numbers up to 10: %A"
+
+Sequences
+-Nullability
+	-NULL is almost never used;
+	-null keyword: valid for interoperability's sake
+-Option<'T>
+	-discriminated union with 2 values
+		-some('T)
+		-None
+	-Essential to F#; syntactic support through the option keyword
+		-val middleName : string option = None
+		-val middleName : string option = Some "George"
+
+Discriminated Unions
+-Values that can be one of a number of named cases, possibly each with different values and types
+	-heterogeneous data
+	-data with special cases (valid, error)
+	-basic inheritance (small object hierarchies)
+	-Enums (when only case identifiers are present)
+
+Discriminated Union Example:
+type Shape =
+	| Rectangle of width : float * length : float
+	| Circle of radius : float
+	| Prism of width : float * float * height : float
+
+let rect = Rectangle(length = 1.3, width = 10.0)
+let circ = Circle(1.0)
+let prism = Prism(5., 2.0, height = 3.0)
+
+//the option type is a discriminated union
+type Option<'a> = 
+	| Some of 'a
+	| None
+
+A Binary Tree + Discriminated Union
+
+//very simple tree that stores integer values:
+type TreeOfInts = 
+	| Nada
+	| Node of int * TreeOfInts * TreeOfInts //(value,left, right)
+
+let t = Node (0, Node(2, Nada, Node(5, Nada, Nada)), Node (3, Node (4, Nada, Nada), Nada))
+
+//Tree with nodes as record types
+
+type TreeNode = {name : string; weight : int}
+type Tree = 
+	| Nil
+	| Node of TreeNode * Tree * Tree
+
+//or, using mutually recursive type def
+type TreeNodeWithChildren =
+	{ name : string; weight : int;
+	  left : TreeRec; right : TreeRec }
+and TreeRec = 
+	| End
+	| Node of TreeNodeWithChildren
+
+
+------------------------------------------------------
+
+Artificial Intelligence Lecture 5 Notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

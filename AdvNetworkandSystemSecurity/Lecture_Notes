@@ -1,0 +1,601 @@
+CSE 8349 Advanced Network and System Security Lecture Notes
+
+--------------------------------------------------------
+
+Advanced Network and System Security Lecture 1 Notes
+
+Call up to 9PM
+(972)-517-6928
+
+send email
+mcfearin@smu.edu
+
+know what's covered in lecture
+
+submit the current events
+
+Risk Management
+-Goal: to protect the enterprise and its ability to carry out its mission
+	-goal is not IT focused, its mission focused
+	-management function
+-balance cost of protection with gains in mission capability
+
+Basic Steps of Risk Management
+-Risk assessment
+-Risk Handling
+-Evaluation and Assessment
+
+Risk Assessment ->memorize list
+-system/asset characterization
+	-iterative process
+	-finding out what you have that's of value
+	-e.g. Dairy Queen Specific Location
+			-employees (training included, training materials), customers, machines, building, land, cash, supplies, data (financial records), intellectual property (recipes, brands, trademarks), marketing materials, processes, franchise network, IT systems, reputation)
+	-how to do this
+		-brainstorming
+		-looking at expenses
+		-look at reports
+		-network scans
+		-interviews 
+		-questionaires
+		-customer feedback
+	-Categorize your assets
+		-facilities
+		-inventory
+		-capital equipment
+		-people
+		-reputation
+		-Intellectual property
+		-IT
+	-Asset Attributes
+		-people->experience, time, ID, skills (soft and hard), clearance, certifications, education, supervisor, salary & benefits
+		-procedures->inputs & outputs, influence (What it applies to), efficiency, expected results, owner
+		-Data->source, value, quantity, format, permissions, confidentiality, quality, location, backup procedures
+		-Hardware/Software->name, IP address, MAC address, Type, Version, location, owner, manufacturer, model #, serial #
+	-Asset Valuation
+		-critical to success ($-$$$$$)
+		-generates revenue/profit ($-$$$$$)
+		-expense to replace ($-$$$$$)
+		-most embarrassing if revealed (greatest liability, $-$$$$$)
+
+
+	-the thoroughness of this section is what's important
+-threat identification
+	-who or what might want to cause harm to what you have of value (actor)
+	-fire, climate control outtage, power failure, angry customers, employee (short time, disgruntled), lawyers (law suit), media (reputation), social network(including people), robber, competition, government regulators, natural disasters (earthquakes, floods, lightning, tornado, hurricanes), bacteria/virus/disease, Environmental threats(power failure, chemical leaks, global warming, cost of resources (market fluctuations)),human threats(insider, spy, terrorist, hacker, criminal, thief)
+	-need to identify threat source (list above), the motivation, and the threat actions (Nest publication, table 3.1) 
+-vulnerability identification
+	-weakness
+	-look at to determine vulnerabilities
+		-outdated software, processes, vendor advisories, penetration testing, involve many people from entire organization, 
+	-how can a threat exploit an asset
+	-vulnerability, threat-source, threat action (table 3.2)
+-control analysis
+	-what is currently in place to help
+	-technical (firewalls), non-technical physical security (locks on doors, cameras, etc.), environmental security (uninterruptable power supply), procedures
+-likelihood determination
+	-risk = likelihood*impact measured in $
+	-High Medium Low, 5 - 1
+	-threat source motivation
+	-threat source capability
+	-nature of vulnerability
+	-existence of controls
+-impact analysis
+	-go back to asset identification
+	-how many $s did we assign to value of asset, and if it would hurt one of these more valuable assets then the impact is greater
+-risk determination
+	-needs to be consistent (could do table 3.6)
+	-use a risk matrix with likelihood and impact on axes
+-control reccomendations
+	-effectiveness
+	-regulations
+	-policies of organization
+	-operational impact
+	-safety - reliability
+	-avoidance
+	-need cost/benefit analysis
+		annual loss expectancy before-annual loss expectancy after -cost of control
+		-if this is positive then it is a beneficial control
+-documentation
+	-giving them the asset identification, risk analysis, etc. documents you have created so that they at the very least get these documents out of your services, and then will want to work with you again
+
+ Ways of Handling Risk
+-4 risk control strategies
+	1. Avoidance: make it less likely
+	2. Mitigation: reduce impact
+	3. Transfer: Insurance
+	4. Accept: I am aware of risks and I accept the 
+			   responsibilities
+	Deny-Ignore risk- obviously bad
+
+
+-------------------------------------------------------
+
+Adv Network and System Security Lecture 2 Notes
+
+Project 1
+
+Intro	
+		-audience
+		-scope
+Asset characterization
+		- list, characteristics, valuation
+		-impact to profit, image, revenue
+
+
+Project 2 is either an audit of SMU engineering network or build a covert channel
+
+Security Audit
+
+Risk Assessment vs. Security Audit
+-RA -financial perspective 
+	-measurements in terms of $$
+-SA - technical
+
+External 
+	-perimeter testing
+	-launched from outside
+	-emulates hackers
+	-concerns firewalls
+Internal
+	-inside the perimeter
+	-emulates insiders (employees, consultants, or others if perimeter fails)
+
+Why do SA
+-better knowledge of client's network
+-more convincing to clients who have false confidence
+-proof of objective evaluation 
+-internet
+	-easily separable
+	-big target
+	-out of control
+
+Steps
+	1.) intelligence gathering
+			web site - goals of company website
+				 - web audience
+				 - web mapping
+			IP address
+			Domain names
+			email addresses
+	2.) foot printing
+			map all IP addresses
+				-DNS lookups or reverse lookups
+			block IP addresses
+				-subnets
+	3.) Vitality (refining the footprint)
+			tools	
+			-ping scans
+			-port scans
+			-trace route
+	4.) Visibility
+			-determine services on the target machine(s)
+				-port scanners
+			-determine versions
+			-determine OS
+	5.) Vulnerability Scanning
+			-not doing this for our project
+			-configuration errors
+			-program errors
+			-procedural errors
+			-Use security Databases for this 
+	6.) Web assessment
+			-not doing this for project
+			-admin backdoors
+			-input sanitization
+			-Cross site scripting
+			-tools OWASP, Zeus, WebSleuth
+			-badstore.com is a cool way to play with sql injection
+
+Networking Background
+-TCP
+-IP
+-UDP
+-FTP
+-TFTP
+-TelNet
+-SSH
+-SMTP
+-HTTP
+-HTTPS
+-DNS
+-DHCP
+-802.11.x
+-ARP
+-ICMP
+-Ethernet
+
+Ethernet
+-several computers connected by a wire
+	-computers have a NIC attached to them
+		-Network Interface Card (nowadays its not a card, but still called a NIC)
+-all computers could be connected back to a common box
+	-hubs, switches, routers
+	-Hub 	-> repeats signal to everyone as if all 
+				computers are connected to each other
+		 	-> cables can only be so long, and must be
+		 	   3 meters between taps
+		 	-> timing to allow time to detect collision
+		 	-> twisted pair or coax
+	-Switch -> can connect computers 1 to 1 using MAC 
+			   addr.
+			-> gives you more capacity on your network
+			   because multiple pairs of computers can talk at once
+			-> self learning
+			-> has queues if numerous computers try to
+			   communicate with the same computer at once
+
+Ethernet frame
+preamble  dest.addr src.addr  type   payload	CRC
+ 8 bytes	 6 			6 		2 	 46-1500	 4
+
+preamble
+	-says something like hey there is a frame coming
+	-it allows you to lock onto the frame
+destination address
+	-where its going
+		06:34:28:5F:3C:29	- sample MAC address
+source address
+	-where it came from
+type
+	-protocol of payload
+	-code for type of communication in payload
+	-Examples
+		-IP 0800
+		-ARP 0806
+payload
+	-data
+CRC
+	-burst errors
+	-not integrity
+
+Example Ethernet
+A <-> B <-> C
+Lets Say A wants to send to B
+
+Dest SRC  Type  	  	Payload 
+		  0800	IP header,options, Data
+		  (IP)
+-destination - mac address of the next computer in the 
+			   chain you are sending to
+-source - mac address of current computer sending the
+		  packet
+-uses ARP request to get hardware address from protocol address
+	-specifically here to get the MAC address from IP address
+		-source (computer A) sends an ARP broadcast
+			-has FFFFF as Dest., src is MAC addr. of source
+			-no IP header
+			-payload says who has this IP and target MAC address in payload is all 0s
+			-type is 806 for ARP
+		-dest. with correct IP (computer B) receives ARP and responds with an ARP
+			-has computer As MAC addr. as Dest., and Computer Bs MAC addr. as Source
+			-type is 806 for ARP again
+			-no IP Header
+			-payload says I have IP ...
+-then sends out packet with correct MAC addr.
+-keeps track of correct IP MAC combos for awhile
+
+How does A know it can't talk to C
+	-its on a different subnet
+	-it looks at IP address and subnet mask
+
+	IP 192.168.1.5
+	11000000.10101000.00000001.00000101
+
+	subnet mask 255.255.255.0
+	11111111.11111111.11111111.00000000
+	take IP and AND it with subnet mask
+
+	11000000.10101000.00000001.00000000
+	Network addr. 192.168.1.0
+
+	subnet tells you of IP address, which parts form your network address
+	As IP is 192.168.1.2
+	since Cs IP address is 192.168.3.3 we know that they can not communicate
+	-so use routing tables to go through B to C
+
+Example of sending packet from A to C
+
+A sends this to B
+  DEST     SRC    Type  DestIP  	 SRCIP      Payload
+00:..:03 00:..:02  800 192.168.3.3 192.168.1.2	
+
+B says I am not this dest. IP so I need to forward it on
+
+B doesn't know Cs MAC address
+-B sends ARP just like above to C
+-C responds with its MAC address in another ARP
+B sends packet to C
+
+-so the IP src and dest don't change along the way, but the MAC dest. and src. do
+IP
+-IP header has Dest, source, type
+-gets you to people who aren't your immediate neighbors
+
+
+-buffer structures used in nested types where you keep adding headers on the front end
+
+Prefix 		Suffix 		Address 	Purpose
+0's 		0's 		me 			Boot time
+Network 	0's 		network
+network 	1's 		broadcast on specific network
+1s 			1s 			broadcast on local network
+127			x 			loop back 	testing           
+
+IP has a payload
+-2 major types of payload are TCP and UDP
+
+TCP
+-connection oriented
+-1 to 1
+-streaming
+-acknowledged - will retransmit
+-throttling- limiting the amount of bandwidth you are allowed to occupy on network when congestion, and then returning it to normal when congestion is removed
+-b.c. of connetion-oriented there are protocols that enable you to add security on top
+-flow control
+	-If you don't want to overflow someone's buffer then you can stop sending packets until a machine says it can handle more
+	-computer to computer
+		-1 says I have room for x so sender says ok ands sends it
+		-then destination says okay now I can handle Y and so sender sends Y
+	-problem is if no response, the sender will retransmit and will assume congestion-> so sender will speak slower and louder
+
+UDP
+-connectionless (vs. connection oriented)
+-allows for broadcast (vs. 1 to 1)
+-less overhead
+-datagram (instead of streaming)
+-unacknowledged (vs. acknowledged)
+-fire and forget (vs throttling)
+
+
+streaming
+-in order-like him talking to us-you hear a stream of sounds and receive them in the order he is speaking them
+-we don't know what sounds go with what so we have to parse the data
+-have to do all of your own framing, not uniformly sized payload
+
+Datagram
+-all 3 letters show up in mailbox, but not necessarily in the right order
+-but when you get a letter, it will be the complete letter
+
+-when you get to destination with TCP
+	-TCP port will use the port # to tell you which server to go to HTTPS server, SMTP server, etc.
+-same with UDP
+	-except, if queue is full then it throws out extra packets
+
+-covert channel
+	-on top of UDP
+		-put text message in payload 
+		-send a covert message behind it saying attack at dawn
+		-could play with timing b.w. packets to send secret message
+		-could modify source port and do something interesting with source port
+	-could try to put it on top of IP with padding
+	-could try using ARP (but would have to stay on your local network)
+	-have to always consider how much covert information can you send in relation to clear text
+		-easy to hide 1 byte of covert info in 1 kb of cleartext info
+	-some things would require raw interfaces, but you would need root access
+		-so you could do it on your own comp
+		-with admin you could do 
+	-TCP is difficult to do 
+
+-------------------------------------------------------
+
+Adv Network and System Security Lecture 4 Notes
+
+Project 2 Due Feb 26th
+Project 3 Due Marh 19th
+Midterm Mar 26th
+
+Assignment 2
+-usually people do it with TCP UDP but sometimes ARP
+
+Current Events
+
+Anthem insurance got 80 mill records hacked
+
+Steganography Covert Channel sent message through pop song
+
+Entropy
+
+	 H
+TTTTT_TTTTTTTTTTT
+-if its tail it doesn't mean a whole lot, but a head would be more interesting
+-when something occurs less often it conveys more information
+
+log_2(1/P_i) P is the probability of the symbol i
+
+log_2(1/(1/16)) = log_2(16) = 4 bits
+
+T = log_2(1/(15/16)) = log_2(16/15) = .0931 bits
+
+So entropy in whole thing = .0931*15 + 4*1
+							______________ = 5.3966/16
+								  16
+
+each character on average is .3373 bits
+
+A  B  C   D
+00 01 10 11
+
+
+A A A A A A A A   B  B  B  B  C  C  D  D
+0000000000000000  01 01 01 01 10 10 11 11   32 bits
+
+A -> log_2(1/(8/16)) = 1 bit of entropy
+
+B -> log_2(1/(4/16)) = 2 bits
+
+C -> log_2(1/(2/16)) = 3 bits
+
+D -> log_2(1/(2/16)) = 3 bits
+
+Average entropy 
+	8 As * 1 bit/A + 4 Bs * 2 bits/B + 6 CDs * 3 bits/C
+
+= 1.75
+
+Sum_i log_2(1/P_i) * P_i 	Average entropy per symbol
+
+if the bits are uncorrelated the best you can do with compression is 1.75 bits per Letter
+
+00 .3 A--------------------
+   					   	  |0 			0
+10 .2 B-------------    .6|---------------
+    			  	|	  |			      |
+010.15 C-- 	  	    |     |1		      |
+   	   .3|----------------  		      | 		<-
+011.15 D-- 		    |				     1|------
+   				    |____________0	      |
+1110.05 E-- 0		    	     |	      |
+   	     .1|------ 1	   	   .4|-------- 1
+1111.05 F-- 1     |			     |
+   			    .2|-------------- 1
+1100.05 G-- 0	  |
+   	     .1|------ 0
+1101.05 H-- 1
+
+				10111011101111
+
+				Huffman Coding
+
+.3 x 2 		.6
+.2 x 2 		.4
+.15 x 3 	.45
+.15 x 3     .45
+.05 x 4     .20
+.05 x 4     .2
+.05 x 4     .2
+.05 x 4     .2
+
+ remember P_i * log_2(1/P_i)
+
+
+.3 * log_2(1/.3) = .5211
+.2 * log_2(1/.2) = .4644
+.15 * log_2(1/.15) = .4105
+.05 * log_2(1/.05) = .2161
+
+Summation = 2.67
+
+Algorithms Dosgupda page 150
+
+lower entropy means less randomness
+
+IF 50 50 split then 1 bit represents 1 bit of information
+
+IF 60 40 split then 1 bit represents < 1 bit of information
+
+26 letters 4.7 bits/letter
+27 letters 4.67 bits/letter
+
+Covert channel
+-program that sends and a program that receives
+-look up a UDP sender and receiver
+	-that way I wouldn't need to write it
+	-modify parameters of UDP, like port or headers, etc. 
+	-could look at standard of UDP and rewrite sender so that it opens a raw socket (IP) and create the UDP header yourself
+
+-can just use 127.0.0.1 network, so that the UDP is working, and then start adjusting it to handle covert info
+	-receiver can handle both the covert and the normal information
+
+Quantum Computing
+-quantum properties
+-trade off b.w. error and time constraint
+-checks numerous things at once
+D-Wave
+
+2 Slits in a pool and splash a wave at the 2 slits
+-part of wave will go through each slit and on the other side an interference pattern would be created with each wave
+
+-change it to use an observer and particles
+-the particles form expected distributions once they are observed
+-when you observe the particle its behavior collapses into a 1 or a 0
+Light behaves as particle and wave at the same time
+-have particle cannon
+
+Spin Paired Particles
+-when you change the state of one the others state changes as well
+-once it collapses, you can only use it once, because it collapses and thats its value
+-defies speed of light property - faster than speed of light
+
+Photons and polarization of photons
+100110
+
+
+-------------------------------------------------------
+
+
+Advanced Network & System Security Lecture 5 Notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

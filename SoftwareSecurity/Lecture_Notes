@@ -1,0 +1,1031 @@
+CSE 7359 Software Security Lecture Notes
+
+---------------------------------------------------------
+
+Software Security Lecture 1 Notes
+
+aaron estes
+
+alestes@lyle.smu.edu ?
+ skype: aaronestes
+ Google+ aaronestes777
+
+The Web Application Hacker's Handbook by Dafydd Stuttard & Marcus Pinto
+
+24 Deadly Sins of Software Security
+
+Software Security: Building Security In Gary McGraw
+
+leet 1337 l337 -> good job
+
+lan3 -> lame
+
+owasp.org
+
+Black Hat
+
+Dev Con
+
+--------------------------------------------------------
+
+Software Security Lecture 2 Notes
+
+-microsoft doesn't suck, secure coding is just hard
+-OS is so huge, that its hard to not have bugs that can be exploited
+
+the problem with software
+-virtually guaranteed presence of vulnerabilities (vulns for short)
+-CERT (computer emergency response team) reports that most successful attacks stem from known software vulns
+-President's advisor equates software vulns with cancer
+-aspect security equates to legacy automobile industry
+-new vulns constantly coming up, but just new instances of already known types of vulns
+
+Problem Analogy
+-application security problem is like cancer today
+	-malware invasion and replication
+	-effects may be invisible to lay person
+	-both preventative actions and research are critical
+-web application security isn't really cancer in the sense of invade and spread
+
+Market Analogy
+-the application security market is like the auto industry 30+ years ago
+	-most cars built w.o safety features
+	-no seatbelts, airbags, crumple zones, etc.
+-many different forces started to affect the market
+	-Pinto, Nader, Oil crisis, Regulation, lots more...
+-Automakers all start including more and more safety features
+	-becomes a critical buying factor
+	-competitors must do more safety to compete
+-application security is following the same path
+	-you can differentiate your product/company
+
+Software Threats
+-can turn up throughout Software Development Lifecycle (SDLC)
+	-development, deployment, operations, sustainment
+-can be inadvertent or intentional
+-can be instigated by insiders and outsiders alike
+- a threat means a "who"
+	-the person or entity behind the threat
+
+Software Lifecycle threats
+-Development
+	-Developer may corrupt software intentionally or unintentionally in ways that affect security
+	-backdoors, easter eggs, coding flaws, logic flaws, etc.
+	-design errors, flaws
+	-coding errors, bugs
+
+-backdoor
+	-way to bypass standard logic or authentication to gain access that you didn't have before, or some hidden feature
+-easter egg
+	-can be fun things that only developers know
+	-can open up a back door
+	-can be a security risk, because code isn't reviewed as meticulously
+	-logic that shouldn't be there
+-flaw
+	-software design problem
+	-could be implemented perfectly off design, but still might have a design problem
+-bug -coding error
+	-if developer doesn't implement the design correctly
+	-insecure syntax, or security hygene, or sql hygene
+-tells you where you need to emphasize at a business
+	-if lots of coding problems need to emphasize coding techniques, and review processes
+	-if lots of flaws, then designers, and architects need to be trained better, or a new architecture is needed altogether
+
+Software lifecycle threats
+-deployment (distribution and installation)
+	-software tampering (during shipping or transmission)
+		-bitsum checking
+		-digital signatures
+
+	-insecure installation configurations
+	-insecure installation processes
+
+Software Lifecycle Threats
+-operation
+	-many vulnerabilities will be found during operation
+	-failure to apply patches and updates will degrade software security
+	-even controlled environments will exhibit this adverse property
+
+Software Lifecycle Threats
+-Sustainment
+	-failure to develop patches and updats in response to discovered vulns
+	-failure to perform root cause analysis
+	-insiders may cause further damage during sustainment
+
+Key Terms
+-Security Bug vs. Software Bug
+-Secure Software
+-Secure Software Development
+-Software assurance
+-software security assurance
+-adverse circumstances
+
+Security Bug or Not?
+-faults that result from malicious intent
+	-security bugs
+-faults tht make SW vulnerable to threats to its security
+	-if it threatens one of the security goals
+-Bruce Schneier "security is about preventing adverse consequences from the intentional and unwarranted actions of others"
+
+Secure Software
+-To be considered secure, software must exhibit 3 properties
+	-Dependability
+		-predictable, correct under all conditions including hostile ones
+	-Trustworthiness
+		-few if any vulnerabilities or weaknesses
+		-no malicious logic or behavior
+	-Survivability
+		-maintaining other 2 factors
+		-resisting attacks, and then the attacks that it can't resist, it must tolerate and recover asap with as little damage as possible
+
+Secure Software Development
+-Objective
+	-"Design, Implement, configure, and sustain software systems in which security is a necessary property from the beginning of the system's life cycle" - build security in
+	-must conform to secure development principles and practices
+
+-security is not a small part of the dev lifecycle but rather a small part of every part of the dev life cycle
+
+System Security Categorization
+-take a look at software and determine its security impact
+-deployment environment
+-internal/external
+-internet?
+-what kinds of technologies (languages, web servers)
+-determine what steps you need to do based of this
+
+Abuse Cases & Requirements
+-modeling threats
+-determining what an attacker would do with a feature or software
+-goal of an attacker in realation to this feature
+
+Identification
+-web site says who are you?
+	-you give user name
+
+Authentication
+-web site asks for your password
+-unless its your first time, then you just provide a password
+-cookie, HTTP
+
+Authorization
+-only allow someone to see what they are supposed to see
+
+Prevent DoS attack
+-maybe limit number of requests
+-hard to mitigate an attack like this without redundancy
+-for something like a baseball signup we wouldn't worry about this 
+
+Threat Modeling
+-in very high demand
+-justification for security requirements
+-for a client you would hand them a list of security requirements, which would be backed by a threat model
+-what assets are they after
+	-what is the attack surface (port 80, port 443, http, html)
+-look at security goals from an attack perspective and determine threats
+	-then decide the security requirements from there
+-storing SSNs in app
+	-for some reason app displays that information back to user
+	-creates an attack surface where this information could be leaked
+	-if it is given to a customer service rep, then they become a threat
+	-way to get rid of this risk is to never give SSN back to user
+	-if it is being used for authentication then take human out of the loop and have an app authenticate your SSN so the human "threat" is removed
+
+Secure Architecture
+-takes most experience
+-different components (OOP,design driven concepts, etc.) are defined in architecture
+-take requirements and allocate these requirements to software components
+-i.e.
+	-this is the authentication component (the piece of the software the does authentication)
+-allocating your security requirements to software components
+-see what component is in charge of input validation
+	-every method must go through this component for input validation
+		-if another component implements its own input validation then it doesn't follow the architecture, but rather it breaks it
+-if there isn't CSRF protection then it is on the architecture, not the developer
+
+
+Secure Coding and Code Review
+-identify applicable security coding standards and make sure everyone follows them
+-static code analysis which is an automated way to determine flaws using a scanner
+-manual code review -> have someone go through your code and look for security flaws
+
+Security Testing
+-Penetration Testing
+	-testers simulate real world threats and simulate real hackers attacking your system
+	-use every method possible
+-Security Requirements verification testing
+	-just go through the requirements, and use the software and make sure it meets the requirements
+
+-focus from Security Categorization to Security Testing for this class
+
+
+Software Assurance
+-meeting requirements and standards
+
+Adverse Circumstances
+-code needs to handle and operate in all these situations
+-in the presence of unintentional faults
+-accidental operational security events
+-intentional choices that threaten security
+	-during development, deployment, operation, sustainment
+
+SW Security Considerations
+-Development Principles and Practices
+-Development Tools
+-Testing Practices and Tools
+-Acquired Components
+-Deployment Configuration
+-Execution Environment
+-Practitioner Knowledge
+
+Characteristics of a Secure Software PRactioner
+-awareness, intention, caution
+
+Awareness
+-softwre sec. training
+	-ongoing to understand current threats
+-security processes
+	-enforced in SDLC processes
+-cultural awareness
+	-becomes part of the SW culture
+
+Intention
+-security requirements analysis
+-secure design principles and patterns
+-security coding practices and policies
+-secure software integration
+
+Caution
+-the goal of software training and secure processes is to create caution
+-the more aware and intentional security is, the more likely practitioners are to be cautious in their work
+
+Software trends
+-these trends have an adverse affect on security
+	-growing size and complexity
+	-built-in extensibility
+	-ubiquitous networking
+
+
+--------------------------------------------------------
+
+
+Software Security Lecture 3 Notes
+
+HW -turn everything in in 1 document
+	-no zip
+	-screen shots are good
+
+	app level requirements
+	-authenticate users
+	-shall statements
+	-look at sample software requirements
+	-specific enough so that coder knows what to do, but not too specific to limit coder
+	-don't specify libraries or algorithms, but rather types (key size)
+	-think about if you are a tester how would you test it
+
+	security news
+	-vehicle hacking
+
+	HD Moore
+	-metasploit author
+	-famous for just trolling internet for things anything and everything
+
+
+	Software Trends
+-these trends have an adverse affect on security
+	-growing size and complexity
+		-million + lines of code
+	-built-in extensibility
+		-drop in plugins and they are installed
+		-could drop in malicious plugin
+		-apply access control to tools dropped in
+	-ubiquitous networking
+		-gas pump connected to internet
+		-guy in alaska could manage 50 pumps at once
+
+
+	Security Is Holistic
+-Physical Security
+	-need to secure hardware
+-Technological Security
+	-application security
+	-operating system security
+	-network security
+-Policies and Procedures
+	-if an admin is convinced to give access (social engineering) then all of the software security is worthless
+-All three required
+
+people, process, techonology
+
+Physical Security
+-limit access to physical space to prevent asset theft and unauthorized entry
+-protecting against information leakage and document theft
+-Ex: Dumpster diving
+-people and processing
+
+Technological Security
+-Application Security
+	-webserver and browser example 
+		-no flaws in identity verification process
+		-configure server correctly
+		-data/input validation
+-OS security
+	-apps (e.g. servers) use OS for many functions
+	-OS code likely to contain vulnerabilities
+		-regularly download patches to eliminate
+	-Network security: mitigate malicious traffic
+	-Tools: Firewalls & Intrusion Detection Systems
+-one chain can be exploited and then used to access other features from there
+
+Policies and Procedures
+-EX: Social Engineering attack - taking advantage of unsuspecting employees (e.g. attacker gets employee to divulge his username and password)
+-Guard sensitive corporate information
+-employees need to be aware, be educated to be somewhat paranoid and vigilant
+
+Security Goals
+-Authentication
+	-identify authentication in different areas (mobile phone, DB, restful interface)
+-Authorization
+	-
+-Confidentiality
+-Integrity
+-Accountability
+-Availability
+-Non-repudiation
+
+-what security goal is X pertaining to, b.c.
+	-be able to explain well
+	i.e. cryptography is integrity and confidentiality
+
+Archetypal Characters
+-Alice & Bob -"good guys"
+-Eve "passive Eavesdropper"
+-Mallory "active eavesdropper"
+-Trent - trusted 3rd party
+
+Authenticaiton
+-Identity verification
+-How can Bob be sure that he is communicating with Alice
+-something you know, have, and are
+
+Something you know
+-password
+	pros:
+		-simple to implement
+		-easy for users to understand
+	cons:
+		-easy to crack (unless users choose strong ones)
+		-passwords are reused many times
+-one-time passwords (OTP): different password used each time, but it is difficult for user to remember all of them
+
+UB key
+-OTP generator
+-can hard code it to hold a password
+-can do a challenge response
+-looks like flash drive sort of
+
+Something You Have
+-only good if its hard to recreate
+-OTP Cards(e.g. SecurID): generates new password each time user logs in
+-SmartCard: tamper-resistant, stores secret information, entered into a card-reader
+
+-Token/key (i.e. iButton)
+-ATM Card
+-Strength of authentication depends on difficulty of forging
+-physical key
+	-key decoder is something you can remember about ridges
+	-can take to lock smith and he can create without actually having the original key 
+	-turns into something you know
+-RSA can be broken by breaking into server where RSA keys are stored and dump keys
+
+Something you ARE
+-biometrics
+-some sort of physical factore related to human beings
+						Effectiveness	Acceptance
+-Palm						1 				6
+-Iris 						2 				1
+-Retinal Scan 				3 				7
+-Fingerprint 				4 				5
+-Voice Id 					5 				3
+-Facial Recognition 		6 				4
+-Signature Dynamics 		7 				2
+
+-pros: "raises the bar"
+-cons: false negatives/positives, social acceptance, key management
+	-false positive: authentic user rejected
+	-false negative: imposter accepted
+-phsyical biometrics can change
+-fingerprints are only partial so 2 people could potential authenticate with same print
+-photos can sometimes permanently compromise biometric
+-templates
+	-take only 15 spots of your fingerprint
+	-less to store
+	-enables them to take different 15 spots if your fingerprint gets compromised
+-captcha
+	-jumbled letters on website to tell you are a human and not a bot
+	-an are you human authentication
+
+Final Notes
+-2 methods or categs have to be combined for 2 factor auth
+	-something you know and have for example
+-who is authenticating who?
+	-person-to-computer?
+	-computer-to-computer?
+-3 types (e.g. SSL)
+	-client authentication: server verifies client's id
+		-server authenticates the browser
+		-more often on mobile app than browser
+		-more convenient b.c. human doesn't have to be in loop
+		-less secure, b.c. secure element exists on phone
+		-app that needs a pin
+			-you are unlocking an ssl certificate that is then sent to the server to authenticate you
+	-server authentication: client verifies server's id
+		-most common
+		-browser authenticates the server
+	-mutual authentication (client and server)
+		-when a mobile app is being authenticated, it is usually authenticating the server as well
+-authenticated user is a "Principal"
+
+Authorization (Access Control)
+-Checking whether a user has permission to conduct some action
+-identity vs. authority
+-is a "subject" (Alice) allowed to access an "object" (open a file)?
+-Access Control List: mechanism used by many operating system to determine whether users are authorized to conduct different actions
+
+Access Control Lists (ACLs)
+-set of three-tuples
+	- <User, Resource, Privilege>
+	- specifies which users are allowed to access which resources with which privileges
+-privileges can be assigned based on roles (e.g. admin)
+ex.	User 	Resource   Privilege
+	Alice 	/home/ 		read/write/exec
+			Alice/* 	cred
+-could also assign a role to a user and give a role a privilege
+
+Access Control Models
+-ACLs used to implement these models
+-Mandatory: computer system decides exactly who has
+			 access to which resources
+-Discretionary(e.g. UNIX): users are authorized to 
+					determine which other users can access files or other resources that they create, use, or own
+-Role-based (non-discretionary): user's access & 
+					privileges determined by role
+-could have different rulesets controlled by different users (OS or user)
+
+CIA Triad
+-confidentiality, integrity, availability 
+
+
+Confidentiality 
+-goal: keep the contents of communication or data on storage secret
+-Ex: Alice and Bob want their communications to be secret from Eve
+-Key - a secret shared b.w. Alice and Bob
+-sometimes accomplished with
+	-cryptography, steganography(not a strong form of confidentiality), access controls, database views, separation of data
+
+Steganography
+-hiding data
+-used by attackers more often to hide data being stolen
+
+Message/Data Integrity
+-data integrity = no corruption (change to data)
+-Man in the Middle attack: Has mallory tampered with the message that Alice sends to Bob?
+-Integrity Check: Add redundancy to data/messages
+-Techniques
+	-Hashing (MD5, SHA-1,..) Checksums (CRC)
+	-Message Authentication Codes (MACs)
+-Different From Cofidentiality:
+	A->B: "The value of x is 1" (not secret)
+	A->M->B: "The value of x is 10000" (BAD)
+	A->M->B: " The value of y is 1" (BAD)
+-can attack hashes by hashing numerous messages until you get the same hash
+
+Accountability
+-able to determien the attacker or principal
+-logging & audit trails
+-requirements
+	-secure timestampings (OS vs. Network)
+	-Data integrity in logs and audit trails, must not be able to change trails, or be able to detect changes to logs
+	-otherwise attacker can cover their tracks
+	-being able to identify your principle
+						|----------------|
+Alice-computer-ISP-webserver -appserver-DB
+					    |		|
+						--Authorization server
+-if an attack on DB happens then need to be able to do principal mapping to trace attack all the way back to the original user
+-lots of layers of authentication and access control makes it hard
+
+Availability
+-uptime, free storage
+	-Ex. Dial tone availability, system downtime limit, web server response time
+-solutions:
+	-Add redundancy to remove single point of failure 
+	-impose "limits" that legitimate users can use
+-goal of DoS attacks are to reduce availability
+	-Malware used to send excessive traffic to victim site
+	-overwhelmed servers can't process legitimate traffic
+-DoS attack can also be just attacking server
+
+Non-Repudiation
+-undeniability of a transaction
+-Alice wants to prove to Trent that she did communicate with Bob
+-Generate evidence/receipts (digitally signed statements)
+-Often not implemented in practice, credit-card companies become de facto third-party verifiers
+
+Part 2
+
+Secure Systems Design
+
+Understanding Threats
+-ID & Mitigate Threats
+-Defacement
+-Infiltration
+-Phishing
+-Pharming
+-Insider Threats
+-Click Fraud
+-DoS
+-Data Theft/Loss
+
+-make sure to connect threats to actors always
+-consider user in requrements
+
+Defacement
+-online vandalism, attackers replace legitimate pages with ilegitimate ones
+-targeted towards political web sites
+-Ex: White house website defaced by anti-NATO activits, Chinese hackers
+
+Infiltration
+-unauthorized parties gain access to resources of computer system (e.g. CPUs, disk, network bandwidth)
+-could gain read/write access to back-end DB 
+-Ensure that attacker's writes can be detected
+-Different goals for different organizations
+	-political site only needs integrity of data
+	-financial site needs integrity and confidentiality
+-exfiltration
+	-stealing data is a completely differet task
+
+Phishing 
+-attacker sets up spoofed site that looks real
+	-Lures user to enter login credentials and stores them
+	-usually sent through an e-mail with link to spoofed site asking users to "verify" their account info
+	-the links might be disguised through the click texts
+	-Wary uers can see actual URL if they hover over link
+-stealing credentials
+
+Pharming
+-close to phishing
+-like phishing, attacker's goal is to get user to enter sensitive data into spoofed website
+-DNS Cache Poisoning- attacker is able to redirect legitimate URL to their spoofed site
+-DNS translates URL to appropriate IP address
+-Attacker makes DNS translate legitimate URL to their IP address instead and the result gets cached, poisoning future replies as well
+
+
+Insider Threats
+-attacks carried out with cooperation of insiders
+	-insiders could have access to data and leak it
+	-Ex: DB and Sys Admins usually get complete access
+-Separation of Privilege/Least Privilege Principle
+	-provide individuals with only enough privileges needed to complete their tasks
+	-don't give unrestricted access to all data and resources
+	-require 2 users to get access together
+
+Click Fraud
+-targeted against pay-per-click ads
+-attacker could click on competitor's ads
+	-depletes other's ad budgets, gains exclusive attention of legitimate users
+-site publishers could click on ads to get revenue
+-automated through malware such as botnets
+
+Denial of Service
+-attacker inundates server with packets causing it to drop legitimate packets
+	-makes service unavailable, downtime = lost revenue
+-particularly a threat for financial and e-commerce vendors
+-can be automated through botnets
+
+Data Theft and Data Loss
+-more of exfiltration
+-Several examples: BofA, ChoicePoint, VA
+	-BofA: backup data tapes lost in transit
+	-ChoicePoint: fraudsters queried DB for sensitive info
+	-VA: employee took computer with personal info home and his home was burglarized
+-CA laws require companies to disclose theft/loss
+-even for encrypted data, should store key in separate media
+-most likely to use steganography to cover tracks
+
+Threat Modeling
+
+Application Type 			Most Significant Threat
+Civil liberties web site 		The Defacer
+White house web site
+
+Financial Institution 			The infiltrator:the 
+Electronic Commerce 			Cyber Thief: the Dos-er
+
+Military Institution  			the infiltrator; the 
+Electronic Commerce 			Cyber Thief (access to 
+								classified data)
+
+Discussion
+How would you break in?
+-Roommates computer (screenlock)
+	-could take harddrive out and connect it to another machine
+		-this circumnavigates OS where the Access controls are
+	-use cd to boot the harddrive
+		-this circumnavigates the OS
+	-reset their password
+	-have windows boot with comboot
+		-enables a 1 boot bypass of the password
+	-see if password is written anywhere on desk
+	-record password typing
+	-shoulder surfing
+
+-Roommates computer (encrypted)
+	-physical attacks will still work
+	-hiren's boot cd
+		-you boot into hiren's boot OS
+	-live cd or comboot don't work b.c. entire OS is on the harddrive
+	-"Evil Maid Attack"
+	-vios password prevents all these attacks                  
+-Roommates facebook account
+-access.smu.edu (profs account)
+
+Designing-In Security
+-Design features with security in mind
+	-not as an afterthought
+	-hard to "add-on" security later
+-define concrete, measurable security goals.  Ex:
+	-only certain users should be able to do X. Log action.
+	-Output of feature Y should be encrypted.
+	-feature Z should be available 99.9% of the time
+-bad examples: Windows 98, Internet
+
+IP Whitelisting & Spoofing
+-IP Whitelisting: accepting communications only from hosts with certain IP addresses
+-IP Spoofing attack: attacker mislabels (i.e. lies) source address on packets, slips past firewall
+-response to spoofing sent to host, not attacker
+	-multiple communication rounds makes attack harder
+	-may DoS against legitimate host to prevent respone
+
+Turtle Shell Architectures
+-inherently insecure system protected by another system mediating access to it 
+	-Ex: Firewalls guard vulnerable systems w.in
+	-Ex: Death Star "strong outer defense" but vulnerable
+-Hard outer shell should not be sole defense
+
+Convenience and Security
+-sometimes inversely proportional
+	-more secure -> less convenient
+	-too convenient-> less secure
+-if too inconvenient -> unusable -> users will workaround -> insecure
+-Ex: users may write down passwords
+-Good technologies increase both: relative security benefit at only slight inconvenience
+
+HW Discussion
+
+Simple Web Server (SWS)
+-To illustrate what can go wrong if we do not design for security in our web applications from the start, consider a simple web server implemented in Java
+-only serves documents using HTTP
+-walthrough the code in the following slides
+
+Hypertext Transfer Protocol
+-HTTP is the communications protocol used to connect to servers on the web
+-Primary function is to establish a connection with a server & transmit HTML pages to client browsers or any other fiels required by an HTTP application
+-Website addresses begin with an htpp:// prefix
+
+HTTP(2.0)
+-a typical HTTP request that a browser makes to a web server
+- Get/HTTP/1.0
+
+When the server receives this request for filename/(the root document on the web server), it attempts to load index.html.
+	returns
+	HTTP/1.0 200 OK
+-followed by the document contents
+
+HW Notes
+Part 1
+-some shall statements on CIA
+
+problem 6.)
+-screen shot of browser before, file used, and browser after
+-explain a little
+-through the web browser
+get call serve file 
+put call store file                                            
+
+-figure out how to take ownership of a Linux machine by writing a file to the server
+
+-read HTTP Auth spec, or cliff notes version
+
+
+--------------------------------------------------------
+
+
+Sotware Security Lecture 4 Notes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
+HTTP
+-form for exchanging web data
+-what type of data or payload is typically in an HTTP packet
+	-text in html, xml, json, binary(image,movies), javascript, etc.
+-what uses http other than browser
+	-RESTful API
+		-applications, mobile apps, XBOX, playstation, SOA (service oriented architecture)
+		-piggy back on HTTP 
+			-can rewrite GET,PUT,POST,DELETE to do custom functionality based on application
+-in charge of request and response with a server
+-hyper text transfer protocol
+-purpose of protocol is to tell server what to do with request and tell client what to do with response over TCP/IP ports
+-typical ports are 80,443, maybe 8080 or 8443
+-can tell server we want to GET PUT POST DELETE HEAD OPTIONS TRACE 
+-GET
+	-request a resource from server (file,image etc.)
+	-browser does request (GET,POST)
+		-typically all a browser does these days
+-dont want web server to respond to PUT request, so browsers don't usually make PUT requests
+
+GET www.google.com/something
+-don't need www.google.com
+GET /something
+GET /
+HOST header then would say www.google.com
+GET Headers:
+-GEt usually doesn't have a payload
+	-can send 1 but typically server will ignore it
+	-shouldn't have anything that changes state
+	-should be idempotent
+	-shouldn't be able to log you in or anything
+-POST will have a payload 
+-Idempotent
+	-every time you make request you get the same thing back (GET)
+-non-idempotent
+	-changes state of machine with request (POST)
+-DELETE deletes a resource
+-HEAD requests only headers from server
+	-typically for debugging purposes
+-security issues with HEAD and DELETE
+-TRACE should also not be on in production
+
+HOST header, Referer header (handles back button in browser), Accept header (telling server what kind of response is accepted), User-Agent (says type of browser), Cookie header
+-HTTP is stateless so you have to authenticate everytime
+	-implemented HTTP authentication
+-also cookie authentication -> store login credentials in cookie 
+-HTTP vs HTTPS
+	-S adds in tranport layer security (TLS) or SSL
+	-initial communication is whats different must generate connection using SSL
+
+HTTP Responses
+-200 OK /Success
+-300 - Redirects
+	-untrusted redirects can be security vulnerability
+-400 - Requst Denied 
+	-404 Not Found
+	-401 Not authorized
+-500 - errors
+	-information leakage
+
+
+Specifying Error Handling Requirements
+-vulnerabilities often due to bad error handling
+-example: DoS on SWS - makes it unavailable
+-Just send a carriage return as the first message instead of a properly formatted GET message...
+-Causes exception while its trying to tokenize it
+	-must consider case where there is no tokens
+
+Sharing Requirements with Quality Assurance (QA)
+-both dev & testers should get requirements
+-should hav test cases for security too: Does it malfunction when provided bad input?
+-Ping-of-Death: sending a packet of data can cause server to crash
+	Ex: DoS attack on SimpleWebServer
+	Ex: Nokia GGSN crashes on packet with TCP option field set to 0xFF
+-shouldn't right shall nots but rather write shalls
+
+Handling Internal Errors Securely
+-error message and observable behavior can tip off an attacker to vulnerabilities
+-fuzz testing
+	-write some automates fuzzer that sends improper or malformed data to server slightly changing input to see if it can cause app to crash or enter invalid state
+	-program designed to automate this testing
+	-also known as Fault injection: - providing a program with input it does not expect and observing behavior
+-"Ethical" hackers often hired to find such bugs
+
+Including Validation and Fraud Checks
+-Requirements should specify which eror cases & threats to handle
+-Credit Card Example:
+	-mod 10 checksum: ensures validity of number, to catch user typos
+	-CVC: guards against fraudsters who have stolen # but don't know the CVC
+	-Full credit card check might be too costly
+
+Writing Measurable Security Requirements
+-Access Control Security: Only certain users can do certain functions
+-Auditing: Maintain log of users' sensitive actions
+-Confidentiality: Encrypt certain functions' output 
+-Availability: Certain features should be available almost always
+-Include these requirements in design docs!
+
+Security or Bust
+-not shipping unless security is deemed acceptable
+
+Security by Obscurity
+-trying to be secure by hiding how systems and products work (to prevent info from being used by attacker)
+-EX: Military uses Need to Know basis
+-maybe necessary, but not sufficient to prevent determined attackers
+-obfuscation
+	-encrypt something by hiding it somewhere else
+	-not even really security
+-should avoid this
+
+Flaws in the Approach
+-What assumptions to make about adversary?
+	-knows algorithms? or not?
+	-algorithms in "binary" secret?
+-Attackers can probe for weaknesses
+	-reverse engineering exes
+	-observe behavior in normal vs. aberrant conds. (use fault injection)
+	-Fuzzing: systematically trying different input string to find an exploit
+	-blackmail insiders
+
+
+Secret Keys
+-Kerchoff's doctrine: "The method used to encipher data is known to the opponent, and that security must lie in the choice of key"
+	-assume the worst case
+	-obscurity alone is not sufficient
+-Compromised key can be changed without redesigning system
+-key is easier to keep secret
+	
+SWS Obscurity
+-disassembled or decompiled
+-decompilers (JAD)
+
+Things to avoid
+-dont invent your own encryption algorithm
+-dont embed keys in software
+	-nor in windows registry which is readable by all
+-dont forget code reuse: reuse well-tested software known to be reliably secure instead of doing same thing from scratch
+
+Open vs. Closed Source
+-open
+	-some people might look at security of your application
+	-may or may not tell you what they find
+		-might want to exploit that bug in the future
+-Closed
+	-not making code available does not hide much 
+	-need diverse security-aware code reviews
+-a business decision: not a security one!
+
+A Game of Economics
+-All systems insecure: how insecure?
+-what is the cost to break system? Weakest link?
+-For every $ that defender spends, how many $ does attacker have to spend?
+-If (Cost to "break" system >> Reward to be gained)
+	-system is secure
+	-otherwise system is NOT secure
+-"raise the bar" high enough
+-security is about risk management
+
+Security is a Business Decision!
+
+Summary
+-Threats (DoS, Phishing, Infiltration, Fraud,...)
+-SimpleWebServer:Security by Obscurity Fails
+-Economics Game(cost>>reward for attacker)
+-"Good Enough" Security: Design Incrementally from Beginning
+
+Part 2
+
+Principle of Least Privilege
+-just enough authority to get the job done
+-common world ex: Valet keys
+	-valets can only start car and drive to parking lot
+-Highly elevated privileges unnecessary
+	-Ex: valet key shouldn't open glove compartment
+	-Web Server Ex: can read, modify, html file
+	-Attacker gets more power, system more vulnerable
+-Programming Example -setuid
+-in the software itself (i.e. encapsulation)
+-limit functions certain users have access to
+
+Defense-in-depth 
+-also called redundancy/diversity: layers of defense, don't rely on any one for security
+-Examples
+	-Banks: Security Guards, Bullet-Proof, Teller Window, Dye on Money
+-numerous levels of defense all providing security in another way that results in several layers attacker must pass
+-make sure layers are sequential or inline
+	-meaning you bypass one level of security and then have to bypass the next level
+	-or else no point in having layers
+
+Prevent, Detect, Contain, Recover
+-should have mechanisms for preventing attacks, detecting breaches, containing attacks in progress, and recovering from them
+-Detection particularly important for network security since it may not be clear when an attack is occurring
+-contain-once you get access to a part of a system they are contained within that small error
+	-example is major transactional web app
+		-lots of user types logging in with various admin levels
+		-could write a separate app on separate url and interface that controls admin features
+		-this way if main user interface gets compromised the admin information is safe
+-recover
+	-are features in place to recover if an attack happens
+	-is it easy to shut down parts of the app till the rest can be fixed
+Lockheed martin example
+-detection-Lockheed Martin saw spurrious logins from a VPN and got suspicious, then confirmed it was malicious
+-containment-had critical users who could still use VPN login but otherwise all other users could not-> so hopefully all but at least most of the stolen login credentials were no longer useful
+-recover-got the system up and running with the compromised logins no longer usable
+
+Diversity-in-depth
+-Using multiple heterogeneous systems that do the same thing
+	-use variety of OSes to defend against virus attacks
+	-Second firewall (different vendor) b.w. server and DB
+-Cost: IT staff need to be experts in and apply to patches for many technologies
+	-weigh extra security against extra overhead
+
+Securing the Weakest Link
+-"Information System is only as strong as its weakest link."
+-Common Weak Links:
+	-unsecured Dial-In Hosts: War Dialers
+		-remote access is the current version of this
+	-Weak passwords: easy to crack
+	-People: Social Engineering Attacks
+	-Buffer Overflows from garbage input
+	-not input validation
+	-sql hygene
+
+Implementation Vulnerabilities
+-correct design can have bugs in implementation
+-misuse of encryption can allow attackers to bypass it and access protected data
+-inadvertent mixing of control and data
+	-attacker feeds input data that's interpreted as a command to hijack control of program
+	-Ex: buffer overflows, SQL injection
+
+Fail-Safe Stance
+-expect for and plan for failure
+
+Secure by Default
+-only enable 20% of product features that are used by 80% of user population
+-"Hardening" a system: All unnecessary services off by default 
+-more enabled features mean more potential exploits and decreased security
+-Example: Legacy Windows
+	-all features turned on to make users hooked
+	-there were lot of viruses (Code Red and Nimda) which exploited IIS vulnerability
+-should have top security settings set by default, and make users remove them rather than add them
+
+Simplicity
+-security holes likely complex in software
+-simpler design is easier to understand and audit
+-choke point: centralized piece of code through which all controls must pass
+	-keeps security checks localized, easier to test
+-less functionality = less security exposure
+
+Usability
+-usable= users can easily accomplish the tasks they need to do with software
+-don't rely on documenation: enable security features by default, design to be easy to use
+	-difficulty in tradeoff with user convenience
+-Users are lazy (they ignore security dialogs)
+	-prevent users from committing insecure actions, assist them in doing it securely
+	-"Why Johnny Can't Encrypt" -"usability for security"
+-Gave the jet example where so complicated to use that the engineers actually had to help them use it
+
+Usability for Security
+-Definition: (Whitten-Tygar) Security software is usable if the people who are expected to use it:
+	-are reliably made aware of security tasks they need to perform
+	-are able to figure out how to successfully perform those tasks
+	-do not make dangerous errors
+	-are sufficiently comfortable with the interface to continue using it
+
+Security Features do not imply security
+-Using one or more security algorithms/protocols will not solve all your problems!
+	-Using encryption doesn't protect against weak passwords
+	-using SSL doesn't protect against buffer overflows
+-Schneier: "Security is a process, not a product!"
+	-can never be completely secure, just provide a risk assessment (more testing lessening risk)
+	-attacker only needs to find one flaw, designers have to try and cover all the possible flaws
+	-security features can help, but can't stop bugs
+
+More Software Sec Principles
+-Gary McGraw's Addditions
+	-Compartmentalize
+	-Hiding Secrets is hard
+	-Be reluctant to trust
+-LM additions
+	-follow a standard process
+	-reduce attack surface
+	-never trust user input
+	-implement auditing and logging
+	-use defensive programming techniques
+
+
+
+PGP is web of security
+-PKI is TTP
+
+
+-------------------------------------------------------
+
+Software Security Lecture 5 Notes
+
+
+
+
+
+
+
+
+
+
+
+
