@@ -1,0 +1,22 @@
+;; Dribble of #<IO TERMINAL-STREAM> started on 2015-02-15 17:08:05.
+#<OUTPUT BUFFERED FILE-STREAM CHARACTER #P"./hw1_result">
+[2]> (load "./hw1.lisp")
+;; Loading file ./hw1.lisp ...
+;; Loaded file ./hw1.lisp
+T
+[3]> (findMinMax '(4 (2 (5))((8) 3)))
+(2 . 8)
+[4]> (atomCount '(G D G (A G) (B D) D D (A G)))
+11
+[5]> (atomCount '(A (B (C) D) (E) F G (((H)))))
+8
+[6]> (frequency '(1 5 5 3 5 2 3 1 1))
+((1 . 3) (5 . 3) (3 . 2) (2 . 1))
+[7]> (frequency '(G D G (A G) (B D) D D (A G)))
+((G . 2) (D . 3) ((A G) . 2) ((B D) . 1))
+[8]> (frequency_prob4 '(1 5 5 3 5 2 3 1 1))
+((1 . 3) (5 . 3) (3 . 2) (2 . 1))
+[9]> (frequency_prob4 '(G D G (A G) (B D) D D (A G)))
+((G . 4) (D . 4) (A . 2) (B . 1))
+[10]> (dribble)
+;; Dribble of #<IO TERMINAL-STREAM> finished on 2015-02-15 17:14:39.
