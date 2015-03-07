@@ -1,0 +1,8 @@
+#ignore all of these video files
+*.wmv
+
+#ignore these automatically created Desktop services store files
+*.DS_Store
+
+#ignore the .vagrant set up files -- automatically created on vagrant init
+.vagrant

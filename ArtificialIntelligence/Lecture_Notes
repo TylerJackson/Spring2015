@@ -1401,10 +1401,1204 @@ and TreeRec =
 Artificial Intelligence Lecture 5 Notes
 
 
+Solving Problems By Searching
+
+Goal-based agents: Architecture
+-Goal:
+	-information that describes situations that are desirable (e.g. taxi driver:: being at the passengers destination)
+-AI sub-fields
+	-search
+	-planning
+
+Problem-solving agents
+-goal based type of Agents
+	-decide what to do by finding a sequence of actionst that lead to desirable states
+-problem ?
+-solution ?
+-general-purpose search algorithms
+	-uninformed
+		-input = only the problem definition
+		-vs. informed search algorithms
+-algorithms complexity
+
+PSA continued
+-goals
+	-simplify the agent's decision problem
+	-help organize behavior by limiting the objectives that the agent is trying to achieve
+-goal formulation
+	-based on:
+		-current state/situation
+		-agent's performance measure:
+			-intelligent agent-> maximize the performance measure
+	-goal= set of desired (world) states
+-problem formulation (i.e. Agent's tasks)
+	-deciding what actions + states to consider given a goal
+		-careful at the level of detail
+
+PSA continued
+-an agent with several immediate options of unknown value can decide what to do by first examining different possible sequences of actions that lead to states of known value, and ten choosing the best sequence
+-Search
+	-the process of looking for a sequence of actions
+-solution
+	-the action sequence (result of algorithm)
+-execution (phase)
+	-carrying out the recommended actions
+-agent design:
+	-formulate - search - execute
+
+
+Ex: Romania
+
+-on holiday in Romania-currently in Arad
+-flight leaves tomorrow from Bucharest
+-formulate goal:
+	-be in Bucharest
+-formulate problem
+	-states: various cities
+	-actions: drive b.w. cities
+-find solution:
+	-sequence of cities e.g. Arad, Sibiu, Fagaras, Bucharest
+-Execution (phase)
+	-carrying out the recommended actions
+
+￼
+Simple problem solving agent
+
+function SIMPLE-PROBLEM-SOLVING-AGENT( percept) 
+								returns an action 
+	inputs: percept : a percept
+	static: seq : an action sequence, initially empty
+		state : some description of the current world 
+												state 
+		goal : a goal, initially null
+		problem : a problem formulation
+state ! UPDATE-STATE( state, percept ) 
+if seq is empty then
+	goal ! FORMULATE-GOAL( state )
+	problem ! FORMULATE-PROBLEM( state, goal ) 
+	seq ! SEARCH( problem )
+action ! FIRST( seq, state ) //recommendation 
+seq ! REST( seq, state ) //remainder 
+return action
+
+Execution of sequence is blind
+	-it ignores its percepts(open-loop system)
+		-it assumest aht the solution it has found will always work
+-assumptions about the environment
+	-static, observable, discrete, deterministic
+
+Well-defined problems...
+-a problem -> four components
+-intial state (So): in (ARad)
+-successor function
+	-a description of the possible actions available 
+	-S(state) = (action,state)
+	-S(In(Arad)) = {(Go(Sibiu),In(Sibiu)),(Go(Timisoara),In(Timisoara)), (Go(Zerind),In(Zerind))}
+-Goal test
+	-Explicit: {In(Bucharest)}
+	-implicit: "checkmate(x)","NoDirt(x)"
+-path cost function (additive)
+	-E.g. Sum of distances, number of actions executed, etc.
+	-c(x,a,y) is the step cost, assumed non-negative
+
+...And Solutions
+-solution
+	-a path from the initial state to a goal state
+-solution quality
+	-measured by the path cost function
+-optimal solution
+	-has the lowest path cost among all solutions
+-problem-solving algorithm
+	-input
+		-the four components of the problem (complex data structure)
+	-output
+		-the solution
+
+Formulating Problems
+-state space
+	-initial state + successor function
+-path in the state space
+	-sequence of states connected by a sequence of actions
+-real world:
+	-ridiculously complex -> state space >>>
+	-abstraction of state space for problem solving
+		-removing detail from the state space representation
+		-is valid if we can expand any abstract solution into a solution in the detailed world
+		-is useful if it simplifies the execution phase
+-toy problems vs. real world problems
+
+States??  
+	(8 states) dirt and robot locations (ignore dirt amounts, ..)
+
+•Actions??
+	Left, Right, Suck, (NoOp)
+
+•Successor
+function??
+	Generates the legal states shown in diagram 
+
+•Goal test??
+	No dirt (all squares)
+
+•Path Cost??
+	1 per action (0 for NoOp) = # steps in path
+
+Number of states for N locations
+N cells, dirt or no dirt
+2^N
+
+Example the 8-puzzle
+● States:
+	● integer locations of tiles (abstraction??)
+● Actions:
+	● move blank left, right, up, down
+● Goal test:
+	● = goal state given above
+● Path cost:
+	● 1 per move (= # steps in the path)
+	● [Note: optimal solution of n-Puzzle family is NP-hard]
+-board for N tiles is NP-hard
+
+Example: Robotic Assembly
+● states??
+	● real-valued coordinates of robot joint angles ● parts of the object to be assembled
+● actions??
+	● continuous motions of robot joints 
+● goal test??
+	● complete assembly with no robot included!
+● path cost??
+● time to execute
+
+Real World Problems
+● Route-finding problem
+● Touring problem
+● Traveling Salesperson Problem (TSP) 
+● VLSI Layout
+● Robot navigation
+● Automatic assembly sequencing
+● Protein design
+● Internet searching (Chapter 10)
+
+Classification of Search Problems
+● Do we have a complete description of the search space?
+	● NO:
+		●Online Search Problem
+	● YES:
+		● No additional information
+			●Uninformed Search Problem
+		● Rough information on the topology of the search space
+			●Heuristic Search Problem
+		● Structured information on the property of being a goal:
+			●Constraint Satisfaction Problem
+
+Classification of Search Algorithms
+● Path stored?
+	● NO:
+		●Local Search
+	● YES:
+		● Memory space becomes a resource problem
+		● Are cycles detected? 
+			●NO: Tree Search 
+			●YES: Graph Search
+
+Search for Solutions
+● Search tree (or graph)
+	● Generated by the initial state and the successor function (state space)
+● Search node
+	● The node currently expanded in the tree
+● Expanding the current state:
+	● Applying the successor function to the state 
+	● Generates new set of states
+● Search strategy:
+	● The choice of which state to expand next
+● State space (or state) vs. search tree (or node)
+Slide 20
+	● Holiday in Romania: 20 cities->20 states
+	● Infinite number of search paths in the state space
+
+From Arad we can go to 3 cities - apply actions and build new states from original state
+-take left most node and degree is 4 so you can go to 4 places from there
+	-forget about where you're coming from (so include parent node as one of its children always)
+
+More Definitions
+Fringe
+	● The collection of nodes that have been generated but not yet expanded
+￼	● Implemented as a queue
+● Queue operations:
+	● MAKE-QUEUE(element, ...) 
+	● EMPTY?(queue)
+	● FIRST(queue)
+	● REMOVE-FIRST(queue)
+	● INSERT(element, queue)
+	● INSERT-ALL(elements, queue)
+
+Search Strategy
+● A search strategy
+	● Is defined by picking the order of node expansion
+● Strategies are evaluated along the following dimensions:
+	● completeness: does it always find a solution if one exists? 
+	● optimality: does it always find a least-cost solution?
+	● time complexity: number of nodes generated
+	● space complexity: maximum number of nodes in memory
+● Time and space complexity (AI) are measured in terms of
+	● b: branching factor of the search tree (maximum number of successors of any node)
+	● d: depth of the least-cost solution (shallowest goal node)
+	● m: maximum depth of any path in the state space (may be ∞)
+
+Uniformed (Blind) Search Strategies
+● Uninformed strategies:
+	● Use only the information available in the problem definition
+		● Generate successors
+		● Distinguish between goal and non-goal states
+● Uninformed search strategies
+	● Breadth-first search (BFS) 
+	● Uniform-cost search
+	● Depth-first search (DFS) 
+	● Depth-limited search
+	● Iterative deepening search
+● Search strategies differ by the order in which
+￼nodes are expanded
+
+Breadth-first search
+-expand shallowest unexpanded node
+-implementation 
+	Fringe = FIFO queue
+		-new successors go at the end
+- allows expand nodes on 1 level before moving on to next level
+
+Properties of BFS
+● Complete?
+	● Yes (if b is finite)
+● Time?
+	● 1+b+b2+b3+... +bd + b(bd-1) = O(bd+1)
+● Space?
+	● O(bd+1) (keeps every node in memory)
+● Optimal?
+	● Yes (if cost = 1 per step); 
+	● Not optimal in general
+● Space is the bigger problem (more than time)
+	● Can easily generate nodes at 100MB/sec
+
+Uniformed-Cost search
+● Expand least-cost unexpanded node (i.e. with the lowest path cost)
+● Implementation:
+	● fringe = queue ordered by path cost
+● Equivalent to breadth-first if step costs all equal
+● Complete?
+	● Yes, if step cost ≥ ε
+● Time?
+	● # of nodes with g ≤ cost of optimal solution, 
+	● where C* is the cost of the optimal solution
+● Space?
+	● # of nodes with g ≤ cost of optimal solution
+● Optimal?
+	● Yes – nodes expanded in increasing order of g(n)
+
+**THESE ARE ALL ON EXAM
+
+Depth-first search (DFS)
+● Expand the deepest unexpanded node 
+● Implementation:
+	● Fringe = LIFO queue (stack) 
+		● Put successors at front of list
+
+Properties of DFS
+● Complete?
+	● No: fails in infinite-depth spaces, spaces with loops
+	● Modify to avoid repeated states along path 
+	->complete in finite spaces
+● Time?
+	● O(bm): terrible if m >> d
+	● But if solutions are dense, may be much faster than breadth-first search
+● Space?
+	● O(bm), i.e., linear space!
+● Optimal? 
+	● No
+
+
+Depth-Limited search
+● = DFS with limit (l) on depth to search 
+	● i.e. Nodes at depth l have no successors
+● Alleviates the problem of unbounded trees
+● Disadvantage:
+	● Incompleteness if l < d
+		● (d = the depth of the shallowest solution node)
+	● Non-optimal when l > d
+● Time: O(bl)
+● Space: O(bl)
+● -> DFS = DLS(l=∞)
+
+Depth Limited Search cont.
+● How to select the limit?
+	● E.g.: Holiday in Romania
+		20 cities -> if solution exists, then length <= 19
+	● l = 19 Diameter =9
+	● l= 9 
+● Note:
+	● For most problems, we will not know a good depth limit until we have solved the problem
+● DLS can terminate with 2 kinds of failure:
+	● Standard failure value (i.e. no solution)
+	● Cutoff value (i.e. no solution within the depth limit)
+
+Iterative Deepening Search
+● A.k.a. Iterative deepening DFS
+● Finds the best depth limit
+● Gradually increases the limit: 0, 1, 2, ... until a goal is found, i.e. when l = d
+	● (d = the depth of the shallowest goal node)
+● Combines the benefits of BFS and DFS:
+	● (DFS):
+		● Space = linear: O(bd)
+	● (BFS):
+		● Complete, when b=finite
+		● Optimal, when the path cost = a non-decreasing function of the depth of the node
+
+IDS algorithm
+-very important that you know how this works
+
+function Iterative-Deepening-Search
+-psuedo code on slide 40
+
+Properties of IDS
+● Complete?? ●Yes
+● Time??
+	●(d + 1)b0 + db1 + (d -1)b2 + ... + bd = O(bd)
+● Space?? 
+	● O(bd)
+● Optimal??
+	●Yes, if step cost = 1
+	●Can be modified to explore uniform-cost tree
+
+-IDS does better b.c. other nodes at depth d are not expanded 
+-BFS can be modified to apply goal test when a node is generated
+
+Bidirectional Search
+● Two simultaneous searches from start an goal.
+	● Motivation: b^(d/2) + b^(d/2) < b^d
+		-forward search, backward search
+● Check whether the node belongs to the other fringe before expansion.
+● Space complexity is the most significant weakness.
+● Complete and optimal if both searches are Breadth-First.
+● The predecessor of each node must be efficiently computable.
+	● Works well when actions are easily reversible.
+
+
+Graph Search
+● Tradeoff between space and time:
+	● Algorithms that forget their history are doomed to repeat it
+	● If an algorithm remembers every state it has visited -> algorithm = viewed as exploring the state-space graph
+		● Closed list: states visited
+		● Open list: the fringe of unexpanded nodes
+
+Searching with Partial Information:
+Problem Types
+● Single-state problem
+	● E:= Deterministic, fully observable
+	● Agent knows exactly which state it will be in 
+	● Solution is a sequence
+● Conformant problem
+	● E: = Non-observable or partially observable 
+	● Agent may have no idea where it is
+		● Agent must reason about sets of states = belief state 
+	● Solution (if any) is a sequence
+● Contingency problem
+	● E:= Nondeterministic and/or partially observable
+	● Actions are uncertain (Problem may be “adversarial”)
+	● Percepts provide new information about current state
+	● Solution is a contingent plan or a policy
+
+Summary
+● Search process:
+	● Sequence of actions to achieve goals 
+	● Applied for environments which are:
+		● Deterministic, observable, static, completely known
+● First formulate the goal then the problem
+● Problem components:
+	● Initial state, set of actions, a goal test function, a path cost function
+	● Environment = state space
+● Solution
+	● = a path through the state space from initial state to goal state
+● Search algorithms comparison aspects:
+	● Completeness, optimality, complexity (time + space) Slide 52
+￼￼￼￼￼￼￼￼
+Summary
+● Breadth-first search
+	● Selects the shallowest unexpanded node
+	● Complete, optimal (step cost=1), time/space complexity
+￼￼￼￼￼￼￼￼= O(bd+1)
+	● Uniform-cost search
+		● Expands the node with lowest path cost, g(n)
+● Depth-first search
+	● Expands the deepest unexpanded node 
+	● Not complete, non-optimal
+	● Time: O(bm), Space: O(bm)
+● Depth-limited search: Fixed depth limit on DFS
+● Iterative deepening search
+	● d x DLS until a solution is found
+	● Time: O(bd); Space: O(bd)
+
+
+Informed Search and Exploration
+
+Informed (Heuristic) SEarch Strategies
+-Informed search strategy
+	-one that uses problem-specific knowledge beyond the problem definition
+	-finds solutions more efficiently than uninformed (i.e. blind) search
+-Heuristic
+	-a method to help solve a problem (informal)
+	-often rapidly leads to a solution that is usually reasonably close to the best possible answer
+		-"rule of thumb"
+		-educated guess
+		-intuitive judgement
+		-common sense
+
+Best-First Search
+-greedy approach
+-an instnace of TREE/GRAPH-SEARCH algoritm where we expand the most desirable node
+-expand node n based on an evaluation function, f(n)
+-f(n) measures distance to the goal
+	-select the node with lowest f(n)
+-fringe implementation
+	-priority queue
+		-data structure taht will maintain the fringe in ascending order of f-values
+-expand what "appears" to be best (according to f), not really the best node
+	-unless f is indeed accurate, then it truly is "best"
+
+
+Best-first search algorithm
+-different evaluation functions
+-heuristic function: h(n)
+	-estimated cost of the cheapest path from node n to a goal node
+-E.g. routing problem in Romania
+	-h = the straight-line distance (SLD) Arad-Bucharest
+-assumption
+	-if n=goal node, then h(n) = 0
+-two best-first search algorithms
+	-Greedy best-first search
+	-A* search
+
+Greedy Best-First Search
+-AKA "greedy search" or "best-first search"
+-method:
+	-expand the node that appears to be closest to the goal
+		-i.e. it is likely to lead to a solution quickly
+	-evaluate nodes using just the heuristic function:
+		f(n) = h(n)
+-example: holiday in Romania
+	-heuristic (h): straight line distance
+		-h_sld(n) = straight line distance from n to Bucharest
+-basically just choose cheapest everytime in relation to goal
+
+Issues with Greedy Search
+-false starts
+	-b.c. of minimizing h(n)
+		-e.g. consider lasi -> Fagarasi
+			-takes you to a dead end or infinite loop
+-repeated states
+	-if they are not avoided -> the solution will never be found (infinite loop)
+-resembles DFS (follow one path to goal)
+-same defects as DFS:
+	-not optimal, incomplete
+		-complete if unique states and finite search space
+	-time/space complexity: O(b^m)
+		-m = maximum depth of the search space
+
+
+A* Search
+-don't look just ahead, but also look at where we have been (path cost to this state)
+-goal
+	-minimize the total estimated solution cost
+-evaluation function:
+	f(n) = g(n) + h(n)
+		g(n) = cost to reach n
+		h(n) = the estimated cost from n to the goal node
+	f(n) = estimated cost of the cheapest solution through n
+-minimize g(n) + h(n)
+-A* = optimal and complete
+	-note some conditions apply on h(n)
+
+Admissable Heuristic
+-never over estimates
+-a heuristic h(n) is admissible if:
+	h(n) never overestimates the cost to reach the goal, i.e. it is optimistic
+-a heuristic h(n) is admissible if for every node n, 
+	h(n) <= h*(n), where h*(n) is the true cost to reach the goal state from n
+-also require h(n) >= 0, so h(G) = 0 for any goal G
+	h_SLD(n) never overestimates the actual road distance
+
+A* search on midterm ********
+
+Optimality of A*
+-theorem 
+	-A* using TREE SEARCH is optimal if h(n) is admissible
+
+Consistent heuristics
+-a heuristic is consisten if for every node n, ever successor n' of n generated by an action a
+	h(n) <= c(n,a,n') + h(n')
+
+-if h is consistent ->
+	f(n') = g(n') + h(n')
+		  = g(n) + c(n,a,n') + h(n')
+		  >=g(n) + h(n)
+		  = f(n)
+-i.e. f(n) is non-decreasing along any path
+
+Analysis of A*
+-complete?
+	-yes
+		-unless infinitely many nodes with f<=f(G)
+-time complexity
+	-exponential
+-space complexity
+	-keeps all nodes in memory?
+-optimal
+	-yes
+-if C* = the cost of the optimal solution path, then:
+	A* expands all nodes with f(n) < C*
+	A* expands some nodes with f(n) = C*
+	A* expands no nodes with f(n) > C*a
+
+More about A*
+-uniform cost search (uninformed search)
+	=A* with h(n) = 0
+		-bands are circular around the initial state
+-pruning
+	-eliminating possibilities from consideration w.o having to examine them
+		e.g. subtree of Timisoara
+-A*
+	-optimally efficient
+		-no other optimal algorithm is guaranteed to expand fewer nodes than A*, except when breaking a tie when f(n) =C*
+	-usually runs out of space long before it runs out of time
+
+
+Memory Bounded Heuristic Searches
+
+Improving space complexity
+IDA* -iterative Deepening A*
+	-apply the idea behind iterative deepening 
+	->IDA* algorithm
+	-cutoff = f-cost instead of depth
+-RBFS = Recursive best first search
+	-similar to recursive DFS, but keeps track of the f-value of the best alternative path available from any ancestor of the current node
+	-space complexity = linear
+-MA* & SMA* (memory-bounded & simplified)
+	-use all available meory: expand the best leaf until memory is full
+	-regenerate a subtree only when all other paths have been proven to look worse than a forgotten path
+
+Heuristic Functions
+
+Admissible Heuristics
+-E.g. for the 8 puzzle
+	h_1(n) = number of misplace puzzles
+	h_2(n) = total Manhattan distance (aka city block distance)
+	how do you determine which one is better?
+h_1(S) = 8
+h_2(S) = 3 + 1 + 2 + 2 +2 +3 +3 +2 = 18
+
+the one closest to the actual cost (without overestimating should be used)
+-the average cost is 22 steps
+-the true cost (here) 26 steps
+
+Dominance
+-which every heuristic function is greater than the other for all possible states, then it dominates other
+
+Relaxed Problems
+-a problem with fewer restrictions on the actions is called a relaxed problem 
+-the cost of an optimal solution to a relaxed problem is an admissible heuristic for the original problem
+
+Pattern Matching
+ 
+ let exists (x : int option) = 
+ 	match x with
+ 	| Some(x) -> true
+ 	| None -> false
+
+ let print tuple1 = 
+ 	match tuple1 with
+ 	  | (a,b) -> printfn "Pair %A %A" a b
+
+ let getShapeHeight shape = 
+ 	match shape with
+ 	| Rectangle(height = h) -> h
+ 	| Circle(radius = r) ->2. * r
+ 	| Prism(height = h) -> h
+
+
+-need . b/c r is float and 2 is not
+-need to match all shape options
+
+recursion F# on slide 29
+
+Functions - Basics
+-in f# if you don't pass a function all of its required arguments then it returns you a function of the remaining arguments (with the ones you did give it plugged in)
+
+-scope & shadowing (when reusing names)
+-parameters: explicit or inferred
+	let f x = x+1
+-Bodies & Return values
+	-let cylinderVolume radius length : float = 
+		//define a local value pi
+		let pi = 3.1415926
+		length = pi* radius * radius
+-calling it 
+	let val = cylinderVolume 2.0 3.0
+-Partial application of arguments
+-currying = creating new functions by partial application of argument
+	F(x,y,z)
+	F(2) = G(y,z)
+	F(2,3) = H(z) = G(3,z)
+	F(2,3,4) = G(3,4) = H(4)
+
+functions defined in functions
+
+functions as arguments to other functions
+
+	let apply1 (transform : int ->  int) y = transform y
+
+-lambda expressions (unnamed functions) 
+
+	let result 3 = apply1( fun x -> x+1) 100
+	let result 4 = apply2( fun x y -> x*y) 10 20
+
+-recursive functions
+	let rec fib n = if n <2 then 1 else fib (n -1) + fib(n-2)
+
+function composition and pipelining
+-pass output from one function to the other function
+
+-composition >> and <<
+let function1 x = x + 1
+let function2 x = x + 2
+let h = function1 >> function2
+let results = h 100
+
+-pipelining |> and <|
+	-let result = 100 |> function1 |> function2
 
 
 
 
+
+-------------------------------------------------------
+
+Artificial Inteligence Lecture 6 Notes
+
+
+Local Search Algorithms
+-in many optimization problems, the path to the goal is irrelevant; the goal state itself is the solution
+-search space = set of 'complete' configurations 
+	-space of candidate solutions
+-consider finding solutions that represent configurations satisfying a set of constraints:
+	-n-Queens problem
+		-the order in which the queens are added is irrelevant
+		-the path in the search tree/graph = irrelevant
+-in such cases we can use local search algorithms: keep a single current state, try to improve it
+	-dont care about multiple paths
+		-paths followed by the search are not retained
+	-not a systematic approach
+
+
+Local search and optimization
+● Initial State = candidate solution
+● Successor function = one that iteratively generates states towards a neighbor candidate solution
+	● Neighborhood relationship between candidate solutions 
+	● Apply changes iteratively to one or more components of the current state
+● Metaheuristic (general heuristic method)
+	● Algorithmic framework designed to find, generate, and select a lower-level procedure or heuristic to solve an optimization problem
+
+Metaheuristic
+● Useful approaches for (combinatorial) optimization problems (e.g. TSP)
+	● Not problem-specific 
+● Goal:
+	● Iteratively improve a candidate solution with regard to a given performance measure
+● Drawback:
+	● Solution is not guaranteed to be optimal
+	● Algorithms are approximate and non-deterministic
+
+Advantages of Local Search
+
+
+Advantages of Local Search
+A 	Low memory requirements: O(1)
+B 	Finding reasonable solutions in large/infinite (
+	continuous) state spaces
+● Pure optimization problems:
+	● Find the best state given an objective function
+● Nature’s objective function = reproductive fitness 
+	● No “goal test”
+	● No “path cost”
+
+Ex: n-queens
+-put n queens on an nxn board with no 2 queens on the same row, column, or diagonal:
+	-no queen attacking any other queen
+	-counting solutions
+
+State space landscape
+-location (state) & elevation (h or f)
+	-elevation [] cost -> find globabal minimum
+	-elevation [] objective function -> find global maximum
+-Complete vs. optimal local search algorithm
+
+
+Hill-climbin search
+● "Like climbing Everest in thick fog with amnesia“!go uphill only
+● Record only current state and objective function value
+￼￼￼● No search tree to maintain/save
+	● Look up only immediate neighbors, nothing beyond that
+
+Hill-climbing search: 8-queens problem
+-Use a complete-state formulation:
+	-each state-> 8 quens on the board, one per column
+-successor function:
+	-returns all possible states generated by moving a single queen within its column
+	-one state -> 8x7 successors
+-heuristic function: 
+	-h = # of pairs of queens attacking each other, directly or indirectly
+
+Hill-Climbing Search
+● Greedy local search
+	● It selects a good neighbor state w/o thinking ahead; 
+	● It there is a tie, it chooses randomly
+● Often, greedy does pretty good
+	● Rapid progress towards a solution
+	● Always trying to improve a bad state
+● Problems:
+	● Local maxima: local peak < global maximum 
+	● Ridges: a sequence of local maxima
+	● Plateaux & Shoulders : flat evaluation function
+
+
+Hill-climbing search
+-main issue:
+	-depending on initial state, can get stuck on local maxima
+
+Hill-climbing search
+-ridges 
+	-a sequence of local maxima
+	-for each local maxima all available actions point downhill
+
+Hill-climbing search: statistics
+● 8-queens problem using steepest ascent (greedy) hill climbing
+	● Stuck: 86% vs. Success:14% 
+	● Works very quickly:
+		● 4 steps (success) vs. 3 steps (stuck) 
+		● State space = 88 
+● Allowing a limited # of sideways moves (plateau / shoulder)
+	● Improves success rate (14%!94% !!!)
+	● The cost: 4!21 steps (success); 3!64 (failure)
+● Many variations of hill climbing
+	● Stochastic hill-climbing (choose randomly the next uphill
+￼￼￼￼● First-choice hill climbing (when a state has many successors,
+￼￼￼￼￼￼￼￼
+￼
+all hill-climbing algorithsm = incomplete
+-random-restart hill-climbing = complete
+	-series of hill-climbing searches from randomly generated initial states until a goal is found
+
+Simulated Annealing search
+● If always “uphill”->incomplete, but efficient 
+● If always (uniformly) random->complete, but
+inefficient
+● -> Combine hill climbing with random walk
+	● Goal: completeness & efficiency
+	● Annealing (Metallurgy):
+		● = Process used to temper or harden metals and glass by heating them to a high temperature and then gradually cooling them
+
+
+Simulated Annealing Search
+●Gradient Descent = Minimizing Cost
+●Allow random moves (instead of the best)
+	● If state is improved!always accept this move
+	● Else!accept move with probability < 1
+		● The probability decreases exponentially with the “badness” of the move
+		● Bad moves are more likely to be accepted in the beginning (‘when the temperature T is high’)
+		● Bad moves become more unlikely as T goes down
+		● If the cooling rate lowers T slowly enough, the algorithm will find a global optimum with probability approaching 1
+● Applied to VLSI layout problems (‘80s), job scheduling, and other optimization problems
+
+Simulated Annealing Search
+-idea: escape local maxima by allowing some "bad" moves but graduall decrease their frequency
+
+Local Beam Search
+● Keep track of k states rather than just one
+● Start with k randomly generated states
+● At each iteration, all the successors of all k states are generated
+	● If any one is a goal state, stop;
+	● Else select the k best successors from the complete list and repeat.
+	● Local beam search [] random-restart search
+		-in random-restart search each search process runs independtly of the others
+		-in local beam search, useful information is passe among the k parallel search threads
+
+Local Beam Search
+-problem
+	-possible lack of diversity among the k states
+-stochastic beam search
+	-instead of k best select k successors at random with the probability of choosing a given successor = increasing function of its value
+	-similar to the process of natural selection
+		● The successors (offspring) of a state (organism) populate the next generation according to its value (fitness)
+
+
+Genetic Algorithms
+● A successor state is generated by combining two parent states
+● Start with k randomly generated states (population)
+● A state is represented as a string over a finite alphabet
+(often a string of 0s and 1s)
+● Evaluation function (fitness function):
+	● Higher values for better states
+● Produce the next generation of states by:
+￼￼￼￼● Selection
+	● Crossover
+	● Mutation
+
+Genetic algorithms: 8-queens problem
+
+● Fitness function: number of non-attacking pairs of queens min = 0, max = 28 <- WHY?
+● Computing the fitness function:
+● 24/(24+23+20+11) = 31%
+● 23/(24+23+20+11) = 29%
+● etc.
+
+-the cut point to do crossover doesn't have to be same for 2 pairs, but it will be given to you where to cut
+
+-take 1 column and change the value at random for the mutation
+
+-want to choose a column that has a duplicate row to mutate
+
+-first and foremost you need to know how to calculate the number of non-attacking pairs ****** on test
+
+
+Genetic Algorithms
+-Crossover Point = after 3rd digit in the position string [3,2,7,5,2,4,1,1]
+● Crossover
+	● Large steps in the state space early in the search process, when population is diverse
+	● Smaller steps later on, when the individuals are similar
+
+
+
+Offline Search vs. Online Search
+● Offline search agents
+	● Compute a solution before setting foot in the real world;
+then execute solution & disregard percepts
+● Online search agents
+	● Interleave computation and action
+		● E.g. takes an action and then observes environments and then computes the next action
+￼￼￼￼● In (semi-)dynamic or stochastic environments 
+	● Necessary for an exploration problem
+		● States and actions are unknown
+			● Actions = experiments to determine the next action
+		● E.g. map-building robot in a new building, or labyrinth
+
+Online Search Problems
+● Agents are assumed to know only the following:
+	● ACTIONS(s): returns a list of actions allowed in state s 
+	● c(s,a,s’): this step-cost cannot be used until the agent knows that s’ is the outcome 
+	● GOAL-TEST(s)
+●The agent cannot access the successors of a state except by actually trying all the actions in that state
+● Assumptions
+	● The agent can recognize a state that it has visited before
+	● Actions are deterministic
+	● Optionally, an admissible heuristic function h(s)
+
+
+Online Search Problems
+● If some actions are irreversible, the agent may reach a dead end
+● No algorithm can avoid dead ends in all state spaces (adversary argument)
+● Assumption: the state space is safely explorable, i.e. some goal state is reachable from every reachable state
+
+Online Search Agents
+● Online algorithm can expand only a node that it physically occupies
+	● Offline algorithms can expand any node in the fringe 
+	● Offline node expansion = simulated action
+	● Online node expansion = real action
+● Same principle as DFS
+	● Expand nodes in a local order
+	● Additionally, the agent will store its map in a table
+
+Online DFS
+function ONLINE_DFS-AGENT(s’) return an action
+	input: s’, a percept identifying current state
+	static: result, a table of the next state, indexed by action and state, initially empty
+		unexplored, a stack that lists, for each visited state, the action not yet tried unbacktracked, a stack that lists, for each visited state, the predecessor states agent has not yet backtracked
+		s, a, the previous state and action, initially null 
+	if GOAL-TEST(s’) then return stop
+	if s’ is a new state then unexplored[s’][]ACTIONS(s’) 
+	if s is not null then do
+		result[a,s][]s’
+		add s to the front of unbackedtracked[s’]
+	if unexplored[s’] is empty then
+		if unbacktracked[s’] is empty then return stop
+		else a[] an action b such that result[b, s’]=POP(unbacktracked[s’])
+	else a [] POP(unexplored[s’]) 
+	s [] s'
+	return a
+
+Online DFS, exampel
+
+● Assume maze problem on 3x3 grid.
+● s’ = (1,1) is initial state
+● Result = empty
+● UX (unexplored)= empty
+● UB (unbacktracked) = empty
+● s, a are also empty
+
+
+
+Online DFS, example
+
+● GOAL-TEST((1,1))?
+	● s’ != G, thus false
+● (1,1) a new state?
+	● True
+	● ACTIONS((1,1)) → UX[(1,1)]
+		● {RIGHT,UP} 
+● s is null?
+	● True (initially)
+● UX[(1,1)] empty?
+	● False
+● POP(UX[(1,1)]) → a
+
+
+Online Local Search
+● Hill-climbing is already online
+	● One state is stored.
+● Bad performance due to local maxima
+	● Random restarts impossible.
+● Cannot implement random restart (Why?)
+● Solution1: Random walk introduces exploration
+	● Selects one of the available actions at random 
+	● Preference to not-yet-tried action
+	● Can produce exponentially many steps
+
+Online Local Search
+● Solution 2: Add memory to hill climbing search
+	● Store current best estimate H(s) of cost to reach goal 
+	● H(s) is initially the heuristic estimate h(s)
+	● Afterward updated with experience
+● Learning real-time A* (LRTA*)
+
+
+Learning Real-Time A*(LRTA*)
+slide 45
+
+Constraint Satisfaction Problem (CSPs)
+● Standard search problem:
+	● state is a "black box“ – any data structure that supports successor function, (problem-specific) heuristic function, and goal test
+● CSP:
+	● state is defined by variables Xi with values from domain Di
+	● goal test is a set of constraints Ci specifying allowable combinations of values for subsets of variables
+● Allows useful general-purpose algorithms with more power than standard search algorithms
+
+Example: Map -Coloring
+Variables WA, NT, Q, NSW, V, SA, T
+Domains Di = {red, green, blue}
+Constraints: adjacent regions must have different colors
+For example: WA ≠ NT, or
+(WA, NT) []{(red, green), (red, blue), (green, red), (
+			green, blue), (blue, red), (blue, green)}
+
+Constraint Graph
+● Binary CSP:
+	● each constraint relates two variables
+● Constraint graph: 
+	● nodes are variables
+	● arcs are constraints
+● General-purpose CSP algorithms use the graph structure to speed up search.
+	● E.g., Tasmania is an independent sub-problem!
+
+Standard Search Formulation
+● States are defined by the values assigned so far
+	● Initial state: the empty assignment { }
+	● Successor function: assign a value to an unassigned
+variable that does not conflict with current assignment
+		● ->fail if no legal assignments
+	● Goal test: the current assignment is complete 
+	● Path cost: constant (e.g. 1) for every step
+● This is the same for all CSPs! (A GOOD thing)
+● Every solution appears at depth ??
+	= n , with n variables->use depth-first search (DFS)
+● how many possible complete assignments of n variables on a domain of size d?
+● path is irrelevant -> can also use complete-state formulation
+
+-DFS better than BFS because uses less space
+
+Varieties of CSPs
+● Discrete variables
+	● finite domains:
+		● n variables, domain size d -> O(d n) complete
+assignments
+		● e.g., Boolean CSPs, incl. ~Boolean satisfiability (3SAT) (NP-complete)
+	● infinite domains:
+		● integers, strings, etc.
+		● e.g., job scheduling, variables are start/end days for each job
+		● need a constraint language, e.g., StartJob1 + 5 ≤ StartJob3
+￼● Constraints: linear or nonlinear
+	-e.g. start/end times for Hubble Space telescope
+	-linear constraints solvable in polynomial time by linear programming (LP) methods
+
+Variety of Constraints
+● Unary constraints involve a single variable,
+	● e.g., SA ≠ green
+● Binary constraints involve pairs of variables,
+	● e.g., SA ≠ WA
+● Higher-order constraints involve 3 or more
+variables,
+	● e.g., cryptarithmetic column constraints
+● Preferences (soft constraints vs. absolute constraints)
+	● E.g. red is better than green
+	● Representable by a cost for each variable assignment
+		● -> Constraint optimization problems
+		● -> Use optimization search methods (path-based or local)
+
+Example: Cryptarithmetic
+	● A.k.a. “Verbal arithmetic”
+● = a type of a mathematical game:
+	● Mathematical equation!unknown numbers whose digits are represented by letters.
+		● Similar to puzzles with non-alphabetic symbols 
+		● Operations: addition, multiplication, division
+		● Classic example (1924, Henry Dudeney):
+			● Solution to the puzzle:
+			● O = 0, M = 1, Y = 2, E = 5
+			● N = 6, D = 7, R = 8, S = 9
+
+
+Cryptarithmetic
+● RULES:
+	● Each letter or symbol represents only one digit throughout the problem;
+	● When letters are replaced by their digits, the resultant arithmetical operation must be correct;
+	● The numerical base, unless specifically stated, is 10; 
+	● Numbers must not begin with a zero;
+	● There must be only one solution to the problem.
+
+
+Another Cryptarithmetic Example
+● Variables: F T U W R O X1 X2 X3
+● Domains: {0,1,2,3,4,5,6,7,8,9}
+● Constraints: Alldiff (F,T,U,W,R,O)
+	● O + O = R + 10 · X1
+	● X1 + W + W = U + 10 · X2
+	● X2 + T + T = O + 10 · X3
+
+
+Real-World CSPs
+● Assignment problems
+	● e.g., who teaches what class
+● Timetabling problems
+	● e.g., which class is offered when and where?
+● Transportation scheduling
+● Factory scheduling
+● Floor planning
+
+Backtracking search
+● b = (n - l +1)[]d at depth l, hence n! · dn leaves!!! 
+	-> Very BAD!!
+● Variable assignments are commutative, i.e.,
+	● [WA = red then NT = green] same as [NT = green then WA = red]
+● Only need to consider assignments to a single variable at each node
+	● -> b = d and there are dn leaves
+● Depth-first search for CSPs with single-variable assignments is called backtracking search
+	● Chooses values for one variable at a time
+	● Backtracks when a variable has no legal values left to assign
+	● Backtracking search is the basic uninformed algorithm for CSPs 
+	● Can solve n-queens for n ≈ 25
+pseudo code on line 21
+
+Most constrained variable 
+	-choose the variable with the fewest legal values
+-aka minimum remaining values (MRV)
+-aka fail-first heuristic
+
+-tie breaker among most constrained variables
+-most constrained variable
+	-choose the variable with most constraints on remaining variables = degree heuristic
+		-attempts to reduce the branching factor on future choices
+
+least constraining variable
+-given a variable, choose the least constraining value:
+	-the one that rules out the fewest remaining variables
+		-combining these heuristics makes 1000 queens feasible
+
+Forward checking
+-idea:
+	-keep track of remaining legal values for unassigned variables
+	-terminate search when any variable has no legal values
+
+Arc consistency
+-simplest form of propagation makes each arc consistent
+- X -> Y is consistent iff
+	-for every value x of X there is some allowed value y of Y
+
+Example: 4-Queens
+● States: 4 queens in 4 columns (44 = 256 states)
+● Actions: move queen in column
+● Goal test: no attacks
+● Evaluation: h(n) = number of attacks
+● Given random initial state, can solve n-queens in almost constant time for arbitrary n with high probability (e.g. n = 1,000,000 -> 50 steps)
+
+
+Example: 8-Queens
+● A two-step solution for an 8-queens problem using min-conflicts.
+● At each stage, a queen is chosen for reassignment in its column.
+● The number of conflicts (in this case, the number of attacking queens) is shown in each
+
+Local Search for CSP: Applications
+● Min-Conflicts: works well for hard problems 
+● E.g.: Scheduling observations for the HST
+	● Initially: 3 weeks needed to schedule a week of observations
+	● With Min-Conflicts: 10 minutes!!
+● Local search can be used in an online setting when the problem changes
+	● Scheduling problems: airline schedule
+		● Thousands of flights
+		● Tens of thousands of personnel assignment
+		● Bad weather at one airport->schedule = infeasible
+			●->Use local search and start from current schedule
+			● Backtracking with a new set of constraints may not be good
+
+Completely independent problems are rare
+
+Tree structured CSP
+● Theorem:
+		If the constraint graph has no loops, the CSP can be solved in O(nd2) time
+	● Compare to general CSP: worst-case = O(dn)
+
+
+Nearly Tree-Structured CSPs
+● Conditioning:
+	● Instantiate a variable, prune its neighbors’ domains 
+● Cutset conditioning:
+	● Instantiate (in all ways) a set of variables such that the remaining constraint graph is a tree
+
+● Tree decomposition:
+	● Three requirements that must be satisfied
+	● Solve each problem independently
+	● In any one has no solution!the entire problem has no solution
+	● Build general solution
+
+		● CSP with constraint graphs of bounded tree width (w) are solvable in polynomial time: O(ndw+1)
+		● Finding the tree decomposition with minimal tree width is NP-hard
+
+Summary
+● CSPs are a special kind of problem:
+	● states defined by values of a fixed set of variables 
+	● goal test defined by constraints on variable values
+● Backtracking = depth-first search with one variable assigned per node
+● Variable ordering and value selection heuristics help significantly
+● Forward checking prevents assignments that guarantee later failure
+
+Glossary of Terms
+● A constraint satisfaction problem is a problem in which the goal is to choose a value for each of a set of variables, in such a way that the values all obey a set of constraints.
+
+● A constraint is a restriction on the possible values of two or more variables. For example, a constraint might say that A=a is not allowed in conjunction with B=b.
+
+● Backtracking search is a form of DFS in which there is a single representation of the state that gets updated for each successor, and then must be restored when a dead end is reached.
+
+● A directed arc from variable A to variable B in a CSP is arc consistent if, for every value in the current domain of A, there is some consistent value of B.
+
+● Backjumping is a way of making backtracking search more efficient by jumping back more than one level when a dead end is reached.
+
+● Min-conflicts is a heuristic for use with local search on CSP problems. The heuristic says that, when given a variable to modify, choose the value that conflicts with the fewest number of other variables.
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 7 Notes
 
 
 

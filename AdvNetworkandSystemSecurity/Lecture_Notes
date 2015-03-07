@@ -527,51 +527,552 @@ Photons and polarization of photons
 Advanced Network & System Security Lecture 5 Notes
 
 
+Current Events
+
+100s of banks attacked around the world to spew out money
+-millions stolen
+-recorded behavior of employees when conducting transactions
+
+Malware that reprograms the firmware on disc drives and hides itself there
+
+Stucksnet-NSA involved
+
+Samsung TV
+-many cases it does not send voice over the line
+-often times it does for complicated requests
+-it is sent in the clear an easy to look at
+-US Marshals are auctioning off 11 million dollars in bit coin.
+-$200/bit coin
+-need $100,000 or $150,000 if you want to even be able to bid
+
+OpenStack
+-IaS
+-have some security and efficiency features that can be manageable by small teams
+-NSA provided
+
+Quiz 1
+ARP request
+To 		From 		Payload ARP
+ 					ARP who has 192.168.1.5
+FF... 	FF 							|
+ 					requested protocol address
+  |______|
+  	  |
+mac addresses
 
 
 
+quantum
+-up and coming
+-looks like it will be revolutionary
+
+BB84
+-have a quantum channel and clear hannel
+-clear
+	- people can hear you
+	-good
+-quantum
+	-know if listener
+	-lossy
+	-can't send important data b.c. lossy
+	-not safe, you just know if its been heard
+-send random bits over quantum channel and decide which bits were correct over clear channel
+-use this as one-time pad to encrypt clear channel
+-can add error correction before encrypting with 1 time pad
+-reasons why one-time pad are good
+	-can't do freq. analysis
+	-provably secure
+		-use random data only once for pad
+	-helps for error correction as 1 bit errors don't propagate through
+
+
+-Send photons down a fiber
+-polarize them horizontally or diagonally
+	-up left, up right, up, right corresponding to 0,1,0,1
+-value changes on observation
+-have to decide if you are going to use x filter or +  filter
+Ex:
+polarize type, value, what gets sent over fiber
++ 0 up
++ 1 right
+X 1 up right
++ 0 up
+X 0 up left
+X 1 up right
++ 1 right
+X 1 up right
+
+vertically polarized means wave form going up and down in relation to whatevers up
+
+if up and a + filter is put on it
+ 		 0
+^ 		|
+|		|
+| ______|______ 1	put filter and determine 	
+|		| 			which had energy (vertical in this)
+        | 			case
+-filter would recognize wave as 0
+
+
+^ 		0
+|      X
+| 		1
+-wouldn't know which one it would go through and it will be random which one it will come out of.  It will also change its polarization to be one of the 2 diagonal ones.  So 50 50 chance it will be wrong.
+
+-receiver has to guess which filter to use
+
+   							guesses
++ 0 up 						x 1
++ 1 right 					+ 1
+X 1 up right 				+ 0
++ 0 up 						x 0
+X 0 up left 				x 0
+X 1 up right 				+ 0
++ 1 right 					+ 1
+X 1 up right 				x 1
+
+So these are your random bits obtained from guessing the filter and getting the data over the quantum channel
+-now go back to clear channel and discuss results
+-first -> I used x what did you use? + so wrong,don'tuse
+-second-> I used + what did you use? + so keep
+-third-> I used + what did you use? x so wrong, don'tuse
+-fourth->I used x what did you use? + so wrong
+-fifth->I used x what did you use? x so keep
+-sixth->I used + what did you use? x so wrong, don't use
+-seventh->I used + you used? + so keep
+-eighth->I used x you used? x so keep
+so random one-time pad is
+1011 assuming noone is listening to you
+-remember you only keep bits where filters matched and bits matched
+
+know if someone is listening
+-person in middle has to add a filter and they also guess
+-they know if listener using probabilities
+	-if the sender and receiver see that they had a 100 bits that they agreed on the filter, but half of them were wrong then there's a good chance that someone was messing with them
+-you grab a random group of agreed upon filters and see if the bits match up
+	-if too many don't match up (to be more than your accepted error threshold) you know someone is listening
+-this means you have to sacrifice more bits
+	-of 100 you used same filter you might take half and check for if bits also match to determine error
+
+-every bit of your message is encoded with a unique bit from your quantum channel
+
+-if someone is listening, what is the probability that they will modify the bit
+
+or what is the probability that it will not be changed
+75%
+
+-if they choose the right filter it works
+-if they choose the wrong then it is a 50 50 chance of getting the wrong random option
+-.5*.5 = 25% chance of wrong
+
+1-(3/4)^5 = 76.3 percent chance you will catch a listener if you choose 5 bits
+(3/4)^5 = the probability that none of the 5 bits have changed, so 1-(3/4)^5 is the probability that at least 1 has changed
+
+
+Entropy 			Temp (T)
+			cold 		mild 		hot
+m 	low 	.1 			.4 			.1  		60%
+	high 	.2 			.1 			.1 			40%
+ 			30% 		50% 		20%
+	
+
+	humidity = m
+
+	H(m) .6lg(1/.6) + .4*lg(1/.4) = .97
+
+	H(T) = .3lg(1/.3) + .5lg(1/.5) + .2*log(1/.2) = 1.48
+
+	H(m) + H(T) = 2.456 
+
+	If these 2 were disjoint that would be the entropy of the whole system
+
+	2 find entropy of the whole system
+
+	H(all) = 4*.1lg(1/.1) + .4lg(1/.4) + .2lg(1/.2)
+		   = 2.32193
+
+	H(T) + H(m) - H(all) approx= .1345
+
+	Since entropy of whole system is less than entropy of sum then there is some overlap
+		-meaning knowing one gives some information about the other
+
+H(m | T=Cold)
+
+Entropy 			Temp (T)
+			cold 		mild 		hot
+m 	low 	.33 		.8 			.5  		
+	high 	.66			.2 			.5 			
+ 			 		
+
+H(m | T=Cold) = .33lg(1/.33) + .66lg(1/.66) = .918
+
+H(m | T=mild) = .8lg(1/.8) + .2lg(1/.2) = .72
+
+H(m | T=hot) = 1 (50/50 split)
+
+H(m | T=Cold) + H(m | T=mild) + H(m | T=hot)
+
+We can weight these, we know we are cold 30% of the time, mild 50 percent and hot 20 percent
+so..
+Entropy when temperature is known of humidity
+	.3*.918 + .5*.72 + .2*1 = .83
+
+
+Entropy of humidity when temp is not known - entropy when it is
+
+.97 - .83 = .1345
+
+
+Venn diagram 
+Temp = 1.48
+Humidity = .9709
+overlap = .1345
+Temp only = 1.48-.1345 = 1.35
+Humid only = .97 - .1345 = .83
+
+As an exercise calculate entropy of T given humidity
+
+Asset Characterization
+Grocery store
+Assets
+				attributes 				value
+							repl. reven. profit val.
+frozen  	ice 			100k  150k   50k    150k
+inventory	icecream
 
 
 
+equity 		cash 								580k
+			income
+			building
+-----------------------
+
+Threat ID
+						motivation 			action
+	customers 			greed 				slip n sue
+
+	power failure 		--- 				no power
 
 
+------------------------
+
+Vulnerabilities
+	-frozen assets must be kept cold
+	-floors are slippery when wet
+------------------------
+
+Controls
+	-signs and mat to dry feet
+	-UPS for 30 minutes back up power
+
+------------------------
+
+Vul-threat pair
+
+power failure for 48 hours thaws frozen food
+
+	Impact 		= 150k
+	likelihood	= .05%/year
+	Risk = I*l = $7500
+customer slips and sues for equity
+
+	impact 		= 580k+
+	likelihood 	= .5%/year
+	Risk = I * l = 29k
+
+------------------------
+
+Reccommendation
+	first vul-threat pair
+		generator/freezer-> cost $9000
+	second vul-threat pair 
+		insurance -> only $500 a year
 
 
+--------------------------------------------------------
+
+Advanced System and Network Security Lecture 6 Notes
+
+Current Events
+
+silent...noone pushed the fuckin button...
+
+Project 3
+get a file witha number, salt, MD5 hash, and place for us to put the password used
+
+salt is a group of characters you add to a given password to make it harder to crack
+-stops you from being able to use precomputed tables
+-add salt to the beginning
+
+never store password in clear text
+-store password hash
+-so no DBAs have access, if DB gets hacked all passwords released
+-
+
+-cant use current classmates
+	-crack as many MD5 passwords as possible
+	-suck the file into excel and add password answers
+
+-make a plan first
+
+Passwords vs Keys
+-size
+
+Key Machine
+Password human
+
+Group A 	6 chars and 1 nonletter
+Group B 	use pass phrases 4sa7yago
+Group C 	8 random characters
 
 
+56   b = bits in password
+1024 = 2^10   e = entries in password file
+.25   P = probability a password is in the dictionary 
+d=20 d = 2^d = dictionary size
+										Avg. 
+Salt 		Dictionary 		Password 	effort C# hashes
+N 			N 				Admin 	 	2^56/2 =2^55 
+Y 			N 				Admin 		2^55
+N 			N 				Any 		2^55/2^10=2^45
+Y 			N 				Any 		2^55
+N 			Y 				Admin 		.25(2^19)+.75(
+										2^55) = 2^54.6
+Y 			Y 				Admin 		"
+N 			Y 				Any 		P(2^(d-1)) + (1-
+										P)(2^b-1) = 1
+N 			Y 				Any 		2^19
+Y 			Y 				Any 		2^D/p = 2^22
+
+.75^1024  ->probability that nothing is in dict.
+.75^2 = 9/16  -probability
+.75^4 = .33
+.75^4 < .75^3 so .75^256 < 1/(3^256)
+
+1-.75^1024 is odds something is in dictionary = 1
+
+chances of finding first one
+.25*(2^19) + .75*.25(2^20+2^19) + .75^2*.25.25(2*2^20+2^19) +.. .75^3*.25.25(1023*2^20+2^19)
+
+converges to 
+approximately 2^20/.25
+
+	(2^d)/P = 2^20/.25 = 2^22
+
+Be able to regurgitate these 8 cases
+
+difference b.w. lossy compression vs. lossless
+-lossless you get the exact same thing back
+	-zip, huffman encoding
+	-set the quality of I don't want to lose anything, and then the file is what it is based on algorithm
+-lossy
+	-jpeg, mp3
+	-can get smaller with lossy
+	-can set file size, and then adjust accuracy to fit that size
+	-multiple images can give you same compressed output
+
+all the original files the algorithm will act on
+
+1 						
+0 -> 
+00
+01
+10
+11
+0000
+001
+10
+11
+000 -> compresses to 0
+100
+101
+110
+111
+	0000
+	0001
+	0010
+	0011
+	0100
+	0101
+	0110
+	0111
+	1000
+	1001 -> compresses to 000
+	1010
+	1011
+	1100
+	1101
+	1110
+	1111
+
+-this means that something from left column must get larger (with lossless only)
+-could say if it has to get larger don't compress it
+	-what if send bit 1 as a packet 
+	-does it interpret this bit as compressed 1 or normal 1
+	-still need to add a flag to say if it was compressed
 
 
+2kb  File 1 ->compress-> C(F) + h
+
+2G 	 File 2 ->compress-> Fh
 
 
+LZW compression
+
+Google Search
+
+LzW applet
+
+set W = nil
+loop
+	read a character k
+	if wk is in the dictionary
+		w = wk
+	else
+		output code for w 
+		add wk to dictionary
+		w = j
+endloop
+
+Ex: compress ABCABCABCABC using LzW
+
+Dictionary 	0
+			65  A
+			66  B
+			67  C
+			.
+Fixed		.
+			.
+		  	127 
+_________________________
+		  	128 AB
+		  	129 BC
+Dynamic	   	130 CA
+		  	131 ABC
+		  	132 CAB
+		  	133 BCA
+		  	255
+
+char 		K 		W 		Output
+-		undefined 	nil 
+A 			A 		A 		
+					
+B 			B 	    		65
+					B
+C 		    C 			     66
+					C 
+A 			A 				 67
+					A
+B 			B 		AB		 
+					
+C 			C 		  		128
+					C
+A  			A 		CA		
+					
+B 			B 		 		130		
+					B
+C 			C 		BC 		
+A 			A 		 		129
+					A
+B 			B 		AB
+C 			C 		ABC
+eof 		eof				131
+					eof
+
+output stream
+65 66 67 128 130 129 131
+
+algorithm for decompression
+
+read char k
+entry = dict[k]
+output entry
+w = entry
+loop 
+	read char k
+	entry = dict[k]
+	output entry
+	Add w + first character of entry to dict
+	w = entry
+end loop
+
+benefit over huffman encoding is you don't have to send the dictionary
+
+			0
+			.
+			.
+			.
+			65 A
+			66 B
+			67 C
+			.
+			.
+			.
+			127
+	___________________
+			128 AB
+			129 BC
+			130 CA
+			131 ABC
+			132 CAB
+			133 BCA
+			.
+			255
+Read 	Entry 		K 		W 		Output	
+65 		 A 			65 		A 		 A
+66 		 B 			66 		 		 B
+							B
+67 		 C 			67 		 		 C
+							C
+128		AB 			128 			 AB
+						    AB
+130 	CA 			130   			 CA	
+							CA
+129 	BC 			129 			 BC
+							BC
+131		ABC 		131 			 ABC
+							ABC
+
+ABC ABC ABC ABC gets smaller so the rest of the letters get larger
 
 
+can use seven bits before compression, but after compression you double the size of what you have to represent 
+0-127 w.o compression
+-represent with 7 bits (2^7 = 128)
+
+65 66 67 65 66 67 65 66 67 65 66 67
+12 numbers with 8 bits per number = 84 bits b4 compression
+
+with dynamic part of dictionary added
+
+128...255 all of a sudden we need 8 bits per number
+b.c. 2^8 = 256 (0-255)
+
+-natural trade off with dictionary size
+-if dictionary is too large you are sending extra bits you don't need
+
+with our example
+ 7 bits * 12 = 84 bits
+ 8 bits * 7 = 56 bits
 
 
+Project 4
+
+How does steganography differ from a covert channel?
+
+modern day examples of steganography?
+-watermarks
+-currency
+-1 movie frame
+-read first letter of every line
+-tattoo head
+-printers
+-math tables
 
 
+-------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Advanced System and Network Security Lecture 7 Notes
 
 
 

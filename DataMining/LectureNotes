@@ -1,6 +1,6 @@
 CSE 7331 Data Mining Lecture Notes
 
---------------------------------------------------------
+------------------------------------------------------
 
 Data Mining Lecture 1 Notes
 
@@ -1675,19 +1675,980 @@ lecture at 1 hour
 
 Data Mining Flipped Module 2 Lecture Notes
 
+Decision Trees
+-just another machine learning algorithm
+-will take features and attribtues and try to come up with a predictive algorithm
+-table data
+	-rows are instances, cols are attributes ()
+
+-decision trees help with classification
+	-look at an attribute and based on value decide if you will go left or right
+	-for binary it would be yes or no
+
+							preg
+				-yes 				-no
+			pos. diagnosis				eye color
+									blue 		hazel
+								BMI				brown
+							<30		>30		-neg. diag.
+							Neg.	Pos.
+
+
+Create a machine learning algorithm that goes through tree
+-then can predict with model
+
+-start at root of tree and compare attribute of instance
+-there's more than one way to fit the same training data
+-finding the optimal model is very difficult
+	-NP complete problem
+-you'd have to look at every possible tree
+
+Use Hueristics
+
+Self Test
+-what makes an optimal decision tree (from the following)?
+	-accuracy
+	-easy to interpret by a human
+	-minimum tree depth
+	-extensible to large datasets
+-# of leafnodes is not as important
+-many leaf nodes on branches near the root (generally not worried about)
+
+Decision tree Classification task
+-use induction
+-most stem from Hunt's algorithm
+
+General Structure of Hunt's Algorithm
+-have a Node t -> D_t = (2,4,7)
+-let D_t be the set of training records that reach a node t
+1. if all records in D_t are the same class y_t then t is a leaf node labeled as y_t
+2. If D_t is an empty set, then t is a leaf node labeled by the default class y_d
+3.  IF D_t contains records that belong to more than one class, use an attribute test to split the data into smaller subsets from D_t
+4.  Recursively apply the procedure to each subset
+
+Self test
+-splitting the data into smaller subsets 
+-given you are in a node with these attributes, should you split the node or make it a leaf node?
+	-there area only 2 unique rows
+	-splitting it would have every row go either left or right, so make a leaf node
+
+Tree Induction: Splitting on Attributes
+-Greedy strategy.
+	-split the records based on an attribute test taht optimizes certain condition
+-issues 
+	-determine how to split
+		-how to specify the test condition?
+		-how to determine the best split?
+	Determine to stop splitting
+
+How to specify test condition?
+-depends on attribute types 
+	-nominal 
+	-ordinal
+	-continuous
+-depends on number of ways to split
+	-2-way split
+	-multi-way split
+
+Splitting based on nominal and ordinal
+-multi-way split: use many partitions as distinct values
+	-cartype-family
+			-sports
+			-luxury
+	-not usually done
+-binary split: Divides values into 2 subsets.
+			-need to find optimal partitioning
+		Car type 						cartype
+-luxury 		-family 		-family 		sports
+ sports 						 luxury 
+
+
+Self test
+-draw the different ways to split this attribute?
+	-attribute size: small, medium, large
+
+small/medium 						large
+small 								medium/large
+small  			medium 				large
+Don't do this next one
+-keep the ordinals ordered
+small/large 						medium
+
+-come up with binary split for all nominal or ordinal attributes
+
+Splitting based on continuous variables
+-different ways of handling
+	-discretization to form an ordinal categorical attribute
+		-static - discretize once at the beginning
+		-dynamic- ranges can be found by equal interval bucketing, equal frequency bucketing (percentiles), or clustering
+	-binary decision: (A < v) or (A>=v)
+		-consider all possible splits and finds the best cut 
+		-can be more compute intensive
+
+Taxable income
+-binary split ex
+	-most common
+	Taxable income is >80k or not
+-multiway split
+	-<10 k, 10k-25k,25k-50k,50k-80k,>80k
+	-this is better done by discretizing the data and making it ordinal
+
+How to determine the best split
+-which test condition is most pure?
+	- node with 20 attributes
+				C0: 10
+				C1: 10
+				- 10 in class zero, 10 in class 1
+	-could split by own car splitting it into 2 groups of  C0: 6      					C0: 4
+		C1: 4 						 C1: 6
+
+	-could split by car type with 3 groups
+	C0:1 				C0:8 			CO:1
+	C1:3 				C1:0 			C1:7
+
+	-could split by student ID
+		-never do this
+
+How to determine best split?
+-greedy approach:
+	-we prefer nodes that are pure, homogeneous
+-need a measure of node impurity
+	C0: 5 							C0:9
+	C1: 5 							C1:1
+	not homogeneous					homogeneous
+	-not pure=highly impure 		very pure = not
+												impure
+
+How to Find the Best Split
+-  								classes 	#records
+											in class
+			Before Splitting:    C0 		N00
+ 								 C1 		N01
+
+ Look at each attribute as a candidate split
+ M is measure of impurity
+
+ Self test
+ -if you have 3 different binary attributes and a node that you want to split, how many "impurities" do you need to calculat
+ 	-you have 3 attributes each get split into 2
+ 		-6 nodes, so 6 impurities
+
+
+Measures of Node impurity
+-gini index
+-entropy
+-information gain
+-gain ratio
+
+Measure of impurity: GINI
+-looks at distribution of classes
+-if I randomly grab a record from this node, what is the probability it is not correct?
+-Gini index for a give node t:
+		GINI(t) = sum_j( p(j | t)*( 1- p(j | t) )
+					   )
+			     -at node t, multiple the odds of selecting class and not selecting class
+			     -sum this up for all classes
+	-also 
+		GINI(t) = 1 - sum_j ( (p(j|t)^2 )
+
+	Example:
+				C1 	1  P(C1) = 1/6
+				C2  5  P(C2) = 5/6
+				Gini = 1 - (1/6)^2 - (5/6)^2 = .278
+
+Measure of Impurity: GINI
+-If I randomly grab a record from this node, what is the probability it is not correct?
+-Gini index for a given node t:
+		GINI(t) = 1 - sum_j ( (p(j|t)^2 )
+	Maximum (1-1/n_c)
+	-records are equally distributed among all classes
+	Minimum (0.0)
+	-all records belong to one class
+	-more impure, the higher the GINI
+
+self test: examples for computing GINI
+		C1 0    Gini = 1 - P(C1)^2 - P(C2)^2 = 0
+		C2 6
+
+		C1 1 	Gini = 1 - P(C1)^2 - P(C2)^2
+		C2 5		 = 1- (1/6)^2 - (5/6)^2 = .278
+
+		C1 2    Gini = 1 - P(C1)^2 - P(C2)^2
+		C2 4		 = 1 - (2/6)^2 - (4/6)^2 = .444
+
+Splitting Based on GINI
+-how to combine Gini indices from children nodes?
+-when a node p is split into k partitions(children), the quality of split is computed as
+
+	Gini_split = Sum_i=1 (n_i/n * GINI(i))
+
+	n_i is number of instances inside the child
+	-n = total # of instances at node t
+-weighted summation
+
+Binary Attribtues: Computing Gini index
+-splits into two partitions
+-effect of weighing partitions
+	-larger, purer partitions
+
+		Parent 
+			C1 6
+			C2 6
+				B?
+			yes 	No
+		Node N1 	  Node N2
+				N1 | N2
+			C1  5  | 1
+			C2  2  | 4
+
+Gini N1
+=1 -(5/7)^2 - (2/7)^2
+=.408
+
+Gini N2
+= 1 - (1/5)^2 - (4/5)^2
+= .320
+
+Gini(children) = 7/12*.408 + 5/12*.320
+			   = .37
+
+Categorical Attribtues: Computing Gini Index
+-for each distinct value, gather counts for each class in the data set
+-use the count matrix to make decisions
+-can calculate Gini from two-way split and use the lower value as the better split (more impure)
+-multi-way split always has lower Gini
+
+Continuous Attributes: Computing Gini Index
+-Use binary decisions based on one value
+-many choices for splitting
+	number of possible splitting valus
+	= number of distinct values
+-each splitting value has a count matrix associated with it
+	-class counts in each of the patitions
+			A >v A<=v
+-simple method to choose best v
+	-for each v, scan the database to gather count matrix and compute its Gini index
+	-computationally inefficient! repetition of work
+
+
+-efficient computation: sort the attribute
+	-take attribute, transpose it to be horizontal and sort it
+	-split positions
+	-determine how many are in each class for each potential split position and calculate corresponding gini
+		-choose where the minimum gini is to be the split position
+	-really only have to calculate the Gini where the class value changes (local minimum) to find which is the extrema
+
+Alternative Splitting Criteria based on INFO
+-Entropy is a measure of randomness
+-want something with low entropy - not very chaotic
+
+Entropy at a give node t:
+	Entropy(t) = sum_j ( p(j|t)*log( 1/( p(j|t) ) )
+					   )
+(Note: p(j|t) is the relative frequency of class j at node t)
+
+-expected number of bits needed to encode a randomly drawn value efficiently
+-entropy == uncertainty, which we want to minimize
+-if something happens more frequently, we want to use fewer bits to represent it
+	-if it happens more rarely we can use more bits
+-if all characters occur around the same amount then there is a high level of entropy and there is not a whole lot of reduction that can be done
+
+	Entropy(t) = -1*sum_j ( p(j|t)*log( p(j|t) )
+					   )
+
+	Ex: C1  1
+		C2  5 	P(C1) = 1/6 	P(C2) = 5/6
+				Entropy = -(1/6)log_2(1/6)
+						  -(5/6)log_2(5/6) = .65
+
+-Measures homogeneity of node
+	-maximum (log n) when records are equally distributed among classes (implying least information)
+	-minimum (0.0) when all records belong to one class, implying most information
+
+-Entropy based computations give similar splits as the Gini impurity
+	-when we combine entropy it becomes better
+
+Self test:
+	Entropy(t) 
+-it will always be positive
+	log(p(j|t)) is always negative
+	p(j|t) is always positive
+	-then you take the negative
+
+self test: examples for computing Entropy
+		C1 0    Entropy = -P(C1)*log(P(C1)) 
+		C2 6			  - P(C2)*log(P(C2)) = -0-0=0
+
+		C1 1    Entropy = -P(C1)*log(P(C1)) 
+		C2 5			  - P(C2)*log(P(C2)) 
+						= -(1/6)*log(1/6) 
+						  - (5/6)*log(5/6) = .65
+
+		C1 2    Entropy = -P(C1)*log(P(C1)) 
+		C2 4			  - P(C2)*log(P(C2)) 
+						= -(2/6)*log(2/6) 
+						  - (4/6)*log(4/6) = .92
+
+
+Splitting Based on INFO...
+-Information Gain:
+	GAIN_split = Entropy(p) - (sum_i ( (n_i/n) * 	
+											Entropy(i)
+							   		 )
+							  )
+-measures reduction in entropy achieved because of the split.  Choose the split that achieves most reduction (maximizes GAIN)
+-Disadvantage: Tends to prefer splits that result in large # of partitions, each being small but pure
+
+Gain Ratio
+				     GAIN_(split)
+GainRatio_(split) =	 ____________
+					 SplitINFO
+
+SpitINFO = -1* Sum_i( (n_i/n) * log( (n_i/n) )
+					)
+-normalizes Gain_(split) by SplitINFO
+-parent node, p is split into k partitions n_i is the number of records in partition i
+
+-Adjusts information gain by the entropy of the partitioning (SplitINFO)
+-Large number of small partitions is penalized
+-Designed to overcome the disadvantage of information gain 			
+
+Decision boundaries for a decision tree
+-graph 2 attribute (one on x and one on y)
+-split on attribute 1 draws a line perpendicular to attribute 1's axis
+-after doing this several times we have leaf nodes that encompass a box in the feature space
+-when do we stop splitting
+	-maybe by size of box (# of instances), or the range has to be large 
+
+Stopping Criteria for Tree Induction
+-creating new nodes is a recursive operation
+	-base case 1:
+		-stop when all the records in box belong to same class
+	-base case 2:
+		-stop when all the records have identical attribute values
+		-if two instances were overlapping a lot
+
+Self Test
+-is this a good base case?
+	-Base Case 3:
+		-stop if all attributes have zero information gain
+		-meaning entropy didn't decrease or GAIN ratio is zero
+		-No! don't stop
+			-if you split again after this happens then the classes will be separated perfectly
+
+Common Decision Tree Algorithms
+-ID3: Iterative Dichotomizer 3
+		-uses information gain for binary splits
+		-difficult to use on continuous data
+			-requires data be discrete
+-CART: classification and regression tree
+		-uses Gini or Entropy for binary splits
+			-only allows you to make binary splits
+			-uses information gain- determines 1 binary split with dynamic programming algorithm
+		-Scans sorted continuous values efficiently
+-C4.5 (or J48 or C5.0)
+		-uses gain ratio
+			-allows for multiway splits
+		-allows missing data (leaves out of entropy)
+			-when using gain ratio it leaves missing data out
+			-can still compare splits to each other
+		-after creation, prunes tree to prevent overfitting
+
+Example: C4.5
+	-Simple Depth-first construction
+	-uses information Gain and Gain Ratio
+	-Sorts Continuous attributes at each node
+	-needs entire data to fit in memory
+		-how could we fix this?
+		-could do memory mapping
+		-could make histograms or KDEs of all the features
+		-use it to approximate values for entropy
+
+-------------------------------------------------------
+
+Data Mining Lecture 11 Notes
+(in class assignment)
+
+
+First part is describe data set
+Second part is using the Gini coefficient
+
+gini_r is the gini index for the right side of split
+gini_l is the gini index for the left side of split
+
+combine the left and right with a weighted sum
+
+-------------------------------------------------------
+
+Data Mining Lecture 12 Notes
+
+Demo Decision Trees--------------
+
+rows in x is number of instances
+-columns in x is attributes
+
+StratifiedShuffleSplit - says use all of classes and 50 percent of data
+
+multiclass log loss
+	-use decision tree to score the probability of each class (p from class 1, class 2, etc.)
+	-grab the correct one given the label, take the log of it, and add it
+	-need to be correct, and as close to a probability of 1 as possible
+-predict_proba returns the prediction probabilites of each class
+-log loss is 26.467
+	-want it to be smaller
+Randomized PCA
+-use this to transform the training data
+	-dimensionality reduction
+-log loss will get better as accuracy goes up
+
+-alter DecisionTreeClassifier to not overfit
+	-need to have a leaf node for each attribute
+		-set max_leaf_nodes=121 (at least 1 per attribute)
+		-setting this ignores max depth
+		-can change min_samples_split to be like 300
+		-max_depth
+-log loss reflects how confident we are in our model being correct
+-if you aren't worried about raw average maybe use log loss
+
+Feature importances
+-want to figure out which attributes are more important
+	-decrease the gini the most
+feature_importances_ shows average drop in gini of each
+-can line up these feature importances back together as an image- will show which parts of image were most important part
+-since its hard to see take the log to normalize the values
+
+Everything scikit-learn implements is used for pre-pruning
+
+-now do post-pruning
+-sci-kit learn has not fully implemented pruning
+
+
+Demo over----------------------
+
+Decision Tree Overfitting
+-overfitting results in decision trees that are more complex than necessary
+-training error no longer provides a good estimate of how well the tree will perform on previously unseen records
+-need new ways for estimating errors
+
+Occam's Razor
+-given 2 models of similar generalization errors, one should prefer the simpler model over the more complex model
+-for complex models, there is a greater chance that it is fitting noise
+-soooo.....we should include model complexity when evaluating splits of the decision tree
+
+How to address overfitting
+-post-pruning
+	-grow decision tree to its entirety
+	-trim the nodes of the decision tree in a bottom-up fashion
+		-only look at sub-trees with 2 leaf nodes (for binary split)
+	-if generalization error improves after trimming, replace sub-tree by a leaf node
+	-class label of leaf node is determined from majority class of instances in the sub-tree
+	-can use pessimistic error of chi-sq. for post pruning
+
+Pessimistic Error for Pruning
+-Re-substitution errors: # of errors on training set
+	- sum (e(t))
+-Generalization errors: # of errors on testing set
+	- sum (e'(t))
+-pessimistic approach to estimate e':
+	-for each leaf node: e'(t) = (e(t) + .5)
+	-total errors: e(T) + N*.5 where N is the total # of leaf nodes
+	-For a tree w/ 30 leaf nodes and 10 errors on training (out of 1000 instances):
+		Training error = 10/1000
+		Pessimistic error = (10 + 30*.5)/1000 = 2.5%
+		30*.5 is the penalty for a complex tree
+-if cutting a branch off improves the pessimistic error then it gets better
+
+The Chi Square Test (chi^2): Complex Trees
+
+					MPG=Good   17
+					MPG=Bad    4
+					Gini 	   .308
+
+split 3 ways
+USA 
+MPG=Good 	10
+MPG=Bad 	0
+Gini=0.0
+
+Asia
+MPG=Good 	5
+MPG=Bad 	2
+Gini=.408
+
+Europe
+MPG=Good 	2
+MPG=Bad 	2
+Gini=.5
+
+Gini split = .301
+
+Would we have seen this level of association "by chance" or "because the attribute is correlated with the class"?
+
+	Test null hypothesis based on expected counts:
+Null: split is by chance with XX% confidence (usually 95%)
+
+The Chi Square Test 
+
+							 (E_p(x=j)([x_k]-x_k,j))^2)
+T=Sum_(j in C)Sum_(k in S)= ___________________________
+						     E_p(x=j)([x_k])
+
+-normalized sum of (count difference)^2
+-S: all splits
+-C: all classes
+-Denominator =>Expected count for jth class in the kth split, based on the parent node
+-Numerator X_k,j is actual count for the j_th class in the k_th split
+
+parent node 		USA    Asia   Europe
+	MPG=Good 		10 	   5 	  2 	 = 17
+	MPG=Bad 		0 	   2      2 	 = 4
+					=10    =7     =4 	 =21
+
+Example:
+
+	E_(p(x=good))([x_USA]) = x_USA * p(x=good) = 8.09
+-expected value of the class being good for the USA attributed
+			= 10 * 17/21 = 8.09
+-actual value of USA being good is 10
+-subtract these 2 numbers from each other, square them, and divide it by actual
+
+if T > chi^2
+-reject null hypothesis split is not by chance
+if t < chi^2 
+-accept null hypothesis split might be by chance
+
+Example
+
+		Exp(USA,Good) = 8.09
+		Exp(Asia,Good) = 7 x17/21 = 5.66
+-do this for all attributes and all classes
+			USA 		ASIA  		EUROPE
+MPG=Good 	10(obs) 	5(obs) 		2(obs)
+			8.09(exp)   5.66(exp)   3.23(exp)
+
+MPG=Bad 	0(obs) 		2(obs) 		2(obs)
+			1.91(exp)   1.33(exp)   .76(exp)
+
+Chi square test = 5.25
+-can look up chi-squared based on how many degrees of freedom are allowed for chi-squared of .050
+df = (rows-1)*(cols-1)
+   = 1*2 = 2
+
+   df    x^2 .050
+   1 	 3.841
+   2 	 5.991
+   3     7.815
+
+5.25 < 5.991
+
+Not 95% confident split is not by chance
+
+
+Self Test: Example of post-pruning
+
+A
+Class=yes 	20
+Class=No 	10
+Error = 10/30
+Pesimisitc Error: (10+.5)/30 = 10.5/30
+
+				
+Mulit split
+A1
+Class=yes 	8
+Class=No 	4
+Error = 10/30
+
+A2
+Class=yes 	3
+Class=No 	4
+Error = 10/30
+
+A3
+Class=yes 	4
+Class=No 	1
+Error = 10/30
+
+A4
+Class=yes 	5
+Class=No 	1
+Error = 10/30
+
+Pessimistic Error after splitting:
+		=(9+4*.5)/30 = 11/30
+
+if a split causes the pessimistic error to go up then prune it
+
+Chi-square test = T = 2.793 < 7.815 while we want it to be > than so we prune it
+
+Decision Tree Summary
+-Advantages:
+	-Inexpensive to construct
+	-Extremely fast at classifying unknown records
+	-variable importance through Gini reduction
+	-Easy to interpret for small-sized trees
+	-Accuracy is comparable to other classification techniques for many data sets
+
+-------------------------------------------------------
+
+Data Mining Lecture 13 Notes
+
+Model Evaluation Measures
+
+Metrics for Performanace Evaluation
+-focus on the predictive capability of a model
+ -not how fast it takes to classify or build models, scalibility, etc.
+-confusion matrix
+					Predicted Class
+						Class=yes 		class=no
+			 class=yes 		a 				b
+Actual Class 
+			 class=no 		c 				d
+
+a: true positive
+b: false negative
+c: false positive
+d: true negative
+
+Metrics for performance evaluation
+-most widely used metric:
+					
+				a+d 			TP + TN
+	accuracy= __________ = ___________________
+			   a+b+c+d 		TP + TN + FP + FN
+
+
+confusion matrix is good because you might care about one of the squares more than the other ones.
+
+Limitation of the accuracy
+-ignores the cost of misclassifications
+-consider an imbalanced 2-class problem
+	-number of Class 0 examples = 9990
+	-number of class 1 examples = 10
+-if model predicts everything to be class 0, accuracy is 9990/10000 = 99.9%
+	-accuracy is misleading because model does not detect any class 1 example
+
+Superimpose cost matrix on top of confusion
+
+
+Cost MAtrix
+
+					Predicted Class
+			 C(i|j)		Class=yes 		class=no
+			 class=yes 	 C(Yes|Yes) 	C(NO|Yes)
+Actual Class 
+			 class=no 	 C(Yes|No) 		C(NO|No)
+
+-define a cost function based on your expertise with problem:
+	C(i|j): cost of misclassifying class j example as class i
+
+Cost Matrix Example
+					Predicted Class
+			 C(i|j)		 	+ 		-
+			  +		 	  	-1		100
+Actual Class 
+			  - 	 		1 		0
+
+i.e. medical diagnosis costs?
+
+What are the accuracy and cost of these two confusion matrices?
+which classifier is "better" as derived by the accuracy and by cost?
+
+
+Model M_1			Predicted Class
+			 C(i|j)		 	+ 		-
+			  +		 	  	150		40
+Actual Class 
+			  - 	 		60 		250
+
+Accuracy = 80%
+Cost = 3910
+
+Model M_2			Predicted Class
+			 C(i|j)		 	+ 		-
+			  +		 	  	250		45
+Actual Class 
+			  - 	 		5		200
+
+Accuracy = 90%
+Cost = 4255
+
+So if you go by accuracy you go by M_2, if you were going by the costs you would say M_1 in this case
+
+-how do we know that the cost matrix is good?
+	-verify with a Doctor if this is a good cost matrix
+	-cost matrix could be economics, cost of someone dieing, etc.  
+
+Cost-Sensitive Measures
+				  a
+Precision (p) = _____
+				 a+c
+
+-higher precision == lower false positives
+
+			   a
+Recall (r) = _____
+			  a+b
+
+-higher Recall == lower false negatives
+
+				 2rp    	2a
+F - measure(F) = ____ = ______________
+ 				 r+p 	 2a + b + c
+higher F1 == lower FN and FP
+
+precision is biased towards 
+	C(p=yes|a=yes)& C(p=yes|a=no)
+Recall is biased towards
+	C(p=yes|a=yes) & C(p=no|a=yes)
+F-measure is biased towards all except C(p=No|a=No)
+
+							w_1*a + w_4*d
+Weighted Accuracy = ______________________________
+					 w_1*a + w_2*b + w_3*c + w_4*d
 
 
 
+Medical diagnosis->Recall probably better because you'd want fewer false negatives
+
+Retrieving similar documents from an online database
+->b.c. if we say its similar, it better be similar
 
 
+Model Evaluation
+-how reliable are the estimates for performance?
+
+Methods for Performance Evaluation
+-how to obtain a reliable estimate of performance?
+-performance of a model may depend on other factors besides the learning algorithm
+	-class distribution
+	-cost of misclassification
+	-size of training and test sets
+
+Learning Curve: Number of samples
+-learning curve shows how accuracy changes with varying sample size
+-effect of small sample size:
+	-bias in the estimate
+	-variance of estimate
+-you cannot estimate this curve without collecting the data. Some bounds exist, but they are too loose to be useful
+-to make one you train a bunch of different models with each sample size
+	-average accuracy given sample size is the point in the curve
+
+Bias Variance Tradeoff
+-complex models can really fit the training data, giving lower bias 
+-simpler models have trouble fitting data, resulting in higher bias
+-but complex models can have high variance in their decision
+
+How do we ensure our model is not overfitting to the data?
+
+Methods of estimating generalization
+-solution: use tesing set, and never, never, never, let the model see it
+	-holdout
+		-reserve 2/3 for training and 1/3 for testing
+	-random subsampling
+		-repeated holdout, with replacement
+	-cross validation
+		-partition the data in k disjoint subset
+		-k-fold: train on k-1 partitions, test on the remaining one
+		-Leave-one-out: k=n
+	-stratified cross validation
+		-select samples, keeping overall class distribution same for each fold
+		-make sure that classes keep same distribution that they had from the whole sample in each inidividual fold
+-if you use 10 fold cross validation then you are training your model on 90% of the data
+	-if you don't expect to have that much training data in the future this would be bad
+
+-still don't look at test data with cross validation
+-take out test data to be used later
+	-then do cross validation on the remaining training data
+	-this is because you wouldn't know if the parameters generalize if you use too much of your data for training
+
+Evaluating Binary Classification : ROC
+
+ROC (Receiver Operating Characteristic)
+-characterize trade-off b.w. positive hits and false alarms
+-ROC curve plots TP (on the y-axis) against FP (on the x-axis)
+-Performance of each classifier represented as a point on the ROC curve
+	-changing the threshold of algorithm, sample distribution or cost matrix changes the location of the point
+
+graph false positive rate vs true positive rate as we adjust some threshold
+-if binary dat then chance would be x=y line
+
+(TP,FP)
+	(0,0): declare everything to be negative class-> means theres never a positive either way
+	(1,1): declare everything to be positive class->
+	on a graph of positive vs. positive then its always true
+	(1,0): ideal-> always got the true positives correctly and never had a false positive
+-Diagonal line:
+	-random guessing for equal number of classes
+	-below diagonal line:
+		-prediction is opposite of the true class
+
+Using ROC for model comparison
+-no model consistently outperforms the other
+	-M1 is better for small FPR
+	-M2 is better for large FPR
+-Area under the ROC curve
+	ideal: Area = 1.0
+
+How to Construct an ROC curve
+	classifier score
+instance# 		P(+|A) 		True Class
+	6 			  .95 			+
+	2 			  .93 			+
+	5 			  .87 			-
+	4 			  .85 			-
+	9 			  .85 			-
+	1 			  .85 			+
+	10 			  .76			-
+	8 			  .53 			+
+	3 			  .43 			-
+	7 			  .25 			+
+
+-Use classifier that produces probability score for each test instance P(+|A)
+-sort the instances according to P(+|A) in decreasing order
+-Apply threshold, T, at each unique value of P(+|A)
+-P(+|A) < T, is a negative class, else it is a positive class
+-count the number of TP,FP, TN, FN at each threshold
+- TP rate, TPR = TP/Positives
+- FP rate, FPR = FP/negatives
+
+Test of Significance
+-Given 2 models
+	-model M1: accuracy = 85% tested on 30 instances
+	-model M2: accuracy = 75%, tested on 5000 instances
+-can we say M1 is better than M2?
+	-how much confidence can we place on accuracy of M1 and M2?
+	-can the difference in performance measure be explained as a result of random fluctuations in the test set?
+
+Comparing performance of 2 models
+-given 2 models, M1 and M2, which is better?
+	M1 is tested on D1 (size = n1), found error rate=e1
+	M2 is tested on D2 (size = n2), found error rate=e2
+	-assume D1 and D2 are independent
+	-if n1 and n2 are sufficiently large, then
+		e1 ~ N(mu_1, sig_1)
+		e2 ~ N(mu_2, sig_2)
+	approximate: 
+									 e_i(1-e_i)
+			variance=(sighat_i)^2 = ______________
+										n_i
+-probably comes form binomial distrib.
+ which is approximate well by normal distr.
+
+-To test if performance difference is statistically significant: d_t = e1-e2 <-estimate of mean diff.
+				-d_t is the true mean
+	- d ~ N(d_t,sig_t) where d_t is the true diff.
+	-since D1 and D2 are independent, their variance adds up:
+								 ~
+		sig1^2 = sig1^2 + sig2^2 = sig1_hat^2 + 	
+		^									sig2_hat^2
+		|
+		|	     e1(1-e1) 	e2(1-e2)
+		|	   = ________ + _________
+		|	   	  	n1 			n2
+estimate of the variance in subtracted error rates
+-sig1_hats is the variance as predicted by binomial distribution
+
+	-at (1-alpha) confidence level, 
+				d_t = d +- Z_(alpha/2)*sigt_hat
 
 
+Z is a confidence interval
+-use this to adjust confidence in mean
+-does this interval include 0?
+	-means error rates between 2 might not be that different from each
+	-if it doesn't include 0 we can say statistically with some confidence level, one is better than the other
+
+An illustrative example
+
+-Given: M1: n1 = 30, e1=.15
+		   M2: n2 = 5000, e2=.25
+
+d = |e2 - e1| = .1 (2-sided test)
+
+		   			.15(1-.15) 		.25(1-.25)
+	(sighat_d)^2 =  ___________  +  ___________ =.0043
+						30 				5000
+
+-at 95% condience level, Z_(alpha/2) = 1.96
+
+	d_t = .1 +- 1.96*sqrt(.0043) = .1 +- .128
+
+=> interval contains 0 => difference may not be statistically significant
+
+-"There are lies, damned lies and statistics."
+	-Mark Twain
+
+M1: n1 = 30, e1 = .15
+M2: n2 = 5000, e2 = .25
+
+Comparing Performance of 2 algorithms
+-each learning algorithm may produce k models:
+	L1 may produce M11, M12, ...., M1k
+	L2 may produce M21, M22, ...., M2k
+-if models are generated on the same test sets D1,D2,
+....,Dk (e.g., via cross-validation)
+	for  each set: compute d_j = e1j - e2j the jth difference
+
+	dj has mean d and variance sig_t
+				1
+	sigt^2 = _______ SUM_j..k (dbar - dj)^2
+			   k-1
+	    ^
+		|
+		-now we can bound to get a better idea about how the accurance varies
+					1
+	d_t = dbar +- ________ *t_( 1-alpha, k-1) * sigt
+				   sqrt(k)
+
+	t(95%,k=10) = 2.26
+
+Comparing Performance of 2 algorithms
+-what about the fact that each model is computed on the same dataset?
+-even if accuracies are similar, what if the errors are on different instances in the data?
+-always a good idea to check the confusions b.w. the classifiers:
+
+	Count 				Model M2
+						Incorrect 		Correct
+			
+			incorrect 		a 				b
+
+Model 		
+M1 			correct 		c 				d
+
+-------------------------------
+	Prob. 				C2
+						Incorrect(0) 	Correct(1)
+			
+		incorrect(0) 		.04 			.16
+
+ 		
+C1 		correct (1)			.16 			.64
 
 
+	
+--------------------------------
+	Prob. 				 C2
+						Incorrect(0) 	Correct(1)
+			
+		incorrect(0) 		.18 			.02
 
+ 		
+C1 		correct(1)	 		.02 			.78
 
+its not ok to compare their accuracies 
 
+Before Moving on...
+-Is there any reason to prefer one learning method over another, if we are only interested in how the algorithm generalizes?
 
+-should any one algorithm be superior to another in all situations?
+	
+	No, it depends on the data you have
+	-no, there is no free lunch.. (there is always a trade off)
+
+-------------------------------------------------------
+
+Data Mining Lecture 14 Notes
 
 
 

@@ -1233,25 +1233,152 @@ RC4
 
 -------------------------------------------------------
 
-Data and Network Security Lecture 10 Notes
+Data and Network Security Lecture 11 Notes
+
+Current Events
+
+Lenovo is shipping computers with the certificate and private key embedded in code
+-Super Phish
+
+Kerberos 
+-authentication scheme
+-designed for LANs
+-uses symmetric key encryption
 
 
+Needham-Schroeder Protocol
+-Original third-party key distribution protocol
+-for session b.w. A and B
+-Vulnerable to Attacker
+	-only works if key is compromised
+    -Initial Message from A to B captured in previous instance
+    -node who will receive packet may not know that it is already used
+    -just add a timestamp to stop
 
+Key Distribution scenario
+-2 parties want to authenticate e.o.
+-once they authenticate they can share a key for the session to create secure channel
+-Uses Key Distribution Center
+-KDC has a shared key with every node in system
+-A says I want to talk to B to KDC.  by sending
+	-ID A, ID B and Nonce
+	-includes a nonce to allow A to keep track of message and include time
+-KDC responds to A with 
+	-a session key K_s and ID of A and B and a nonce all encrypted using shared key b.w. KDC and A
+	-Same session key to be used b.w. A and B and the ID A all encrypted using Secret key b.w. B and KDC
+-A forwards second part to B who can then decrypt the message and get the ID A and the session key to be used b.w. A and B
+-B sends Response to A
+	-sends a Nonce encrypted using the Session key
+-A responds with a function of the Nonce (like Nonce + 1) encrypted with the session key they share
+-now they are both authenticated
 
+Kerberos
+-in security, Kerberos is an authentication system based on symmetric key crypto
+	-originated at MIT
+	-based on work by Needham and Schroeder
+	-relies on trusted third party like KDC
 
+Motivation for Kerberos
+-authentication using public keys
+	-N users -> N key pairs
+-authentication using symmetric keys
+	-N users require about N^2
+-symmetric key case does not scale!
+-Kerberos based on symmetric keys but only requires N keys for N users
+	-but must rely on TTP (central node)
+	-advantage is that no PKI is required
 
+Kerberos KDC
+-Kerberos Key Distribution Center or KDC
+	-Acts as a TTP
+	-TTP must not be compromised
+-KDC shares symmetric key K_A with Alice, key K_B with Bob, key K_C with Carol, etc.
+	-Master key K_KDC known only to KDC
+	-KDC enables authentication and session keys
+	-Keys for confidentiality and integrity
+	-in practice, the crypto algorithm used is DES (old!)
 
+Kerberos Tickets
+-KDC issue a ticket containing info needed to access a network resource
+-KDC also issues ticket-granting tickets or TGTs that are used to obtain tickets
+-Each TGT contains
+	-Session Key
+	-User's ID
+	-Expiration time
+-every TGT is encrypted with KKDC
+	-TGT can only be read by the KDC
 
+User comes to work station
+-connected to Ticket Granting Server, normal Server you are trying to access, and Authentication Server
 
+Kerberized Login
+-Alice enters her password
+-Alice's workstation
+	-Derives K_A from Alice's password
+	-Uses K_A to get TGT for Alice from the KDC
+-Alice can then use her TGT (credentials) to securely access network resources - workstation sends request to KDC with public information on Alice
+-KDC responds with Session Key S_A and TGT that is all encrypted with K_A
+	-not necessary to encrypt TGT b.c. already encrypted, but they do it anyway
+-plus: security is transparent to Alice
+-Minus: KDC must be secure -- its trusted!
 
+Kerberized Login again
+-Key KA derived from Alice's password using an agreed upon function (agreed on by KDC and workstation) located on workstation
+-Workstation sends request for TGT to KDC
+-KDC creates session key S_A and TGT and sends to workstation encrypted using K_A
+-Workstation decrypts S_A, TGT, forgets K_A
+-TGT = ID_A, S_A, and its encrypted using K_KDC
 
+Alice Requests Ticket to Bob
+-REQUEST = (TGT, authenticator) where
+	authenticator = E(timestamp, S_A)
+-REPLY = E("Bob", K_AB, ticket to Bob, S_A)
+-ticket to Bob = E("Alice",K_AB,K_B)
+-KDC gets S_A from TGT to verify timestamp
 
+Alice uses ticket to Bob
+-Alice sends (ticket to Bob, authenticator)
+	-ticket to bob = E("Alice",K_AB,K_B)
+	-authenticator = E(timestamp, K_AB)
+-Bob responds with timestamp+1 encrypted with K_AB
+	-Bob had to first decrypt "ticket to Bob" to get K_AB which he then uses to verify timestamp
 
+Nonce uses a 3 way handshake
+	-initial nonce
+	-response with nonce +1
+	-final response saying authenticated
+Timestamp
+	-Timestamp encrypted with K_AB
+	-acts like a nonce known to both sides
+	-Note: time is a security-critical parameter
 
+Kerberos Alternatives?
+-could have Alice's workstation remember password and use taht for authentication
+	-then no KDC required
+	-but hard to protect password on workstation
+	-scaling problem
+-could have KDC remember session key instead of putting it in a TGT
+	-then no need for TGT's
+	-but stateless KDC is a big feature of Kerberos
 
+Kerberos Realms
+-Kerberos environment consists of
+	-Kerberos server
+	-number of clients, all registered with server
+	-application servers, sharing keys with server
+-realm typically a single administrative domain
+-in case of multiple realms, their Kerberos servers must share keys and trust
 
+------------------------------------------------------
 
+Data and Network Security Lecture 12 Notes
 
+Current Events 
+-Uber has many compromised drivers information
+
+------------------------------------------------------
+
+Data and Network Security Lecture 13 Notes
 
 
 
