@@ -1380,6 +1380,141 @@ Current Events
 
 Data and Network Security Lecture 13 Notes
 
+HW2
+
+Design an encryption system using hash
+-could use key and then generate a hash out of it
+-could then be used as a one time pad
+
+plaintext XOR 1 time pad
+
+1 time pad made with hash and encryption key
+-for each 128 bits-> could hash the hash again
+-as long as receiver knows key then they can recreate the 1 time pad
+
+
+Current Events
+
+-federal aviation and cyber sec of airplanes
+	-flight logs, traffic, weather, 
+	-long flights make it real easy to break into some of the systems
+
+-new attack on SSL called FREAK that gives people access to keys for EC2 in 7 hours
+
+-attacks where you force OS to use a worse encryption scheme and then attack that lower level
+
+target attack
+-put malware in all Point of Sale devices and skimmed memory for information on credit cards
+
+What is PKI ( public key infra)
+-pervasive security infrastructure whose services are implemented and delivered using public-key concepts and techniques
+	-secure sign-on
+	-end-user transparency
+	-comprehensive security
+
+Business Drivers
+-cost savings
+-inter operability
+-uniformity
+-potential for validation/testing
+-choice of provider
+
+Components and services
+-certification authority
+- certification repository
+- certification revocation
+-key backup and recovery
+-automatic key update
+-key history
+-cross-certification
+-support for non-repudiation
+-time stamping
+
+Certificates
+-certificates vs signature
+-types of certificates
+	-X.509(v1,v2,v3)
+	-Simple public key infra (SPKI) certificates
+	-PGP certificates
+	-attribute certificates
+
+Public key Certificates
+-certificates allow key exchange without real-time access to public-key authority
+-a certificate binds identity to public key
+	-usually with other info such as period of validity, rights of use, etc.
+-with all contents signed by a trusted Public-key or CA
+-can be verified by anyone who knows the public-key authority's public-key
+
+-A submits public key it generated of A to CA
+-CA responds with a certificate signed using CAs private key (C_A) including- timestamp, ID of A, and the pub key A submitted
+-B submits its own key to CA using same process
+-when A wants to talk to B it sends C_A to B and when B wants to talk to A it sends C_B to A
+
+Certificate Format
+-version number
+-serial number
+-signature algorithm identifier
+-issuer name
+-period of validity
+-subject name
+-subjects public key info
+-issuer unique ID
+-subject Unique ID
+-extensions
+-signature
+---> all encrypted using CAs private key
+
+Obtaining a certificate
+-any user with access to a CA can get any certificate from it
+-only the CA can modify a certificate
+-because cannot be forged, certificates can be placed in a public directory
+
+Certificate Path Processing
+-eventual objective is to determine whether the key in a given certificate can be trusted
+	-path construction - aggregation of certificates to form a complete path
+	-path validation - validating each certificate in the path
+Target certificate is trusted only if every certificate in the path are trustworthy
+
+-you validate the certificate coming form someone using your CA path
+
+-can have two CAs mutually authenticate
+
+Certificate Revocation
+-certificates have a period of validity
+-may need to revoke before expiry
+	-user's private key is compromised
+	-user is no longer certified by this CA
+	-CA's certificate is compromised
+-CA's maintain list of revoked certificates
+	-the Certificate Revocation List (CRL)
+-users should check certificates with CA's CRL
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 14 Notes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
