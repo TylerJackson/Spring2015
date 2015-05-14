@@ -1,0 +1,1 @@
+This is an ATM with a standard use mode and a maintenance mode.  Standard mode acts like a normal ATM more or less, while the maintenance allows the entire ATM to be opened in order to access the internals.  The goal of this exploit is to open the ATM.

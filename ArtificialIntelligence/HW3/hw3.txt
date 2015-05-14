@@ -1,0 +1,54 @@
+;; Dribble of #<IO TERMINAL-STREAM> started on 2015-03-27 04:51:56.
+#<OUTPUT BUFFERED FILE-STREAM CHARACTER #P"hw3.txt">
+[11]> (load "hw3.lisp")
+;; Loading file hw3.lisp ...
+;; Loaded file hw3.lisp
+T
+[12]> (GCD_E 3 10)
+1
+[13]> (GCD_E 110 30)
+10
+[14]> (GCD_E 2132 430)
+2
+[15]> (GCD_D 3 10)
+1
+[16]> (GCD_D 110 30)
+10
+[17]> (GCD_D 2132 430)
+2
+[18]> (GCD 3 10)
+1
+[19]> (GCD 110 30)
+10
+[20]> (GCD 2132 430)
+2
+[21]> (isPrime 10)
+NIL
+[22]> (isPrime 17)
+T
+[23]> (isPrime 33)
+NIL
+[24]> (isPrime 31)
+T
+[25]> (isPalindrome '(a b c))
+NIL
+[26]> (isPalindrome '(a b b c))
+NIL
+[27]> (isPalindrome '(a b b c b b a))
+T
+[28]> (isPalindrome '(a))
+T
+[29]> (isPalindrome '(a b b a))
+T
+[30]> (traverseTree '(1 (2 (4 () ()) (5 () ())) (3 (6 (7 () (8 () ())) ()) ())) "pre")
+(1 2 4 5 3 6 7 8)
+[31]> (traverseTree '(1 (2 (4 () ()) (5 () ())) (3 (6 (7 () (8 () ())) ()) ())) "post")
+(4 5 2 8 7 6 3 1)
+[32]> (traverseTree '(1 (2 (4 () ()) (5 () ())) (3 (6 (7 () (8 () ())) ()) ())) "in")
+(4 2 5 1 7 8 6 3)
+[33]> (traverseTree '(1 (2 (4 () ()) (5 () ())) (3 (6 (7 () (8 () ())) ()) ())) "invalidinput")
+"Invalid traverse type"
+[34]> (insertionSort '(5 3 4 3 3 7 2 5))
+(2 3 3 3 4 5 5 7)
+[35]> (dribble)
+;; Dribble of #<IO TERMINAL-STREAM> finished on 2015-03-27 04:57:18.

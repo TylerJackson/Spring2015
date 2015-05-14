@@ -1,0 +1,3 @@
+compile with g++ -g -fno-stack-protector -o cabc.out
+
+The object is to get free cable by exploiting the buffer overflow.  There are no other stipulations.

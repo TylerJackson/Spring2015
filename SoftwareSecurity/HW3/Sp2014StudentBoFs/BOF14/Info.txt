@@ -1,0 +1,3 @@
+The purpose of this program is to make an account, in which you have $1,000,00.00. You enter your name and your PIN. Once the program identifies you, you will have access to the money
+
+The purpose of this exploit is to be able to log to that account even if its not you who is accessing it. That way, you'll get free money.

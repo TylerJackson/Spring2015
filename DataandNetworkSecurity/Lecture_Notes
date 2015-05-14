@@ -1493,6 +1493,1199 @@ Certificate Revocation
 
 Data and Network Security Lecture 14 Notes
 
+-CIA and other gov't groups tried to infect Xcode
+
+midterm is on April 1st
+
+Layers of security
+
+HTTP FTP SMTP 				HTTP FTP SMTP
+TCP 						SSL or TLS
+IP/IPSec 					TCP
+ 							IP
+(a) network level           (b) Transport Level
+
+	S/MIME PGP SET
+Kerberos SMTP HTTP
+UPD TCP
+IP
+
+(c) application level
+
+Socket Layer
+-socket layer lives b.w. application and transport layers
+-SSL usually lies b.w. HTTP and TCP
+
+				Application - user
+socket "layer"->			
+				transport ---- OS
+				network   ---- OS
+				link      ---- NIC
+				physical  ---- NIC
+
+
+What is SSL?
+-SSL is the protocol used for most secure transactions over the internet
+-you want to buy a book at amazon.com...
+	-you want to be sure you are dealing with Amazon (authentication)
+	-your credit card information must be protected in transit (confidentiality and/or integrity)
+	-as long as you have money, Amazon doesn't care who you are (authentication need not be mutual)
+-usually client authenticates the server - they don't care who you are as long as you pay
+
+SSL History
+-evolved through
+	-unrelased v1 (netscape)
+	-flawed-but-useful v2
+	-version 3 from scratch
+	-standard TLS 1.0
+		-SSL 3.0 with minor tweaks, hence version field is 3.1
+-Defined in RFC2246
+-Open source implementation
+	- openssl.org
+-no guarantee of sec at client or server, just on pipe
+
+difference b.w. ssl or vpn
+-ssl is right below application
+	-it only protects that one connection
+-vpn is in ip layer
+	-everything is protected
+
+
+Overview
+-establish a session
+ 	-agrees on algorithms
+ 	-share secrets
+ 	-perform authentication
+-transfer application data
+	-ensure privacy and integrity
+
+-ssl is like pki
+
+
+SSL architecture
+-SSL Connection
+	-transient, peer-to-peer, communications link
+	-associated with one SSL session
+-SSL session
+	-an association b.w. client and server
+	-created by the handshake protocol
+	-define a set of cryptographic parameters
+	-may be shared by multiple SSL connections
+-record protocol to transfer application and TLS information
+-a session is established using a handshake protocol
+
+handshae protocol | change cipher spec | alert protocol
+
+		TLS 		RECORD 			PROTOCOL
+
+-establish conneciton, handshake, record layer
+
+Handshake
+-negotiate cipher-suite algorithms
+	-symmetric cipher to use
+	-key exchange method
+	-message digest function
+-establish and share master secret
+-optionally authenticate server and/or client
+
+SSL Messages
+-client initiates connection (Hello)
+-server sends back protocols it supports and cert.
+	-the cert has the server's public key authenticated by a CA root
+-when the client authenticates, all it can say is that this is Amazon's certificate.  No saying if Amazon was actually the one to send it
+	-okay b.c. without private key of Amazon it doesn't matter
+-then they exchange a private key to send data with
+
+-compromise certificate is only way MiM attack could happen
+
+-server sends a chain with a CA root
+
+-can get numerous keys from 1 certificate by subsequent hashing
+
+If client sends A,B,C it hashes everything signs it and sends packet
+
+client hello
+-uses time of day and pure random number, so no replay attack
+
+-when you have session ID already a lot of the 10 steps get skipped
+
+-compress and then encrypt
+	-encryption takes longer so compressing it will speed it up
+	-also encryption schemes are supposed to return a random pattern, which can't be compressed
+
+cipher suite
+-public key scheme
+-secret key scheme
+-hash scheme
+
+Server hello
+-version, random #, session ID, cipher suite, compression method
+
+Validating a certificate
+-must recognize accepted CA in certificate chain
+-must verify that certificate has not been revoked
+
+Client Key Exchange
+-premaster secret
+	-created by the client used to "seed" the calculation of encryption parameters
+	-usually 2 bytes (SSL)
+
+Master secret is generated from Certificate
+
+-premaster secret, client generated #, server generated #
+	-these values are usued for SSL connections
+
+-line up these values and add ASCII A
+	-put it through SHA and then append to premaster secret and run it through MD5
+	-makes up first part of master secret
+-repeat this with BB and CCC
+-these make up the three parts left to right of master secret
+-both client and server go through same process to get mastersecret
+
+-could repeat a second time to get second key
+
+-from master secret you generate hashses and you get all needed keys
+	-use different keys for everything as added protection
+
+SSL Record Protocol Services
+-Message integrity
+	-using a MAC with shared secret key
+	-similar to HMAC
+-confidentiality
+	-using symmetric encryption with a shared secret key defined by handshake protocol
+
+-more expensive to send data with public key
+
+SSL Record Protocol
+-chop data into smaller pieces
+-compress it
+-add a MAC 	-> adding a hash 
+
+Record Header
+-3 pieces of information
+	-content type
+		-applicaiton data
+		-alert
+		-handhskae
+		--change-cipher-spec
+
+Alerts and closure
+	-conveys SSL-related alerts to peer entity
+	-severity
+	    -warning or fatal
+	-specific alert
+		-fatal: unexpected message, bad record mac, decompression failure, handshake failure, illegal parameter
+		-warning: close notify, no certificate, bad certificate, unsupported certificate, certificate revoked, certificate expired, certitificate unknown
+	-compressed & encrypted like all SSL data
+
+change cipher spec
+-switch to newly negotiated algorithms and key material
+-finished
+	-first message encrypted with new crypto parameters
+	-digest of negotiated master secret, the ensemble of handshake messages, sender constant 
+	-HMAC approach of nested hashing
+
+Session vs. connection
+-ssl session is established as shown on previous slides
+-ssl designed for use with http
+-one session can be used for multiple connections
+	-each connection will have their own keys, but same master secret
+-http usually opens multiple simultaneous connections
+
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 15 Notes
+
+
+-passwords are stored in hash, not plaintext
+-hash
+	-fixed size and efficient
+-digital signature
+	-you hash, and then sign it
+	-more efficient
+
+-biggest difference b.w. password and key is computer generates key
+
+-computer can try a 32 bit key in 1 second
+
+-2 bit key
+	- 00
+      01
+      10 
+      11
+-3 bit key
+		000
+		001
+		010
+		011
+		100
+		101
+		110
+		111
+-4 bit key
+	requires 16 times work 
+
+-6 bits
+	-requires 64 times work
+
+27 bits
+- 2^25 = 32 million
+
+if 32 bit key takes 1 second
+64 bit takes 2^32 seconds
+	= 128 years
+
+-64 to 128 bits
+	-1 sec = 32 bits
+		128 bits = 2^96 seconds
+
+
+16 million words
+
+-hash to 256 bits
+
+needs 2^24 amount of work
+
+2 1
+4 2
+8 3 
+.
+.
+1000 10
+1000000 20
+
+so 16,000,000 = 2^4* 2^20 = 2^24
+
+Diffie-Hellman key exchange
+- session based pki
+-first thing you do is pick a #
+
+-want it to be random
+	-could get 11 or 12 bits of randomness from hashing time
+	-best is nuclear decay and geigan counter
+	-lava lamp is random
+	-to get a large amount of bits from small random source you can just repeat the random bits
+
+-measure for randomness in a bit is entropy
+
+
+
+
+have a number with 32 bits of security and need 256 bits
+-go back to how you picked the 32 bits (the random source) and do it enough times to get 256 bits (8 times)
+
+Entropy of these 2 bits
+10
+
+P(1)* log(1/P(1)) + P(0)*log(1/P(0))
+
+50 50 of each = 1 bit of entropy
+40 60 = .97 bits
+30 70
+20 80
+0  100 = 0 bits
+
+
+TTTT_TTTTT
+
+-if this was a heads it would add more randomness to the string (it is expected to happen less)
+-would add to the entropy of the list
+-if it happens less often it happens less often, and gives more bits of entropy or information
+
+
+computers have enabled authentication and non-repudiation
+-also sharing secret keys
+
+Quantum Computing
+-way of allowing you to predict what a particle will be
+-have bits that are 1, 0 and qubits that are a 1 and 0 at the same time (superposition)
+-when you observe the particle it changes position
+
+-2 slit experiment
+	-shoot electrons through 2 slits
+	-functions like 2 pebbles dropped in a pond would
+	-interference pattern from the ripples
+	- even if only 1 electron is being shot, it functions as if it went through both slots because still interference pattern
+	-if you put a camera behind it, you no longer have interference pattern, it goes back to functioning if only 1 electron was shot
+
+-D-wave
+	-512 qubit computer
+	-make use of superposition
+
+-factoring normal is exponential, but with quantum computing it becomes quadratic 
+	O(n^2)
+
+-if it goes up by a factor of 5, the computation only goes up by a factor of 25
+
+-if you have something you want to keep secret, don't put it in electronic form
+
+-makes stuff like RSA obsolete because we will be able to do the factoring of some of these algorithms
+
+-for the future
+	-they've hypothesized and this has been done in lab that we can tell if someone is listening
+
+
+-you use quantum channel to exchange a 1 time pad
+	-you can only use them once so you have to do it once for every message
+-verify no one is listening by sacrificing bits from quantum channel by verifying you and sender have same bits over clear channel
+-lose 50 percent of bits so don't send messages over quantum channel
+
+-if bits over quantum channel are totally random then 1 bit of entropy for each bit
+-no information content comes through 
+
+
+
+-------------------------------------------------------
+
+
+Data and Network Security Lecture 16 Notes
+
+-presentations should be 25-30 minutes
+-just do a reasonable job
+
+-could either record and send video link
+-or make presentation and add talking points
+
+TCP is streaming
+
+SSL record protocol
+-they don't want for whole tcp session to end to determine if it was protected
+
+-in ssl every record during session is protected
+-if attacker is in between
+	-he can capture the packets and reorder or delete records if he wanted
+
+-every record has confidentiality and integrity so how do you prevent reordering
+	-you add a sequence #
+	-used in SSL to prevent reordering
+
+-MAC is created from 
+	K	 | seq.#	|	 Headers | Data
+-hashed into MAC (HMAC)
+
+-data and MAC are encrypted 
+-reciever will generate MAC and if it has changed then integrity violated
+-so headers are paintext, but protected with MAC
+
+-could still do replay if you take all packets from a session
+	-instead you use a nonce to verify start of new session
+
+Key Exchange
+-client says hi
+-servers responds hi with his public key signed by CA
+-client respond with premaster key
+-they both generate master key from premaster key based on agreed upon algorithms
+
+-secret keys are regenerated using premaster key
+
+-all relies on certificate form CA
+
+
+RSA
+-PKI scheme to exchange keys
+
+diffie-hellman
+-PKI scheme to exchange keys
+
+	A 					B
+	g^a 				g^b
+
+-everyone knows P
+
+A creates a number g^a and publishes that
+B creates a number g^b and publishes that
+
+a and b are secret
+-a sends g^a
+-b sends g^b
+
+-a calcualtes g^ba and b calcualtes g^ab
+-so now they have a shared large prime number without knowing each others secret keys
+-can get a new secret anytime you want by changing #
+-can just say ill take first 128 bits of g^ab
+
+diffie-hellman has MiM attack vulnerability
+
+A -> g^a - C makes g^ac and sends g^c to A
+-so A thinks hes talking to B
+
+B -> g^b - C makes g^bc and sends g^c to B
+
+-now A and B think they have authenticated correctly
+-anonymous diffie-hellman
+-need to authenticate each other using a certificate
+
+still use diffie-hellman so that you aren't transmitting secret key
+
+-ephemeral key
+	-don't need public key for anything but authentication
+
+most time consuming part in handshake
+-public key cryptography
+-want to only have to do this once per session
+-SSL has an efficient protocol for opening new connections given an existing session
+-will have a session ID cache somewhere
+-now in hello message, the client will provide a session ID and the server will go into its cache and provide a session ID
+-handshake finishes using final message
+	-hash all messages received thus far and compare
+
+-IP gives not much value
+-not included in auth process
+-if client doesn't have same contents then client can not connect
+
+SSL
+-2-10 times slower than TCP
+	-handshake phase
+		-client does public key encryption
+		-server does private-key encryption (still public-key cryptography)
+		-usually clients have to wait on servers to finish
+
+SSL attacks
+-certificate attacks
+-timing attack
+
+Timing Attack
+-get certificate from server and send secret to server encrypted with servers public key
+-can look at how long it takes server to decrypt and then you can determine what the bits are
+-although lots of noise in network delaying things
+-can do multiple attacks
+-good attack because linear
+
+ssh created b.c. of attack on rlogin
+-2 machines
+-connect through secure tunnel, and then authenticate 
+
+
+
+-------------------------------------------------------
+
+
+Data and Network Security Lecture 18 Notes
+
+- review for exam
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 19 Notes
+- EXAM
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 20 Notes
+
+Test
+-lowest 40
+-highest 93
+-average 73.69
+-median 77
+
+-each small problem worth 8 points
+
+Reason for using OFB
+-feedback happens before cipher
+	-error will not propagate
+
+If you use a hash chain use a backward chain 
+-could keep only 1 hash, but each time the hash changes
+	-use n-1 for each hash
+
+Diffie-Hellman
+	-has M in Middle attack
+	-authentication fixes that
+	-can't be used for encryption
+
+various scenarios for a certificate to go bad
+	-key is compromised
+	-they have a revocation list
+
+SSL
+	-want security on top of TCP
+	-with SSL records you can delete insert, and change order
+	-when you make the MAC inside the record there is a sequence # that doesn't get transmitted with header
+	-need MAC and sequence number for full credit
+
+N=33, e=3
+p=11, q=3
+phi(N) = 20
+d = 7
+
+M = 25 	M^e mod n = 16
+
+
+Why is it a bad idea to use the same RSA key pair for both encryption and decryption
+-if somebody gives you a message to sign, they could give you a cipher 
+	-by you signing it you would have been decrypting it actually
+
+Timestamps for authentication
+-prevent replay
+	-could also be prevented with nonces
+-will reduce the number of messages going back and forth
+-disadvantage
+	-both parties have to have the same time
+
+Kerberos Login why is TGT sent to user and not just log you in
+	-keeps it stateless
+		-they don't have to keep track of everything
+
+DES
+	-first the attacker reduces the strength of the encryption
+		-use hash to make sure all the messages match
+	-second they don't even support the encryption
+		-the connection would just be terminated
+
+No Authentication
+-M in the Middle attack
+
+Final is a little comprehensive
+-70-30 break between second part and first part
+
+--end of post test review
+
+IPSEC and SSL
+-IPSec lives at the network layer
+-IPSec is transparent to applciations
+-users don't have to worry about it
+
+application
+			<---SSL
+transport
+network 	<---IPSec
+link
+physical
+
+IPSec
+-general IP security Mechanisms
+-provides 
+	-authenticaiton
+	-confidentiality
+	-key management
+-applicable to use over LANs, across public and private WANs and for the internet
+
+Benefits of IPSec
+-in a firewarll/router provides strong security to all traffic crossing the perimeter
+-is below transport layer, hence transparent to applications
+-can be transparent to end users
+-can provide security for individual users
+-secures routing architecture
+
+IPSec and Complexity
+-IPSec is very complex
+-over-engineered
+	-lots of generally useless features
+-flawed
+	-some serious security flaws
+-interoperability is serious challenge
+	-defeats the purpose of having a standard
+	-standards are there, but in spite of that there is enough variability that it is still not interoperable
+
+IKE and ESP/AH
+-2 parts to IPSec
+-IKE internet key exchange
+	-secure key exchange b.w. 2 parties
+	-mutual auth
+	-two pahses
+-ESP/AH
+	-ESP:Encapsuating security payload --for encryption and/or integrity of IP packets
+	-AH: authentication header -- integrity only
+
+IKE
+-2 phases
+	-phase 1 - IKE security association (SA)
+	-phase 2 - AH/ESP security association
+-phase 1 is comparable to SSL session
+-phase 2 is comparable to SSL connection
+-not an obvious need for 2 phases in IKE
+-if multiple Phase 2s do not occur, then it is more expensive to have 2 phases
+
+IKE Phase 1
+-four differnet key options
+	-public key encryption (original version)
+	-public key encrytption (improved version)
+	-public key signature
+	-symmetric key
+-for each of these, 2 different modes
+	-main mode
+	-aggressive mode
+-there are 8 versions of IKE phase 1
+
+-these are all different ways of using Diffie-Hellman
+
+IKE Phase 1
+-well discuss 6 of the 8 variants
+-why public key encryption and public key signatures?
+	-always know your own private key
+	-may not (initially) know other side's public key
+
+IKE Phase 1
+-uses ephemeral Diffie-Hellman to establish session key
+	-achieves perfect forward secrecy (PFS)
+	-once encrypted if someone gets the cipher it won't matter because the secrets are destroyed
+-Let a be Alice's Diffe-Hellman exponent
+-Let b be Bob's Diffie-Hellman exponent
+-Let g be generator and p prime
+-Recall p and g are public
+
+Digital Signature: Main Mode
+-Alice sends IC and CP
+-Bob responds IC,RC,CS 
+-Alice responds IC, RC, g^a mod p, R_a
+-Bob responds IC, RC, g^b mod p, R_b
+-Alice responds IC,RC,E("Alice",proof_A,K)
+-Bob responds IC,RC,E("Bob",proof_B,K)
+-CP = crypto proposed
+-CS = crypto selected
+-IC = initiator cookie
+-RC = responder cookie
+-RA,RB = different, random numbers for nonces
+-K = h(IC,RC,g^(ab) mod p, R_a,R_b)
+-SKEYID = h(R_a,R_b,g^(ab) mod p)
+-proof_A = [h(SKEYID,g^a,g^b,IC,RC,CP,"Alice")]_Alice
+-because of proof_A and proof_B prevents man in the middle attack
+	-packet will just be discarded
+-K available to only Alice, Bob and potentially man in the middle attacker
+	-however even if attacker has K, the proof_A and proof_B would not be there
+
+Public key signature (aggressive mode)
+-Alice sends IC, "Alice",g^a mod p, R_A,CP
+-Bob responds IC,RC,"Bob",R_B,g^b mod p, CS, proof_B
+-Alice responds IC,RC,proof_A
+-main difference from main mode
+	-not trying to protect identities
+	-cannot negotiate p and g
+-anonynimity not provided so only 3 steps necessary
+
+Symmetric key (main mode)
+-Alice sends IC,CP
+-Bob sends IC,RC,CS
+-Alice sends IC,RC,g^a mod p, R_A
+-Bob sends IC,RC,g^b mod p, R_B
+-Alice sends IC, RC, E("Alice",proof_A,K)
+-Bob sends IC,RC,E("Bob",proof_B,K)
+-same as signature mode except
+	-K_(AB) = symmetric key shared in advance
+	-K = h(IC,RC,g^(ab)mod p, R_A,R_B,K_(AB))
+	-SKEYID = h(K,g^(ab) mod p)
+	-proof_A = h(SKEYID,g^a,g^b,IC,RC,CP,"Alice")
+-main difference is shared secret (private key vs public key encryption)
+-exchanged K is dependent on K_(AB)
+-not useful, b.c. designed to prevent knowing ID of sender, but in order to figure out K_(AB) and decrypt you need the ID of the sender
+
+Symmetric Key (Aggressive Mode)
+-Alice sends IC, "Alice",g^a mod p, R_A,CP
+-Bob responds with IC,RC,"Bob",R_B, g^b mod p, CS, proof_B
+-Alice responds with IC,RC,proof_A
+-same format as digital signature aggressive mode
+-not trying to hide identities
+-as a result does not have problems of main mode
+-but does not (pretend to) hide identities
+
+Public key encryption (main mode)
+-Aice sends IC,CP
+-Bob respodns with IC,RC,CS
+-Alice sends IC,RC,g^a mod p, {R_A}_Bob, {"Alice"}_Bob
+-Bob responds with IC,RC,g^b mode p, {R_B}_Alice,{"Bob"}_Alice
+-Alice responds with IC,RC,E(proof_A,K)
+-Bob responds with IC,RC,E(proof_B,K)
+-K = h(IC,RC,g^(ab) mod p, R_A,R_B)
+-SKEYID = h(R_A,R_B,g^(ab) mod p)
+-proof_A = h(SKEYID,g^a,g^b,IC,RC,CP,"Alice")
+
+Public Key Encryption (Aggressive mode)
+-Alice sends IC,CP,g^a mod p, {"Alice"}_Bob,{R_A}_Bob
+-Bob responds IC,RC,CS,g^b mod p, {"Bob"}_Alice, {R_B}_Alice, proof_B
+-Alice responds with IC,RC,proof_A
+-K,proof_A,proof_B computed as in main mode
+-Note that identities are hidden
+	-the only aggressive mode to hide identities
+	-then why have main mode
+
+-this lecture was about IPSec------------
+	-2 parts IKE, ESP/AH
+	-IKE has 2 phases that, like SSL, is all about establishing session securely so that you can have multiple connections
+
+IKE phase 1
+-establish secured assocation for key exchange
+-4 different encryption strategies
+	-public key encryption original, revised
+	-secret key encryption
+	-public key signature
+	-four each of these you have main and aggressive mode
+		-main mode is designed to hide the identity of sender
+			-need 6 message exchanges
+			-preferred when anonymity is important
+		-aggressive mode
+			-identity is put out there
+			-only need 3 exchanges
+			-used when speed is important
+	-for the private key modes they need to know who the sender is to be able to use the correct shared private key
+		- weakness in the system
+
+IKE phase 2 
+-establish secured association for IPSec itself or rather the connection
+
+-------------------------------------------------------
+
+Data Network and Security Lecture 21 Notes
+
+Security News
+-Singtell bought a company for 810 million
+
+new Security Directives from White House
+
+Spear Fishing
+-more educated phishing
+
+Even if email looks legit, don't click on it
+
+public key
+- you have to get their public key where as in signature you already have your private
+
+
+main mode - hide id's
+
+plausible deniability
+-mode where repudiation
+
+IKE Phase 1 Summary
+-Result of IKE Phase 1 is 
+	-mutual auth
+	-shared symmetric key
+	-IKE security Association (agreement on what kind of encryption schemes)
+	-pahse 1 is expensibve (in public key and /or main mode cases)
+	-developers of IKE thought it would be used for lots of things not just IPSec
+	-over engineered
+
+IKE Phase 2
+-pahse 1 establishses IKE SA
+-phase 2 establishes IPSec SA
+-Comparison to SSL
+	-SSL session is comparable to IKE phase 1
+	-SSL connections are like IKE phase 2
+-IKE could be used for lots of things
+-but in practice its not
+
+IKE Phase 2
+-Alice sends IC, RC,CP,E(hash1, SA, R_A,K)
+-Bob sends IC,RC,CS,E(hash2,SA,R_B,K)
+-Alice sends IC,RC,E(hash3,K)
+-key K, IC, RC, and SA known from phase 1
+-Proposal CP includes ESP and/or AH
+-Hashes 1,2,3 depend on SKEYID, SA,R_A and R_B
+-keys derived from KEYMAT = h(SKEYID,R_A,R_B,junk)
+-Recall SKEYID depends on phase 1 key method
+-Optional PFS (ephemeral Diffie-Hellman exchange)
+
+IPSec
+-after IKE phase 1, we have an IKE SA
+-after IKE phase 2, we have an IPSec SA
+-both sides have a shared symmetric key
+
+IP REview
+n IP datagram is of the form
+
+	IP header | data
+
+where IP header is
+
+version | IHL | Type of Service | Total Length
+Identification					| |f|f|fragment offset
+TTL 	| Protocol 				| Header checksum
+Source IP address 				
+Destination IP address
+Options
+
+IP and TCP
+-IP encapsulates TCP
+-TCP encapuslates HTTP
+
+IPheader 	| data
+IPheader 	| TCP hdr | http header| app data
+
+n IP data includes TCP header, etc. 
+
+Architecture and terminology
+-host or gateway implementation
+-tunnel vs transport mode
+-encapsulating security payload (ESP)
+-authentication header (AH)
+-security association (SA)
+	-security paremeter index (SPI)
+	-security policy database (SPD)
+	-SA database (SAD)
+
+IPSec placement
+-host implementation
+	-OS integrated modify the IP code
+-bump-in-the-stack
+	-layer b.w. data link and IP
+-bump-in-the-wire
+	-IPSec outside host, ina  router/firewall
+	-least intrusive
+
+IPSec Transport Mode
+
+A sends encrypted IP header with ESP/AH header and data
+
+-use one of these keys and make a MAC
+-then take these fields and double check they have not changed
+
+IPSec Transport Mode
+-IPSec Transport Mode
+
+IPHeader 	| data
+IP header |ESP/AH | data
+-transport mode designed for host-to-host
+-transport mode is efficient
+	-adds minimal amount of extra header
+-the original header remains
+	-passive attacker can see who is talking
+
+IPSec Tunnel Mode
+-A unencrypted to gateway- encrypted between gateways- unencrypted from last gatweay to B
+-encrypted tunnel
+-listener can only tell that 2 firewalls are communicating
+
+New IPHEADER | AH or ESP hdr | orig. IP header|TCP|Data	
+Comparison of IPSec modes
+-transport mode
+	-takes IPheader and data packet and embeds ESP/AH in between
+-tunnel mode
+	-takes IPheader and data packet and prepends a new IP hdr and ESP/AH to the front of IP header and data
+	-this new header gets stripped at the end
+
+Comparison of IPSec modes
+-transport mode
+	-host-to-host
+-tunnel mode
+	-firewall-to-firewall
+-transport mode not necessary
+-transport mode is more efficient
+
+AH vs. ESP
+-AH
+	-authentication header
+	-integrity only (no confidentiality)
+	-integrity protect everything beyond IP header and some fields of header (why not all fields)
+-ESP
+	-encapsulating security payload
+	-integrity and confidentiality
+	-protects everything beyond IP header
+	-integrity only by using NULL encryption
+
+Why does AH exist?
+-cannoy encrypt IP header
+	-routers must look at IP header
+	-IP addresses, TTL , etc.
+	-IP header exists to route packets
+-AH protects immutable fields in IP header
+	-cannot integrity protect all header fields
+	-TTL for example must change
+-ESP does not protect IP header at all
+-ESP encryptes everything beyond the IP header (if non-null encryption)
+-if ESP encrypted, firewall cannot look at TCP header (e.g. port #s)
+-why not use ESP with null encryption?
+	-firewall sees ESP header, but does not know whether null encryption is used
+	-end systems know, but not firewalls
+
+
+-------------------------------------------------------
+
+Data and Network SEcurity LEcture 22 Notes
+
+Security Association- SA
+-one way relatinoship (uni-directional)
+-dtermine IPSec processing for senders
+-dtermine IPSec decoding for destination
+-SAs are not fixed! generated and customized per traffic flows (manual as well as dynamic)
+	-if no manual, no lifetime, dynamic has a lifetime
+
+Security Parameters Index - SPI
+-can be up to 32 bits large
+-the SPI allows the destination to select the correct SA under which the received packet will be processed (accoding to the agreement with the sender)
+	-the SPI is sent with the packet by the sender
+-SPI + DEST IP address + IPSec Protocol (AH or ESP) uniquely identifies a SA
+
+SA Database - SAD
+-holds parameters for each SA
+	-lifetime of this SA
+	-AH and ESP informatino
+	-tunnel or transport mode
+-every host or gateway participating in IPSec has their own SA database
+
+SA bundle
+-more than 1 SA can apply to a packet
+
+Security Policy Database - SPD
+-what traffic to protect
+-has incoming traffic been properly secured
+-Policy entries define which SA or SA bundles to be used on IP traffic
+-each host or gateway has their own SPD
+-Index into SPD by selector fields
+	-dest IP, source IP, Transport Protocol, IPSec protocol, source and destination Ports, etc. 
+
+
+SPD Entry Actions
+-Discard
+	-do not let in or out
+-Bypass
+	-outbound: do not apply IPSec
+	-inbound: do not expect IPSec
+-Protect - will point to an SA or SA bundle
+	-outbound: apply security
+	-inbound: check that security has been applied
+
+SPD protect acitno
+-if the SA does not exist
+	-outbound processing: use IKE to generate SA dynamically
+	-inbound processing: drop packet
+
+AH security
+-connectionless integrity
+	-flow/error control left to transport layer
+	-data integrity
+-authentication
+	-can "Trust" IP address source
+	-use MAC to authenticate
+-anti-replay feature
+-integrity check value
+
+Integrity Check Value - ICV
+-message authentication code (MAC) calculated over
+	-IP header field that do not change or are predictable 
+	-IPSec protocol header minus where the ICV value gores
+	-upper-level data
+-code may be truncated to first 96 bits
+
+AH header format
+
+Next header 
+(TCP/UDP) | payload length | reserved
+			SPI
+	Sequence Number
+	ICV
+
+
+AH Modes
+-Tunnel
+-Transport
+-Nested headers
+	-multiple SAs applied to same message
+	-nested tunnels
+		-if there is a tunnel from A to D, there can't be one from C to E, but there can be one b.w. B and C
+
+Processing Outbound messages
+-insert next header and SPI field 
+-Compute the sequence number field
+	-if processing < 2^32 message
+		-increment
+		-place new value in AH and SAD
+	-else
+		-change keys at wrap around if replay protection is enables
+		Else set to 1
+-if transport mode, change preceding IP header's Next Header field to AH
+-if tunnel mode, add the tunnel header
+	-recompute the header length, header checksum, etc.
+-compute authentication value
+-calculated on entire IP packet including AH header
+	-zero out all mutable fields including authenticationdata field
+	-get the key from SA
+	-HMAC-MD5-96 or HMAC-SHA-96
+	-Insert the cryptographic hash code in the AH header
+-Fragment the message
+	-IPSec processing may result in large message which will be fragmented
+		-Transport Mode
+			-source address initiator of the message
+			-total message auhtnetication b4 fragmentation
+		-tunnel mode
+			-message may have been fragmented already
+			-authenticate the fragment and further fragment
+Input processing 
+-identify the inbound SA
+	-if not found, drop the packet
+-repaly protection check
+	-drops duplicates within the window
+	-drops late arribals outside the window
+	-advances with the receipt of authenticated message
+-verify auhtentication data
+	-authentication hash computed and checked
+	-if no match, discard
+-strop off the AH header and continue IPSec processing for any remaing IPSec headers
+	-either an upper layer protocol header or a tunnel header is encountered
+
+Replay protection
+-sequence number checking
+	-anti-replay is used only if auhtentication is slected
+	-sequence number shoul dbe the first check on a packet upon looking up an SA
+	-duplicates are rejected
+			 check bitmap verify if new
+| reject 	| sliding window size >=32 | verify
+0 			n
+-sliding window vulnerable to DoS attack
+
+Encapsulated Security Policy (ESP)
+-confidentiality for upper layer protocol
+-traffic flow confidentiality
+-data origin authentication and connectionless integrity (optional)
+
+ESP Packet
+-Before Applying ESP
+IPV4-> original IP header | TCP header | Data 
+-after applying ESP
+IPV4->Outer IP hdr| ESP hdr|orig IP hdr|tcphdr 
+							<---encrypted-------------
+				   <authenticated---------------------
+|data|ESP trailer|ESP Auth
+------encrypted-->
+---authenticated->
+
+Once payload is encrypted the firewall can't look in at TCP headers or anything else
+
+Original IP header
+SPI
+Seq. #
+Payload(TCP header and data)
+		variable length
+		Padding (0-255 bytes)
+				pad length | next header
+Integrity check value
+
+
+SSL vs IPSec
+-IPSec 
+	-lives at network layer
+	-has encryption, integrity, authentication, etc.
+	-is overly complex (including serious flaws)
+-SSL 
+	-lives at socket layer (part of user space)
+	-has encryption, integrity, authentication, etc.
+	-has a simpler specification
+
+-for hw
+	-set up 2 insecure connections on web and use sniffer to look at packets
+		-you will see both our open and everything can be seen
+	-then do 1 of the connections using SSL and you will see now that only 1 of them is open
+	-then tier down your machine and connect to your machine using IPSec and you will see that both packets are protected
+	-they are at different levels
+
+SSL vs. IPSec Continued
+-IPSec implentation
+	-requires changes to O.S. but no changes to applications
+-SSL implementation
+	-requires changes to applications but no chagnes to OS
+-SSL built into web application early on (Netscape)
+-IPSec used in VPN applications (secure tunnel)
+-Reluctance to retrofit applications for SSL
+-Reluctance to use IPSec due to complexity and iteroperability	
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 23 Notes
+
+GSM System Overview
+
+monile air interface to base station - to base controller over landline to AuC
+-early forms had almost no protection
+
+Mobile phone
+-contains SIM (subsriber identity module)
+-SIM is the security module
+	-IMSI 
+	-User Key Ki (128 bits)
+	-Tamper resistant (smart card)
+	PIN activated (usually not used)
+
+
+GSM system components
+-visited network
+	-base station - one "Cell"
+	-VLR (visitor Location register) --info on all visiting mobiles currently in the network
+-home network -- "home" of the mobile
+	-HLR (home location register) -- keeps track of most recent location of mobile
+	-AuC (authentication center) -- contains IMSI/Ki
+
+GSM security Goals
+-primary design goals
+	-make GSM as secure as ordinary telephone
+	-prevent phone cloning
+-not designed to resist an active attack!
+	-at the time this seemed infeasible
+	-today such an ttack is very feasible
+-designers considered biggest threats
+	-insecure billing
+	-corruption
+	-other low-tech attacks
+
+GSM security features
+-anonymity
+	-intercepted traffic does not identify user
+	-not so important to phone company
+-authentication
+	-necessary for proper billing
+	-very important to phone company
+-confidentiality
+	-confidentiality of calls over the air interface 
+	-not important to phone company
+	-may be very important for marketing
+
+GSM: anonymity
+-IMSI used to initially identify caller
+-then TMSI (temporary mobile subscriber ID) used 
+-TMSI changed frequently
+-TMSI's encrypted when sent
+-Not a string form of anonymity
+-but probably sufficient for most users
+
+GSM: authentication
+-caller is authenticated to base station
+-auth is not mutual
+-authentication via challenge-response
+	-home network generates RAND and computes XRES = A3(Rand,Ki) where A3 is a hash 
+	-Then (RAND,XRES) sent to base station
+	-Base station sends challenge RAND to mobile
+	-Mobile's response is SRES = A3(RAND,Ki)
+	-Base station verifies SRES = XRES
+-note: Ki never leaves home network!
+
+GSM: Confidentiality
+-data encrypted with stream cipher
+-error rate estimated at about 1/1000
+	-error rate too high for a block cipher
+-encrpytion key Kc
+	-home network computes Kc = A8(RAND,Ki), where A8 is a hash
+	-then Kc sent to base station with (RAND,XRES)
+	-mobile computes Kc = A8(RAND,Ki)
+	-keystream generated from A5(Kc)
+-note: Ki never leaves home network
+
+GSM SEcurity
+1. User sends IMSI to base station 
+2. Base station forwards IMSI to home network
+3. Responds to Base station with protected triplet (RAND,XRES,Kc)
+4. Base station will respond to mobile with RAND
+5. Mobile responds to base station with SRES
+6. Base station and mobile can communicate with Encryption with Kc
+
+GSM triplets
+-authentication while roaming
+	-w.o passing the Ki
+-AuC generates (RANd,XRES,Kc) triplets
+-passes to VLR
+-usually precalculated
+-if attack on HLR then theres a problem
+
+GSM insecurity
+-hash used for A3/A8 is COMP128
+	-broken by 160,000 chosen plaintexts
+	-with SIM, can get Ki in 2 to 10 hours
+-encryption b.w. mobile and base station but no encryption from base station to base station controller
+	-often transmitted over microwave 
+-encryption algorithm A5/1
+	-broken with 2 seconds of known plaintext
+-attacks on SIM card
+	-optical fault induction - can attack SIM with a flashbulb to recover Ki
+	-paritioning attacks - using timing and power consumption, can recover Ki with only 8 adaptively chosen "plaintexts"
+-with posession of SIM, attacker can recover Ki in seconds
 
 
 
@@ -1500,10 +2693,341 @@ Data and Network Security Lecture 14 Notes
 
 
 
+-------------------------------------------------------
+
+HW 4
+-IPSec Transport Mode
+	-end to end encryption
+	-A ------- Gateway ---------- Gateway ----------B
+	 	encrypted 		encrypted  			encrypted
+	-IP HeADER | ESP/AH | data
+	-IP header doesn't change, but you add ESP/AH in b.w. header and payload
+	-data is not protected
+	-no confidentiality, but integrity
+	-they use the MAC to add authentication
+	-take several fields from header and data and form MAC and put in ESP/AH and make sure not changed
+	-trasport mode is efficient
+		-adds minimal amt. of extra header
+	-passive attacker can see A is talking to B and what they are saying, but can't change data
+
+-IPSec Tunnel Mode
+	-A ----------Gateway------------Gateway----------B
+	  unencrypted        encrypted         unencrypted
+	-attacker can just see the next hop, but can't see if A is talking to B, C, D
+	-used often for communication b.w. firewalls
+	-confidentiality, b.c. multiple hosts could be connected to same firewall
+	- New IP Header | AH or ESP header | orig. IP header | data
+	-routers use new IP header to route for the encrypted section
+	-after the encrypted section the new headers were stripped off and the original packet is restored
+	-i.e. from A to G1 orig. IP header from G1 to G2 is new IP header and from G2 to B is orig. IP header
+	-could have a nested tunnel inside this tunnel during which there would be a second new IP header and AH/ESP header on top of the other new one.  The first new one would be considered the orig. IP packet for this nested tunnel
+
+	AH
+	-auth header
+	-no confidentiality, so just use MACs for integrity
+	-payload never changes, so it is okay to use that in the MAC
+	-Can't use all of the header fields in the MAC b.c. the TTL changes
+		-just use the immutable IP header fields in the MAC (i.e. the source and dest. IP address)
+
+	ESP
+		-encapsulating sec payload
+		-integrity and confidentiality
+		-protects everything beyond IP header with encryption
+		-uses NULL encryption for the integrity
+			- just means no encryption and it is just like AH
+		-if ESP encrypted firewall can not look at TCP header (e.g. port #s)
+		-can't use null encryption
+			-firewall doesn't know if null encryption is used soo
 
 
+Replay protection
+-seq # checking
+-if window starts at N 
+	-any packets coming in at id N-1 or lower will be rejected
+	-any packets coming inside the range of the window that isn't a duplicate will be accepted
+		-duplicate are rejected
+	-packets that are above the window will cause the window to advance
+	-if 32 slot window and a packet comes in with id N + 32 then the window would advance 1.  
+		-if the packet with ID N had not come in yet then it is lost forever, because it would not be accepted now that the window has advanced
+-in order to accept a packet first check ICV
+	-if ICV passes then move the window by 1
+	-if you don't check the ICV before accepting and moving the window then only later will you realize you can reject it
+	-someone could send you packets with high seq. #s and then packets will be dropped unecessarily resulting in a DoS attack
 
 
+IPSec
+
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 24 Notes
+
+
+RFID Tags
+-used everywhere
+-whenever you wanna track an item stick a tag on it
+-replaces the barcode
+-can read it through an opaque material
+
+Basic Components
+-RFID tag
+	-transponder
+	-located on the object to be identified
+-RFID reader
+	-transceiver
+	-can read and write data to Tag
+-Data Processing Subsystem
+	-connects to reader
+
+Forward Channel and Backward channel
+-when a reader tries to read something
+	-its either connected to outlet or has a powerful battery
+	-sends out a powerful signal to tag
+	-tag sends a weak response back
+-the forward range is the range of the reader out to tags
+-the backward range is the weak range of the tags response back to the reader
+-airplane and garage signal example
+
+May have lots of items stored with RFID tag, but they have to be close to reader for them to work
+
+Security Issues with RFID
+-privacy
+	-business
+	-personal
+-denial of service
+-incorrect information
+-forgeries
+	-change the tag information on a walmart tv and pay $2 for it.
+	-clone a toll tag and drive through on their expense
+
+Vulnerability Concentration Areas
+-market concentration is on the low end
+-people are focusing on vulnerability concentration
+	-credit cards, medical niches, ePassport
+
+RFID Security Attacks
+-cloning
+	-included implanted chips (verichip)
+	-could make an identical chip
+-tracking
+	-merchant may track using the transaction counter
+-loss of anonymity (military?)
+	-big problem in Gulf War
+	-by looking at some of the items someone is carrying they can identify them
+-skimming
+	-Johnny Carson Attack
+		-somebody brings envelop and he tries to figure out what is in it
+		-idea of someone identifying what is inside something without opening it
+		-read information off of it
+	-Bump and run etc.
+		-someone just comes near your pocket, read the tag and then run
+-SQL Injection
+	-put some sql injection patterns into card and use it to get access
+-Eavesdropping
+-replay and relay
+	-replay can be thwarted with timestamps, transaction counter, etc.
+	-relay is when 2 adversaries could collude to use somebody else's credit card 
+
+Cost-Security Trade-off
+-low cost
+	-low intelligence (up to 5000 gates)
+	-low storage (few hundred bits)
+	-low range (few meters)
+-security
+	-AES needs 20-30 thousand gates
+	-Hash such as SHA-1 also needs similar order
+	-TEA algorithm still not feasible
+
+Existing Security Solutions
+-EPC RFID Tag Kill Command
+	-internal kill sequence to make the tag permanently inoperative
+	-option to PIN (32 bits) protect against DoS
+	-Done at POS
+	-not wide-spread b.c. of "return" logistics
+		-if someone kills a tag then there is no way for merchant to know if it was actually purchased from that company
+-PIN protected READ/WRITE
+-Tear-off antennas
+-Faraday cages
+	-useful for credit cards and e-passports
+	-makes it so someone can't read signal until it is opened
+
+Hash-based Access Control
+-when a query is given, even on a secure tag, then a tag responds that I am alive
+	-tag responds with meta ID not real ID
+	-the metaID is sent to the database which gets the key and real ID based on metaID and the key is sent to the Tag and then the Tag responds with the real ID
+
+Randomized Access Control
+-in addition to a hash it has a random number generator
+and a hash function
+-reader sends query to tag
+-tag responds with a random number, a hash of (random number and ID)
+-this will create essentially a different metaID for each signal
+-the reader says to DB send me all IDs
+-the reader then goes by brute force and takes the random number with every id and hashes them all to find the matching hash value
+-it then knows that the tag is who it says it is and it sends ID to the reader
+-brute force takes a while though
+
+
+Data Leakage from Reader
+-probabilistic
+	-tags respond in randomly generated times
+	-slotted aloha scheme
+		-if small amount of tags
+		-you try to communicate when ready, and if channel is open then you send, otherwise wait till the next slot and try again
+-deterministic binary tree-walking scheme
+	-space of k-bit identifiers
+	-k-bit identifiers leaves in a tree of depth k
+	-reader sorts through tags based on tag-ID
+		-Traverse tree asking subsets of tags to broadcast a single bit at a time
+	-RFID reader broadcasts tag serial numbers over very large distances
+		-may introduce vulnerability to eavesdropping
+		-whatever bit the reader is sending out can be read by the eavesdropper
+	-reader selects a tag and if both children are equal then thats the response, but if they are different then you choose 1 and move on
+	-deterministic (it will converge)
+
+	Ex:
+		reader requests signal
+			-in its forward range there are 2 tags
+			-if they respond on backward channel with the same bit then the reader takes that bit
+			-if there is a conflict then it will only allow 1 tag to proceed
+				-it will say only tag with next bit = 0 can continue
+				-this is sent on forward range though so an eavesdropper from far away gets that bit
+			-if the 2 tags differ on every bit then the eavesdropper gets the entire key
+
+-silent tree walking
+	-if no conflict then accept that bit
+	-if conflict then instead of sending what the next accepted bit is it will take the XOR of the previous bit and the bit he is choosing
+	-the eavesdropper won't know what exactly the previous bit was (b.c. it was sent on the backward channel) so it won't know what the current bit is 
+
+Physical Unclonable Functions (PUFs)
+-uses inert variations of the manufacturing process
+-generates unpredictable response, givena  stimulus (challenge)
+-responses are reproducible
+-tamper-evident and difficult to clone
+-applications
+	-challenge-response authentication
+	-physical key storage
+
+ring oscillator
+
+
+A -NorGate- NorGate- NorGAte -XOR-------
+|____________________________| 		|
+|___________________________________|
+
+
+One-time pad authentication
+-normally replay attack is easy -> just intercept signal, and create clone of RFID tag
+-with a unique key for everytime that fixes this problem
+
+OCCRA: Overt-Covert Challenge REsponse Authentication
+-authentication and key sharing protocol using embedded sequence of challenge-response pairs
+-Advantages
+	-low-cost, oracle-based authentication
+	-device-centric deployments
+		-dont have to transfer any intelligence to it
+		-just put circuitry there
+	-ownership transfer
+	-system scalability
+	-multi-user provisions
+	-breach recovery
+	-volatile-key generation
+
+-lots of startups working on PUFs now
+
+
+OCCRA Protocol
+1. SEtup
+	-initialize phase
+	-collect some challenge and responses (in a closed room)
+	-only server knows r values
+		c1 		r1
+		c2 		r2
+		c3 		r3
+		c4 		r4
+		c5		r5
+
+2. Authentication phase
+	-2 step process
+	-atomic
+	-1 overt (open) challenge and 1 covert (closed)
+		-anyone can see overt challenge
+		-covert challenge is encrypted
+			-xor of response you could get with open challenge and the challenge itself
+		-overt could be c1
+			-covert would be r1 XOR c3
+	-takes c1, goes to server gets r1 and takes c3 and xors with r1
+	-
+3. REfresh cycle
+	-sometimes need to flush and generate new challenges
+4. 
+
+Email Security
+-remember ssl doesn't have end to end security
+-you can encrypt email at application layer
+-PGP - pretty good privacy
+	 - uses combo of secret key and public key
+	 - A wants to send PGP protected mail to B
+	 soo....
+	 A signs message with As private key and then randomly pick a secret key for the encryption key
+	 ----(but B doesn't know secret key b.c. no handshake)
+	 -So A encrypts with secret key and then encrypts secret key with Bs public key
+	 -both parties need PGP for it to work
+
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 25 Notes
+
+
+Medical Industry
+-Jim Lomeo
+
+Sensor Networks
+-Jordan Kayse
+
+
+Automotive Cyber-Physical Security Threats
+-Raz Friman
+
+Biometric Security: security at any cost
+-Andy Buck
+
+-------------------------------------------------------
+
+
+Data and Network Security Lecture 26 Notes
+
+
+SDN Security
+-Chris Ayala
+
+Mobile Security
+-Peter DeNicola
+
+Scada Security
+-Austin Lee
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 27 Notes
+
+
+--all presentations
+-Jeff shaffer
+
+-------------------------------------------------------
+
+Data and Network Security Lecture 28 Notes
+
+4 pages of cheat sheets for final
+-comprehensive with more focus on topics after midterm
+-3 hour exam, May 11th at 8AM
+
+
+-------------------------------------------------------
+
+End of Class
 
 
 

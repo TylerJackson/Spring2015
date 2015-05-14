@@ -1,0 +1,543 @@
+;; Dribble of #<IO TERMINAL-STREAM> started on 2015-03-25 04:47:54.
+#<OUTPUT BUFFERED FILE-STREAM CHARACTER #P"HW3/hw3_result.txt">
+[2]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+[3]> (GCD_E 5 10)
+
+*** - EVAL: undefined function B
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'B).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'B).
+ABORT          :R4      Abort main loop
+Break 1 [4]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 1 [4]> (GDC_E 10 5)
+
+*** - EVAL: undefined function GDC_E
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'GDC_E).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'GDC_E).
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort main loop
+Break 2 [5]> (GCD_E 10 5)
+
+*** - COND: variable B has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of B.
+STORE-VALUE    :R2      Input a new value for B.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort main loop
+Break 3 [6]> (GCD_E 10 '5)
+
+*** - COND: variable B has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of B.
+STORE-VALUE    :R2      Input a new value for B.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort main loop
+Break 4 [7]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 4 [7]> (GCD_E 10 5)
+
+*** - EVAL: undefined function B
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'B).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'B).
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort main loop
+Break 5 [8]> (GCD_E 10 '5)
+
+*** - EVAL: undefined function B
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'B).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'B).
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort main loop
+Break 6 [9]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 6 [9]> (GCD_E 10 5)
+
+*** - PROGN: variable /*Q has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of /*Q.
+STORE-VALUE    :R2      Input a new value for /*Q.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort main loop
+Break 7 [10]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 7 [10]> (GCD_E 10 5)
+5
+Break 7 [10]> (GCD 10 5)
+5
+Break 7 [10]> (GCD_E 1232 1184)
+1184
+Break 7 [10]> (GCD 1232 1184)
+16
+Break 7 [10]> (/ 1232 1184)
+77/74
+Break 7 [10]> (% 10 5)
+
+*** - EVAL: undefined function %
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION '%).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION '%).
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort debug loop
+ABORT          :R10     Abort debug loop
+ABORT          :R11     Abort main loop
+Break 8 [11]> (mod 10 5)
+0
+Break 8 [11]> (mod 5 10)
+5
+Break 8 [11]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 8 [11]> (GCD_E 10 5)
+5
+Break 8 [11]> (GCD 1232 1184)
+16
+Break 8 [11]> (GCD_E 1232 1184)
+16
+Break 8 [11]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 8 [11]> (GCD_E 10 5)
+5
+Break 8 [11]> (GCD 1232 1184)
+16
+Break 8 [11]> (GCD_E 1232 1184)
+16
+Break 8 [11]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+*** - SYSTEM::%EXPAND-FORM: (> M N) should be a lambda expression
+The following restarts are available:
+SKIP           :R1      skip (DEFUN GDC_D # ...)
+RETRY          :R2      retry (DEFUN GDC_D # ...)
+STOP           :R3      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort debug loop
+ABORT          :R10     Abort debug loop
+ABORT          :R11     Abort debug loop
+ABORT          :R12     Abort main loop
+Break 9 [12]> (load "./HW3/hw3.lisp")
+;;  Loading file HW3/hw3.lisp ...
+*** - SYSTEM::%EXPAND-FORM: (> A B) should be a lambda expression
+The following restarts are available:
+SKIP           :R1      skip (DEFUN GDC_D # ...)
+RETRY          :R2      retry (DEFUN GDC_D # ...)
+STOP           :R3      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R4      Abort debug loop
+SKIP           :R5      skip (DEFUN GDC_D # ...)
+RETRY          :R6      retry (DEFUN GDC_D # ...)
+STOP           :R7      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort debug loop
+ABORT          :R10     Abort debug loop
+ABORT          :R11     Abort debug loop
+ABORT          :R12     Abort debug loop
+ABORT          :R13     Abort debug loop
+ABORT          :R14     Abort debug loop
+ABORT          :R15     Abort debug loop
+ABORT          :R16     Abort main loop
+Break 10 [13]> (load "./HW3/hw3.lisp")
+;;   Loading file HW3/hw3.lisp ...
+;;   Loaded file HW3/hw3.lisp
+T
+Break 10 [13]> (GCD_D 1232 1184)
+
+*** - EVAL: undefined function GCD_D
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'GCD_D).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'GCD_D).
+ABORT          :R4      Abort debug loop
+SKIP           :R5      skip (DEFUN GDC_D # ...)
+RETRY          :R6      retry (DEFUN GDC_D # ...)
+STOP           :R7      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R8      Abort debug loop
+SKIP           :R9      skip (DEFUN GDC_D # ...)
+RETRY          :R10     retry (DEFUN GDC_D # ...)
+STOP           :R11     stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R12     Abort debug loop
+ABORT          :R13     Abort debug loop
+ABORT          :R14     Abort debug loop
+ABORT          :R15     Abort debug loop
+ABORT          :R16     Abort debug loop
+ABORT          :R17     Abort debug loop
+ABORT          :R18     Abort debug loop
+ABORT          :R19     Abort debug loop
+ABORT          :R20     Abort main loop
+Break 11 [14]> (load "./HW3/hw3.lisp")
+;;   Loading file HW3/hw3.lisp ...
+;;   Loaded file HW3/hw3.lisp
+T
+Break 11 [14]> (GCD_D 1232 1184)
+
+*** - EVAL: undefined function GCD_D
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'GCD_D).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'GCD_D).
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+SKIP           :R6      skip (DEFUN GDC_D # ...)
+RETRY          :R7      retry (DEFUN GDC_D # ...)
+STOP           :R8      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R9      Abort debug loop
+SKIP           :R10     skip (DEFUN GDC_D # ...)
+RETRY          :R11     retry (DEFUN GDC_D # ...)
+STOP           :R12     stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R13     Abort debug loop
+ABORT          :R14     Abort debug loop
+ABORT          :R15     Abort debug loop
+ABORT          :R16     Abort debug loop
+ABORT          :R17     Abort debug loop
+ABORT          :R18     Abort debug loop
+ABORT          :R19     Abort debug loop
+ABORT          :R20     Abort debug loop
+ABORT          :R21     Abort main loop
+Break 12 [15]> clear
+
+*** - SYSTEM::READ-EVAL-PRINT: variable CLEAR has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of CLEAR.
+STORE-VALUE    :R2      Input a new value for CLEAR.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+SKIP           :R6      skip (DEFUN GDC_D # ...)
+RETRY          :R7      retry (DEFUN GDC_D # ...)
+STOP           :R8      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R9      Abort debug loop
+SKIP           :R10     skip (DEFUN GDC_D # ...)
+RETRY          :R11     retry (DEFUN GDC_D # ...)
+STOP           :R12     stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R13     Abort debug loop
+ABORT          :R14     Abort debug loop
+ABORT          :R15     Abort debug loop
+ABORT          :R16     Abort debug loop
+ABORT          :R17     Abort debug loop
+ABORT          :R18     Abort debug loop
+ABORT          :R19     Abort debug loop
+ABORT          :R20     Abort debug loop
+ABORT          :R21     Abort main loop
+Break 13 [16]> 
+*** - Ctrl-C: User break
+The following restarts are available:
+ABORT          :R1      Abort debug loop
+ABORT          :R2      Abort debug loop
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+SKIP           :R5      skip (DEFUN GDC_D # ...)
+RETRY          :R6      retry (DEFUN GDC_D # ...)
+STOP           :R7      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R8      Abort debug loop
+SKIP           :R9      skip (DEFUN GDC_D # ...)
+RETRY          :R10     retry (DEFUN GDC_D # ...)
+STOP           :R11     stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R12     Abort debug loop
+ABORT          :R13     Abort debug loop
+ABORT          :R14     Abort debug loop
+ABORT          :R15     Abort debug loop
+ABORT          :R16     Abort debug loop
+ABORT          :R17     Abort debug loop
+ABORT          :R18     Abort debug loop
+ABORT          :R19     Abort debug loop
+ABORT          :R20     Abort main loop
+Break 14 [17]> 
+Break 13 [16]> exit
+
+*** - SYSTEM::READ-EVAL-PRINT: variable EXIT has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of EXIT.
+STORE-VALUE    :R2      Input a new value for EXIT.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+SKIP           :R7      skip (DEFUN GDC_D # ...)
+RETRY          :R8      retry (DEFUN GDC_D # ...)
+STOP           :R9      stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R10     Abort debug loop
+SKIP           :R11     skip (DEFUN GDC_D # ...)
+RETRY          :R12     retry (DEFUN GDC_D # ...)
+STOP           :R13     stop loading file /vagrant/ArtificialIntelligence/HW3/hw3.lisp
+ABORT          :R14     Abort debug loop
+ABORT          :R15     Abort debug loop
+ABORT          :R16     Abort debug loop
+ABORT          :R17     Abort debug loop
+ABORT          :R18     Abort debug loop
+ABORT          :R19     Abort debug loop
+ABORT          :R20     Abort debug loop
+ABORT          :R21     Abort debug loop
+ABORT          :R22     Abort main loop
+Break 14 [18]> quit
+[19]> stop
+
+*** - SYSTEM::READ-EVAL-PRINT: variable STOP has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of STOP.
+STORE-VALUE    :R2      Input a new value for STOP.
+ABORT          :R3      Abort main loop
+Break 1 [20]> 
+*** - Ctrl-C: User break
+The following restarts are available:
+ABORT          :R1      Abort debug loop
+ABORT          :R2      Abort main loop
+Break 2 [21]> 
+Break 1 [20]> :q!
+:Q!
+Break 1 [20]> quit
+[22]> break
+
+*** - SYSTEM::READ-EVAL-PRINT: variable BREAK has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of BREAK.
+STORE-VALUE    :R2      Input a new value for BREAK.
+ABORT          :R3      Abort main loop
+Break 1 [23]> exit
+
+*** - SYSTEM::READ-EVAL-PRINT: variable EXIT has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of EXIT.
+STORE-VALUE    :R2      Input a new value for EXIT.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort main loop
+Break 2 [24]> help
+
+Commands may be abbreviated as shown in the second column.
+COMMAND        ABBR     DESCRIPTION
+Help           :h, ?    print this command list
+Error          :e       print the last error message
+Inspect        :i       inspect the last error
+Abort          :a       abort to the next recent input loop
+Unwind         :uw      abort to the next recent input loop
+Reset          :re      toggle *PACKAGE* and *READTABLE* between the
+                          local bindings and the sane values
+Quit           :q       quit to the top-level input loop
+Where          :w       inspect this frame
+Up             :u       go up one frame, inspect it
+Top            :t       go to top frame, inspect it
+Down           :d       go down one frame, inspect it
+Bottom         :b       go to bottom (most recent) frame, inspect it
+Mode mode      :m       set stack mode for Backtrace: 1=all the stack elements
+             2=all the frames                         3=only lexical frames
+             4=only EVAL and APPLY frames (default)   5=only APPLY frames
+Frame-limit n  :fl      set the frame-limit for Backtrace. This many frames
+                          will be printed in a backtrace at most.
+Backtrace [mode [limit]] :bt  inspect the stack
+Break+         :br+     set breakpoint in EVAL frame
+Break-         :br-     disable breakpoint in EVAL frame
+Redo           :rd      re-evaluate form in EVAL frame
+Return value   :rt      leave EVAL frame, prescribing the return values
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of EXIT.
+STORE-VALUE    :R2      Input a new value for EXIT.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort main loop
+Break 2 [24]> EXIT
+
+*** - SYSTEM::READ-EVAL-PRINT: variable EXIT has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of EXIT.
+STORE-VALUE    :R2      Input a new value for EXIT.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort main loop
+Break 3 [25]> STOP
+
+*** - SYSTEM::READ-EVAL-PRINT: variable STOP has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of STOP.
+STORE-VALUE    :R2      Input a new value for STOP.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort main loop
+Break 4 [26]> --help
+
+*** - SYSTEM::READ-EVAL-PRINT: variable --HELP has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of --HELP.
+STORE-VALUE    :R2      Input a new value for --HELP.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort main loop
+Break 5 [27]> help
+
+Commands may be abbreviated as shown in the second column.
+COMMAND        ABBR     DESCRIPTION
+Help           :h, ?    print this command list
+Error          :e       print the last error message
+Inspect        :i       inspect the last error
+Abort          :a       abort to the next recent input loop
+Unwind         :uw      abort to the next recent input loop
+Reset          :re      toggle *PACKAGE* and *READTABLE* between the
+                          local bindings and the sane values
+Quit           :q       quit to the top-level input loop
+Where          :w       inspect this frame
+Up             :u       go up one frame, inspect it
+Top            :t       go to top frame, inspect it
+Down           :d       go down one frame, inspect it
+Bottom         :b       go to bottom (most recent) frame, inspect it
+Mode mode      :m       set stack mode for Backtrace: 1=all the stack elements
+             2=all the frames                         3=only lexical frames
+             4=only EVAL and APPLY frames (default)   5=only APPLY frames
+Frame-limit n  :fl      set the frame-limit for Backtrace. This many frames
+                          will be printed in a backtrace at most.
+Backtrace [mode [limit]] :bt  inspect the stack
+Break+         :br+     set breakpoint in EVAL frame
+Break-         :br-     disable breakpoint in EVAL frame
+Redo           :rd      re-evaluate form in EVAL frame
+Return value   :rt      leave EVAL frame, prescribing the return values
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of --HELP.
+STORE-VALUE    :R2      Input a new value for --HELP.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort main loop
+Break 5 [27]> 
+Break 4 [26]> 
+*** - Ctrl-C: User break
+The following restarts are available:
+ABORT          :R1      Abort debug loop
+ABORT          :R2      Abort debug loop
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort main loop
+Break 5 [28]> 
+*** - Ctrl-C: User break
+The following restarts are available:
+ABORT          :R1      Abort debug loop
+ABORT          :R2      Abort debug loop
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort main loop
+Break 6 [29]> n
+
+*** - SYSTEM::READ-EVAL-PRINT: variable N has no value
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of N.
+STORE-VALUE    :R2      Input a new value for N.
+ABORT          :R3      Abort debug loop
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort main loop
+Break 7 [30]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 7 [30]> (GCD_D 1023 11)
+
+*** - EVAL: undefined function GCD_D
+The following restarts are available:
+USE-VALUE      :R1      Input a value to be used instead of (FDEFINITION 'GCD_D).
+RETRY          :R2      Retry
+STORE-VALUE    :R3      Input a new value for (FDEFINITION 'GCD_D).
+ABORT          :R4      Abort debug loop
+ABORT          :R5      Abort debug loop
+ABORT          :R6      Abort debug loop
+ABORT          :R7      Abort debug loop
+ABORT          :R8      Abort debug loop
+ABORT          :R9      Abort debug loop
+ABORT          :R10     Abort debug loop
+ABORT          :R11     Abort main loop
+Break 8 [31]> (load "./HW3/hw3.lisp")
+;; Loading file HW3/hw3.lisp ...
+;; Loaded file HW3/hw3.lisp
+T
+Break 8 [31]> (GCD_D 1023 11)
+11
+Break 8 [31]> (GCD_D 1232 1184)
+16
+Break 8 [31]> (GCD_D 1232 2184)
+56
+Break 8 [31]> (GCD 1232 2184)
+56
+Break 8 [31]> (GCD 1232 1232)
+1232
+Break 8 [31]> (GCD_D 1232 1232)
+1232
+Break 8 [31]> (GCD_D 1232 1232)
+1232
+Break 8 [31]> (dribble)
+;; Dribble of #<IO TERMINAL-STREAM> finished on 2015-03-25 05:37:57.
+;; Dribble of #<IO TERMINAL-STREAM> started on 2015-03-25 23:50:37.
+#<OUTPUT BUFFERED FILE-STREAM CHARACTER #P"hw3_result.txt">
+[2]> (load "hw3.lisp")
+;; Loading file hw3.lisp ...
+;; Loaded file hw3.lisp
+T
+[3]> (isPrime 13)
+T
+[4]> (isPrime 2)
+T
+[5]> (isPrime 1)
+
+*** - REM: division by zero
+The following restarts are available:
+ABORT          :R1      Abort main loop
+Break 1 [6]> (isPrime 17)
+T
+Break 1 [6]> (isPrime 16)
+NIL
+Break 1 [6]> (isPrime 4)
+NIL
+Break 1 [6]> (isPrime 256)
+NIL
+Break 1 [6]> (isPrime 117)
+NIL
+Break 1 [6]> (isPrime 119)
+NIL
+Break 1 [6]> (/ 119 7)
+17
+Break 1 [6]> (dribble)
+;; Dribble of #<IO TERMINAL-STREAM> finished on 2015-03-25 23:52:44.

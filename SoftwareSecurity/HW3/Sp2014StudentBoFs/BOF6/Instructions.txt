@@ -1,0 +1,15 @@
+Video Downloads:
+SMU provides video downloads for in-class students by charging them .
+The application requires the students to enter the credit card information in order to get the video's.
+Once the student enters the valid student information, the video's start downloading.
+
+
+Objective:
+The main objective this to get the video downloads by not providing the valid information such as name on card, expiration date etc.
+
+How To:
+1)To compile the code, place the videodownloads.c file in a directory
+2)type the command  gcc videodownloads.c -o videodownloads -fno-stack-protector 
+3)Once the compilation is success
+4)Run the application by the command ./videodownloads
+5)Follow as directed by the application

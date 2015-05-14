@@ -1,0 +1,13 @@
+Encryption should be used to protect the information while in transit. Servers should be authenticated before transferring information.
+Provide Upgrade Information
+Provide information on how to upgrade to the latest version.
+You should have a way to communicate available security fixes to customers.
+Educate your developers on how to write secure code to avoid the most common classes of vulnerabilities:
+    Buffer overflows
+    Integer overflows
+    Race conditions
+    Format string vulnerabilities
+Pay special attention to code that deals with potentially untrusted data, such as documents or URLs
+    communicates over the network, handles passwords or other sensitive information and runs with elevated privileges such as root or in the kernel
+Test for Security
+

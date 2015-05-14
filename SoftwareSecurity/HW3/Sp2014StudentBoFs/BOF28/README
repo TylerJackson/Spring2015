@@ -1,0 +1,18 @@
+README
+
+This is the README for my House of Cards program. The goal is to watch season 4 of House
+of Cards, which has not been released yet. If successful, the program will say,
+"You are watching the new season of House of Cards!!"
+
+It does not take anything special to run or compile...
+
+TO COMPILE: 
+g++ hoc.cpp
+
+TO RUN: 
+./a.out hoc.cpp
+
+
+If there are any issues you can email at mwinslow@smu.edu
+
+

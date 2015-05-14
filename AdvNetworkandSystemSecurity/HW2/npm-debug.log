@@ -1,0 +1,212 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install', 'raw-socket' ]
+2 info using npm@2.7.1
+3 info using node@v0.12.0
+4 verbose node symlink /usr/local/bin/node
+5 silly cache add args [ 'raw-socket', null ]
+6 verbose cache add spec raw-socket
+7 silly cache add parsed spec { raw: 'raw-socket',
+7 silly cache add   scope: null,
+7 silly cache add   name: 'raw-socket',
+7 silly cache add   rawSpec: '',
+7 silly cache add   spec: '*',
+7 silly cache add   type: 'range' }
+8 verbose addNamed raw-socket@*
+9 silly addNamed semver.valid null
+10 silly addNamed semver.validRange *
+11 silly addNameRange { name: 'raw-socket', range: '*', hasData: false }
+12 silly mapToRegistry name raw-socket
+13 silly mapToRegistry using default registry
+14 silly mapToRegistry registry https://registry.npmjs.org/
+15 silly mapToRegistry uri https://registry.npmjs.org/raw-socket
+16 verbose addNameRange registry:https://registry.npmjs.org/raw-socket not in flight; fetching
+17 verbose request uri https://registry.npmjs.org/raw-socket
+18 verbose request no auth needed
+19 info attempt registry request try #1 at 20:42:05
+20 verbose request id dc2ceb50d14b41ac
+21 verbose etag "9TJ08SZRIE37VO4P6IFE8SDKG"
+22 http request GET https://registry.npmjs.org/raw-socket
+23 http 304 https://registry.npmjs.org/raw-socket
+24 silly get cb [ 304,
+24 silly get   { date: 'Thu, 19 Mar 2015 01:42:05 GMT',
+24 silly get     server: 'Apache',
+24 silly get     via: '1.1 varnish',
+24 silly get     'last-modified': 'Thu, 19 Mar 2015 01:42:05 GMT',
+24 silly get     'cache-control': 'max-age=60',
+24 silly get     etag: '"9TJ08SZRIE37VO4P6IFE8SDKG"',
+24 silly get     age: '0',
+24 silly get     'x-served-by': 'cache-ord1729-ORD',
+24 silly get     'x-cache': 'MISS',
+24 silly get     'x-cache-hits': '0',
+24 silly get     'x-timer': 'S1426729325.773370,VS0,VE137',
+24 silly get     vary: 'Accept',
+24 silly get     'content-length': '0',
+24 silly get     'keep-alive': 'timeout=10, max=50',
+24 silly get     connection: 'Keep-Alive' } ]
+25 verbose etag https://registry.npmjs.org/raw-socket from cache
+26 verbose get saving raw-socket to /Users/tylerjackson/.npm/registry.npmjs.org/raw-socket/.cache.json
+27 silly addNameRange number 2 { name: 'raw-socket', range: '*', hasData: true }
+28 silly addNameRange versions [ 'raw-socket',
+28 silly addNameRange   [ '1.0.0',
+28 silly addNameRange     '1.0.1',
+28 silly addNameRange     '1.0.2',
+28 silly addNameRange     '1.1.0',
+28 silly addNameRange     '1.1.1',
+28 silly addNameRange     '1.1.2',
+28 silly addNameRange     '1.1.3',
+28 silly addNameRange     '1.1.4',
+28 silly addNameRange     '1.1.5',
+28 silly addNameRange     '1.1.6',
+28 silly addNameRange     '1.1.7',
+28 silly addNameRange     '1.2.0',
+28 silly addNameRange     '1.2.1',
+28 silly addNameRange     '1.2.2' ] ]
+29 verbose addNamed raw-socket@1.2.2
+30 silly addNamed semver.valid 1.2.2
+31 silly addNamed semver.validRange 1.2.2
+32 silly cache afterAdd raw-socket@1.2.2
+33 verbose afterAdd /Users/tylerjackson/.npm/raw-socket/1.2.2/package/package.json not in flight; writing
+34 verbose afterAdd /Users/tylerjackson/.npm/raw-socket/1.2.2/package/package.json written
+35 silly install resolved [ { name: 'raw-socket',
+35 silly install resolved     version: '1.2.2',
+35 silly install resolved     description: 'Raw sockets for Node.js.',
+35 silly install resolved     main: 'index.js',
+35 silly install resolved     directories: { example: 'example' },
+35 silly install resolved     dependencies: {},
+35 silly install resolved     contributors: [ [Object] ],
+35 silly install resolved     repository:
+35 silly install resolved      { type: 'mercurial',
+35 silly install resolved        url: 'https://bitbucket.org/stephenwvickers/node-raw-socket' },
+35 silly install resolved     keywords:
+35 silly install resolved      [ 'checksum',
+35 silly install resolved        'checksums',
+35 silly install resolved        'htonl',
+35 silly install resolved        'htons',
+35 silly install resolved        'net',
+35 silly install resolved        'network',
+35 silly install resolved        'ntohl',
+35 silly install resolved        'ntohs',
+35 silly install resolved        'raw',
+35 silly install resolved        'raw-socket',
+35 silly install resolved        'raw-sockets',
+35 silly install resolved        'socket',
+35 silly install resolved        'sockets' ],
+35 silly install resolved     author:
+35 silly install resolved      { name: 'Stephen Vickers',
+35 silly install resolved        email: 'stephen.vickers.sv@gmail.com' },
+35 silly install resolved     license: 'MIT',
+35 silly install resolved     scripts: { install: 'node-gyp rebuild' },
+35 silly install resolved     gypfile: true,
+35 silly install resolved     readme: '\n# raw-socket - [homepage][homepage]\n\nThis module implements raw sockets for [Node.js][nodejs].\n\n*This module has been created primarily to facilitate implementation of the\n[net-ping][net-ping] module.*\n\nThis module is installed using [node package manager (npm)][npm]:\n\n    # This module contains C++ source code which will be compiled\n    # during installation using node-gyp.  A suitable build chain\n    # must be configured before installation.\n    \n    npm install raw-socket\n\nIt is loaded using the `require()` function:\n\n    var raw = require ("raw-socket");\n\nRaw sockets can then be created, and data sent using [Node.js][nodejs]\n`Buffer` objects:\n\n    var socket = raw.createSocket ({protocol: raw.Protocol.None});\n\n    socket.on ("message", function (buffer, source) {\n        console.log ("received " + buffer.length + " bytes from " + source);\n    });\n    \n    socket.send (buffer, 0, buffer.length, "1.1.1.1", function (error, bytes) {\n        if (error)\n            console.log (error.toString ());\n    });\n\n[homepage]: http://re-tool.org "Homepage"\n[nodejs]: http://nodejs.org "Node.js"\n[net-ping]: https://npmjs.org/package/net-ping "net-ping"\n[npm]: https://npmjs.org/ "npm"\n\n# Network Protocol Support\n\nThe raw sockets exposed by this module support IPv4 and IPv6.\n\nRaw sockets are created using the operating systems `socket()` function, and\nthe socket type `SOCK_RAW` specified.\n\n# Raw Socket Behaviour\n\nRaw sockets behave in different ways depending on operating system and\nversion, and may support different socket options.\n\nSome operating system versions may restrict the use of raw sockets to\nprivileged users.  If this is the case an exception will be thrown on socket\ncreation using a message similar to `Operation not permitted` (this message\nis likely to be different depending on operating system version).\n\nThe appropriate operating system documentation should be consulted to\nunderstand how raw sockets will behave before attempting to use this module.\n\n# Keeping The [Node.js][nodejs] Event Loop Alive\n\nThis module uses the `libuv` library to integrate into the [Node.js][nodejs]\nevent loop - this library is also used by [Node.js][nodejs].  An underlying\n `libuv` library `poll_handle_t` event watcher is used to monitor the\nunderlying operating system raw socket used by a socket object.\n\nAll the while a socket object exists, and the sockets `close()` method has not\nbeen called, the raw socket will keep the [Node.js][nodejs] event loop alive\nwhich will prevent a program from exiting.\n\nThis module exports four methods which a program can use to control this\nbehaviour.\n\nThe `pauseRecv()` and `pauseSend()` methods stop the underlying `poll_handle_t`\nevent watcher used by a socket from monitoring for readable and writeable\nevents.  While the `resumeRecv()` and `resumeSend()` methods start the\nunderlying `poll_handle_t` event watcher used by a socket allowing it to\nmonitor for readable and writeable events.\n\nEach socket object also exports the `recvPaused` and `sendPaused` boolean\nattributes to determine the state of the underlying `poll_handle_t` event\nwatcher used by a socket.\n\nSocket creation can be expensive on some platforms, and the above methods offer\nan alternative to closing and deleting a socket to prevent it from keeping the\n[Node.js][nodejs] event loop alive.\n\nThe [Node.js][nodejs] [net-ping][net-ping] module offers a concrete example\nof using these methods.  Since [Node.js][nodejs] offers no raw socket support\nthis module is used to implement ICMP echo (ping) support.  Once all ping\nrequests have been processed by the [net-ping][net-ping] module the\n`pauseRecv()` and `pauseSend()` methods are used to allow a program to exit if\nrequired.\n\nThe following example stops the underlying `poll_handle_t` event watcher used\nby a socket from generating writeable events, however since readable events\nwill still be watched for the program will not exit immediately:\n\n    if (! socket.recvPaused)\n        socket.pauseRecv ();\n\nThe following can the be used to resume readable events:\n\n    if (socket.recvPaused)\n        socket.resumeRecv ();\n\nThe following example stops the underlying `poll_handle_t` event watcher used\nby a socket from generating both readable and writeable events, if no other\nevent watchers have been setup (e.g. `setTimeout()`) the program will exit.\n\n    if (! socket.recvPaused)\n        socket.pauseRecv ();\n    if (! socket.sendPaused)\n        socket.pauseSend ();\n\nThe following can the be used to resume both readable and writeable events:\n\n    if (socket.recvPaused)\n        socket.resumeRecv ();\n    if (socket.sendPaused)\n        socket.resumeSend ();\n\nWhen data is sent using a sockets `send()` method the `resumeSend()` method\nwill be called if the sockets `sendPaused` attribute is `true`, however the\n`resumeRecv()` method will not be called regardless of whether the sockets\n`recvPaused` attribute is `true` or `false`.\n\n[nodejs]: http://nodejs.org "Node.js"\n[net-ping]: http://npmjs.org/package/net-ping "net-ping"\n\n# Constants\n\nThe following sections describe constants exported and used by this module.\n\n## raw.AddressFamily\n\nThis object contains constants which can be used for the `addressFamily`\noption to the `createSocket()` function exposed by this module.  This option\nspecifies the IP protocol version to use when creating the raw socket.\n\nThe following constants are defined in this object:\n\n * `IPv4` - IPv4 protocol\n * `IPv6` - IPv6 protocol\n\n## raw.Protocol\n\nThis object contains constants which can be used for the `protocol` option to\nthe `createSocket()` function exposed by this module.  This option specifies\nthe protocol number to place in the protocol field of IP headers generated by\nthe operating system.\n\nThe following constants are defined in this object:\n\n * `None` - protocol number 0\n * `ICMP` - protocol number 1\n * `TCP` - protocol number 6\n * `UDP` - protocol number 17\n * `ICMPv6` - protocol number 58\n\n## raw.SocketLevel\n\nThis object contains constants which can be used for the `level` parameter to\nthe `getOption()` and `setOption()` methods exposed by this module.\n\nThe following constants are defined in this object:\n\n * `SOL_SOCKET`\n * `IPPROTO_IP`\n * `IPPROTO_IPV6`\n\n## raw.SocketOption\n\nThis object contains constants which can be used for the `option` parameter to\nthe `getOption()` and `setOption()` methods exposed by this module.\n\nThe following constants are defined in this object:\n\n * `SO_RCVBUF`\n * `SO_RCVTIMEO`\n * `SO_SNDBUF`\n * `SO_SNDTIMEO`\n * `IP_HDRINCL`\n * `IP_OPTIONS`\n * `IP_TOS`\n * `IP_TTL`\n * `IPV6_TTL`\n * `IPV6_UNICAST_HOPS`\n * `IPV6_V6ONLY`\n\n*The `IPV6_TTL` socket option is not known to be defined by any operating\nsystem, it is provided in convenience to be synonymous with IPv4*\n\nFor Windows platforms the following constant is also defined:\n\n * `IPV6_HDRINCL`\n\n# Using This Module\n\nRaw sockets are represented by an instance of the `Socket` class.  This\nmodule exports the `createSocket()` function which is used to create\ninstances of the `Socket` class.\n\nThe module also exports a number of stubs which call through to a number of\nfunctions provided by the operating system, i.e. `htonl()`.\n\nThis module also exports a function to generate protocol checksums.\n\n## raw.createChecksum (bufferOrObject, [bufferOrObject, ...])\n\nThe `createChecksum()` function creates and returns a 16 bit one\'s complement\nof the one\'s complement sum for all the data specified in one or more\n[Node.js][nodejs] `Buffer` objects.  This is useful for creating checksums for\nprotocols such as IP, TCP, UDP and ICMP.\n\nThe `bufferOrObject` parameter can be one of two types.  The first is a\n[Node.js][nodejs] `Buffer` object.  In this case a checksum is calculated from\nall the data it contains.  The `bufferOrObject` parameter can also be an\nobject which must contain the following attributes:\n\n * `buffer` - A [Node.js][nodejs] `Buffer` object which contains data which\n   to generate a checksum for\n * `offset` - Skip this number of bytes from the beginning of `buffer`\n * `length` - Only generate a checksum for this number of bytes in `buffer`\n   from `offset`\n\nThe second parameter type provides control over how much of the data in a\n[Node.js][nodejs] `Buffer` object a checksum should be generated for.\n\nWhen more than one parameter is passed a single checksum is calculated as if\nthe data in in all parameters were in a single buffer.  This is useful for\nwhen calulating checksums for TCP and UDP for example - where a psuedo header\nmust be created and used for checksum calculation.\n\nIn this case two buffers can be passed, the first containing the psuedo header\nand the second containing the real TCP packet, and the offset and length\nparameters used to specify the bounds of the TCP packet payload.\n\nThe following example generates a checksum for a TCP packet and its psuedo\nheader:\n\n    var sum = raw.createChecksum (pseudo_header, {buffer: tcp_packet,\n            offset: 20, length: tcp_packet.length - 20});\n\nBoth buffers will be treated as one, i.e. as if the data at offset `20` in\n`tcp_packet` had followed all data in `pseudo_header` - as if they were one\nbuffer.\n\n## raw.writeChecksum (buffer, offset, checksum)\n\nThe `writeChecksum()` function writes a checksum created by the\n`raw.createChecksum()` function to the [Node.js][nodejs] `Buffer` object \n`buffer` at offsets `offset` and `offset` + 1.\n\nThe following example generates and writes a checksum at offset `2` in a\n[Node.js][nodejs] `Buffer` object:\n\n    raw.writeChecksum (buffer, 2, raw.createChecksum (buffer));\n\n## raw.htonl (uint32)\n\nThe `htonl()` function converts a 32 bit unsigned integer from host byte\norder to network byte order and returns the result.  This function is simply\na stub through to the operating systems `htonl()` function.\n\n## raw.htons (uint16)\n\nThe `htons()` function converts a 16 bit unsigned integer from host byte\norder to network byte order and returns the result.  This function is simply\na stub through to the operating systems `htons()` function.\n\n## raw.ntohl (uint32)\n\nThe `ntohl()` function converts a 32 bit unsigned integer from network byte\norder to host byte order and returns the result.  This function is simply\na stub through to the operating systems `ntohl()` function.\n\n## raw.ntohs (uint16)\n\nThe `ntohs()` function converts a 16 bit unsigned integer from network byte\norder to host byte order and returns the result.  This function is simply\na stub through to the operating systems `ntohs()` function.\n\n## raw.createSocket ([options])\n\nThe `createSocket()` function instantiates and returns an instance of the\n`Socket` class:\n\n    // Default options\n    var options = {\n        addressFamily: raw.AddressFamily.IPv4,\n        protocol: raw.Protocol.None,\n        bufferSize: 4096,\n        generateChecksums: false,\n        checksumOffset: 0\n    };\n    \n    var socket = raw.createSocket (options);\n\nThe optional `options` parameter is an object, and can contain the following\nitems:\n\n * `addressFamily` - Either the constant `raw.AddressFamily.IPv4` or the\n   constant `raw.AddressFamily.IPv6`, defaults to the constant\n   `raw.AddressFamily.IPv4`\n * `protocol` - Either one of the constants defined in the `raw.Protocol`\n   object or the protocol number to use for the socket, defaults to the\n   consant `raw.Protocol.None`\n * `bufferSize` - Size, in bytes, of the sockets internal receive buffer,\n   defaults to 4096\n * `generateChecksums` - Either `true` or `false` to enable or disable the\n   automatic checksum generation feature, defaults to `false`\n * `checksumOffset` - When `generateChecksums` is `true` specifies how many\n   bytes to index into the send buffer to write automatically generated\n   checksums, defaults to `0`\n\nAn exception will be thrown if the underlying raw socket could not be created.\nThe error will be an instance of the `Error` class.\n\nThe `protocol` parameter, or its default value of the constant\n`raw.Protocol.None`, will be specified in the protocol field of each IP\nheader.\n\n## socket.on ("close", callback)\n\nThe `close` event is emitted by the socket when the underlying raw socket\nis closed.\n\nNo arguments are passed to the callback.\n\nThe following example prints a message to the console when the socket is\nclosed:\n\n    socket.on ("close", function () {\n        console.log ("socket closed");\n    });\n\n## socket.on ("error", callback)\n\nThe `error` event is emitted by the socket when an error occurs sending or\nreceiving data.\n\nThe following arguments will be passed to the `callback` function:\n\n * `error` - An instance of the `Error` class, the exposed `message` attribute\n   will contain a detailed error message.\n\nThe following example prints a message to the console when an error occurs,\nafter which the socket is closed:\n\n    socket.on ("error", function (error) {\n        console.log (error.toString ());\n        socket.close ();\n    });\n\n## socket.on ("message", callback)\n\nThe `message` event is emitted by the socket when data has been received.\n\nThe following arguments will be passed to the `callback` function:\n\n * `buffer` - A [Node.js][nodejs] `Buffer` object containing the data\n   received, the buffer will be sized to fit the data received, that is the\n   `length` attribute of buffer will specify how many bytes were received\n * `address` - For IPv4 raw sockets the dotted quad formatted source IP\n   address of the message, e.g `192.168.1.254`, for IPv6 raw sockets the\n   compressed formatted source IP address of the message, e.g.\n   `fe80::a00:27ff:fe2a:3427`\n\nThe following example prints received messages in hexadecimal to the console:\n\n    socket.on ("message", function (buffer, address) {\n        console.log ("received " + buffer.length + " bytes from " + address\n                + ": " + buffer.toString ("hex"));\n    });\n\n## socket.generateChecksums (generate, offset)\n\nThe `generateChecksums()` method is used to specify whether automatic checksum\ngeneration should be performed by the socket.\n\nThe `generate` parameter is either `true` or `false` to enable or disable the\nfeature.  The optional `offset` parameter specifies how many bytes to index\ninto the send buffer when writing the generated checksum to the send buffer.\n\nThe following example enables automatic checksum generation at offset 2\nresulting in checksums being written to byte 3 and 4 of the send buffer\n(offsets start from 0, meaning byte 1):\n\n    socket.generateChecksums (true, 2);\n\n## socket.getOption (level, option, buffer, length)\n\nThe `getOption()` method gets a socket option using the operating systems\n`getsockopt()` function.\n\nThe `level` parameter is one of the constants defined in the `raw.SocketLevel`\nobject.  The `option` parameter is one of the constants defined in the\n`raw.SocketOption` object.  The `buffer` parameter is a [Node.js][nodejs]\n`Buffer` object where the socket option value will be written.  The `length`\nparameter specifies the size of the `buffer` parameter.\n\nIf an error occurs an exception will be thrown, the exception will be an\ninstance of the `Error` class.\n\nThe number of bytes written into the `buffer` parameter is returned, and can\ndiffer from the amount of space available.\n\nThe following example retrieves the current value of `IP_TTL` socket option:\n\n    var level = raw.SocketLevel.IPPROTO_IP;\n    var option = raw.SocketOption.IP_TTL;\n    \n    # IP_TTL is a signed integer on some platforms so a 4 byte buffer is used\n    var buffer = new Buffer (4);\n    \n    var written = socket.getOption (level, option, buffer, buffer.length);\n    \n    console.log (buffer.toString ("hex"), 0, written);\n\n## socket.send (buffer, offset, length, address, beforeCallback, afterCallback)\n\nThe `send()` method sends data to a remote host.\n\nThe `buffer` parameter is a [Node.js][nodejs] `Buffer` object containing the\ndata to be sent.  The `length` parameter specifies how many bytes from\n`buffer`, beginning at offset `offset`, to send.  For IPv4 raw sockets the\n`address` parameter contains the dotted quad formatted IP address of the\nremote host to send the data to, e.g `192.168.1.254`, for IPv6 raw sockets the\n`address` parameter contains the compressed formatted IP address of the remote\nhost to send the data to, e.g. `fe80::a00:27ff:fe2a:3427`.  If provided the\noptional `beforeCallback` function is called right before the data is actually\nsent using the underlying raw socket, giving users the opportunity to perform\npre-send actions such as setting a socket option, e.g. the IP header TTL.  No\narguments are passed to the `beforeCallback` function.  The `afterCallback`\nfunction is called once the data has been sent.  The following arguments will\nbe passed to the `afterCallback` function:\n\n * `error` - Instance of the `Error` class, or `null` if no error occurred\n * `bytes` - Number of bytes sent\n\nThe following example sends a ICMP ping message to a remote host, before the\nrequest is actually sent the IP header TTL is modified, and modified again\nafter the data has been sent:\n\n    // ICMP echo (ping) request, checksum should be ok\n    var buffer = new Buffer ([\n            0x08, 0x00, 0x43, 0x52, 0x00, 0x01, 0x0a, 0x09,\n            0x61, 0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68,\n            0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, 0x70,\n            0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, 0x61,\n            0x62, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69]);\n\n    var socketLevel = raw.SocketLevel.IPPROTO_IP\n    var socketOption = raw.SocketOption.IP_TTL;\n\n    function beforeSend () {\n        socket.setOption (socketLevel, socketOption, 1);\n    }\n    \n    function afterSend (error, bytes) {\n        if (error)\n            console.log (error.toString ());\n        else\n            console.log ("sent " + bytes + " bytes");\n        \n        socket.setOption (socketLevel, socketOption, 1);\n    }\n\n    socket.send (buffer, 0, buffer.length, target, beforeSend, afterSend);\n\n## socket.setOption (level, option, buffer, length)\n\nThe `setOption()` method sets a socket option using the operating systems\n`setsockopt()` function.\n\nThe `level` parameter is one of the constants defined in the `raw.SocketLevel`\nobject.  The `option` parameter is one of the constants defined in the\n`raw.SocketOption` object.  The `buffer` parameter is a [Node.js][nodejs]\n`Buffer` object where the socket option value is specified.  The `length`\nparameter specifies how much space the option value occupies in the `buffer`\nparameter.\n\nIf an error occurs an exception will be thrown, the exception will be an\ninstance of the `Error` class.\n\nThe following example sets the value of `IP_TTL` socket option to `1`:\n\n    var level = raw.SocketLevel.IPPROTO_IP;\n    var option = raw.SocketOption.IP_TTL;\n    \n    # IP_TTL is a signed integer on some platforms so a 4 byte buffer is used,\n    # x86 computers use little-endian format so specify bytes reverse order\n    var buffer = new Buffer ([0x01, 0x00, 0x00, 0x00]);\n    \n    socket.setOption (level, option, buffer, buffer.length);\n\nTo avoid dealing with endianess the `setOption()` method supports a three\nargument form which can be used for socket options requiring a 32bit unsigned\ninteger value (for example the `IP_TTL` socket option used in the previous\nexample).  Its signature is as follows:\n\n    socket.setOption (level, option, value)\n\nThe previous example can be re-written to use this form:\n\n    var level = raw.SocketLevel.IPPROTO_IP;\n    var option = raw.SocketOption.IP_TTL;\n\n    socket.setOption (level, option, 1);\n\n# Example Programs\n\nExample programs are included under the modules `example` directory.\n\n# Bugs & Known Issues\n\nNone, yet!\n\nBug reports should be sent to <stephen.vickers.sv@gmail.com>.\n\n# Changes\n\n## Version 1.0.0 - 29/01/2013\n\n * Initial release\n\n## Version 1.0.1 - 01/02/2013\n\n * Move `SOCKET_ERRNO` define from `raw.cc` to `raw.h`\n * Error in exception thrown by `SocketWrap::New` in `raw.cc` stated that two\n   arguments were required, this should be one\n * Corrections to the README.md\n * Missing includes causes compilation error on some systems (maybe Node\n   version dependant)\n\n## Version 1.0.2 - 02/02/2013\n\n * Support automatic checksum generation\n\n## Version 1.1.0 - 13/02/2013\n\n * The [net-ping][net-ping] module is now implemented so update the note about\n   it in the first section of the README.md\n * Support IPv6\n * Support the `IP_HDRINCL` socket option via the `noIpHeader` option to the\n   `createSocket()` function and the `noIpHeader()` method exposed by the\n   `Socket` class\n\n## Version 1.1.1 - 14/02/2013\n\n * IP addresses not being validated\n\n## Version 1.1.2 - 15/02/2013\n\n * Default protocol option to `createSession()` was incorrect in the README.md\n * The `session.on("message")` example used `message` instead of `buffer` in\n   the README.md\n\n## Version 1.1.3 - 04/03/2013\n\n * `raw.Socket.onSendReady()` emit\'s an error when `raw.SocketWrap.send()`\n   throws an exception when it should call the `req.callback` callback\n * Added the `pauseRecv()`, `resumeRecv()`, `pauseSend()` and `resumeSend()`\n   methods\n\n[net-ping]: https://npmjs.org/package/net-ping "net-ping"\n\n## Version 1.1.4 - 05/03/2013\n\n * Cleanup documentation for the `pauseSend()`, `pauseRecv()`, `resumeSend()`\n   and `resumeRecv()` methods in the README.md\n\n## Version 1.1.5 - 09/05/2013\n\n * Reformated lines in the README.md file inline with the rest of the file\n * Removed the `noIpHeader()` method (the `setOption()` method should be\n   used to configure the `IP_HDRINCL` socket option - and possibly\n   `IPV6_HDRINCL` on Windows platforms), and removed the `Automatic IP Header\n   Generation` section from the README.md file\n * Added the `setOption()` and `getOption()` methods, and added the\n   `SocketLevel` and `SocketOption` constants\n * Tidied up the example program `ping-no-ip-header.js` (now uses the\n   `setOption()` method to configure the `IP_HDRINCL` socket option)\n * Tidied up the example program `ping6-no-ip-header.js` (now uses the\n   `setOption()` method to configure the `IPV6_HDRINCL` socket option)\n * Added the example program `get-option.js`\n * Added the example program `ping-set-option-ip-ttl.js`\n * Use MIT license instead of GPL\n\n## Version 1.1.6 - 18/05/2013\n\n * Added the `beforeCallback` parameter to the `send()` method, and renamed the\n   `callback` parameter to `afterCallback`\n * Fixed a few typos in the README.md file\n * Modified the example program `ping-set-option-ip-ttl.js` to use the\n   `beforeCallback` parameter to the `send()` method\n * The example program `ping6-no-ip-header.js` was not passing the correct\n   arguments to the `setOption()` method\n\n## Version 1.1.7 - 23/06/2013\n\n * Added the `htonl()`, `htons()`, `ntohl()`, and `ntohs()` functions, and\n   associated example programs\n * Added the `createChecksum()` function, and associated example program\n\n## Version 1.1.8 - 01/07/2013\n\n * Added the `writeChecksum()` function\n * Removed the "Automated Checksum Generation" feature - this has been\n   replaced with the `createChecksum()` and `writeChecksum()` functions\n\n## Version 1.2.0 - 02/07/2013\n\n * Up version number to 1.2.0 (we should have done this for 1.1.8 because it\n   introduced some API breaking changes)\n\n## Version 1.2.1 - 15/08/2013\n\n * Receiving `Assertion \'!(handle->flags & (UV_CLOSING | UV_CLOSED))\' failed`\n   error after a number of pings - the underlying `uv_poll_t` handle was being\n   closed twice\n\n## Version 1.2.2 - 21/09/2013\n\n * Using uint16_t instead of uint32_t on line 87 in src/raw.cc for a value\n   that is out of range\n * raw::SocketWrap::pause() only uses the first argument\n * Delete uv_poll_t watcher in uv_close() OnClose callback instead of in the\n   wrapped C++ objects deconstructor\n\n# Roadmap\n\nIn no particular order:\n\n * Enhance performance by moving the send queue into the C++ raw::SocketWrap\n   class\n\nSuggestions and requirements should be sent to <stephen.vickers.sv@gmail.com>.\n\n# License\n\nCopyright (c) 2013 Stephen Vickers\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n\n# Author\n\nStephen Vickers <stephen.vickers.sv@gmail.com>\n',
+35 silly install resolved     readmeFilename: 'README.md',
+35 silly install resolved     _id: 'raw-socket@1.2.2',
+35 silly install resolved     dist:
+35 silly install resolved      { shasum: 'c9be873878a1ef70497a27e40b6e55b563d8f886',
+35 silly install resolved        tarball: 'http://registry.npmjs.org/raw-socket/-/raw-socket-1.2.2.tgz' },
+35 silly install resolved     _from: 'raw-socket@*',
+35 silly install resolved     _npmVersion: '1.2.17',
+35 silly install resolved     _npmUser:
+35 silly install resolved      { name: 'stephen.vickers',
+35 silly install resolved        email: 'stephen.vickers.sv@gmail.com' },
+35 silly install resolved     maintainers: [ [Object] ],
+35 silly install resolved     _shasum: 'c9be873878a1ef70497a27e40b6e55b563d8f886',
+35 silly install resolved     _resolved: 'https://registry.npmjs.org/raw-socket/-/raw-socket-1.2.2.tgz' } ]
+36 info install raw-socket@1.2.2 into /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2
+37 info installOne raw-socket@1.2.2
+38 verbose installOne of raw-socket to /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2 not in flight; installing
+39 verbose lock using /Users/tylerjackson/.npm/_locks/raw-socket-ba5450d79550c96b.lock for /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+40 silly install write writing raw-socket 1.2.2 to /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+41 silly cache addNamed cb raw-socket@1.2.2
+42 verbose unbuild node_modules/raw-socket
+43 verbose gentlyRm vacuuming /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+44 verbose tar unpack /Users/tylerjackson/.npm/raw-socket/1.2.2/package.tgz
+45 verbose tar unpacking to /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+46 verbose gentlyRm vacuuming /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+47 silly gunzTarPerm modes [ '755', '644' ]
+48 silly gunzTarPerm extractEntry package.json
+49 silly gunzTarPerm modified mode [ 'package.json', 438, 420 ]
+50 silly gunzTarPerm extractEntry .npmignore
+51 silly gunzTarPerm modified mode [ '.npmignore', 438, 420 ]
+52 silly gunzTarPerm extractEntry README.md
+53 silly gunzTarPerm modified mode [ 'README.md', 438, 420 ]
+54 silly gunzTarPerm extractEntry index.js
+55 silly gunzTarPerm modified mode [ 'index.js', 438, 420 ]
+56 silly gunzTarPerm extractEntry binding.gyp
+57 silly gunzTarPerm modified mode [ 'binding.gyp', 438, 420 ]
+58 silly gunzTarPerm extractEntry example/create-checksum.js
+59 silly gunzTarPerm modified mode [ 'example/create-checksum.js', 438, 420 ]
+60 silly gunzTarPerm extractEntry example/htonl.js
+61 silly gunzTarPerm modified mode [ 'example/htonl.js', 438, 420 ]
+62 silly gunzTarPerm extractEntry example/htons.js
+63 silly gunzTarPerm modified mode [ 'example/htons.js', 438, 420 ]
+64 silly gunzTarPerm extractEntry example/ntohl.js
+65 silly gunzTarPerm modified mode [ 'example/ntohl.js', 438, 420 ]
+66 silly gunzTarPerm extractEntry example/get-option.js
+67 silly gunzTarPerm modified mode [ 'example/get-option.js', 438, 420 ]
+68 silly gunzTarPerm extractEntry example/ping-no-ip-header.js
+69 silly gunzTarPerm modified mode [ 'example/ping-no-ip-header.js', 438, 420 ]
+70 silly gunzTarPerm extractEntry example/ping-set-option-ip-ttl.js
+71 silly gunzTarPerm modified mode [ 'example/ping-set-option-ip-ttl.js', 438, 420 ]
+72 silly gunzTarPerm extractEntry example/ping.js
+73 silly gunzTarPerm modified mode [ 'example/ping.js', 438, 420 ]
+74 silly gunzTarPerm extractEntry example/ping6-no-ip-header.js
+75 silly gunzTarPerm modified mode [ 'example/ping6-no-ip-header.js', 438, 420 ]
+76 silly gunzTarPerm extractEntry example/ping6.js
+77 silly gunzTarPerm modified mode [ 'example/ping6.js', 438, 420 ]
+78 silly gunzTarPerm extractEntry example/ntohs.js
+79 silly gunzTarPerm modified mode [ 'example/ntohs.js', 438, 420 ]
+80 silly gunzTarPerm extractEntry src/raw.cc
+81 silly gunzTarPerm modified mode [ 'src/raw.cc', 438, 420 ]
+82 silly gunzTarPerm extractEntry src/raw.h
+83 silly gunzTarPerm modified mode [ 'src/raw.h', 438, 420 ]
+84 info preinstall raw-socket@1.2.2
+85 silly install resolved []
+86 verbose about to build /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+87 info build /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+88 verbose linkStuff [ false,
+88 verbose linkStuff   false,
+88 verbose linkStuff   false,
+88 verbose linkStuff   '/Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules' ]
+89 info linkStuff raw-socket@1.2.2
+90 verbose linkBins raw-socket@1.2.2
+91 verbose linkMans raw-socket@1.2.2
+92 verbose rebuildBundles raw-socket@1.2.2
+93 info install raw-socket@1.2.2
+94 verbose unsafe-perm in lifecycle true
+95 info raw-socket@1.2.2 Failed to exec install script
+96 verbose unlock done using /Users/tylerjackson/.npm/_locks/raw-socket-ba5450d79550c96b.lock for /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+97 verbose stack Error: raw-socket@1.2.2 install: `node-gyp rebuild`
+97 verbose stack Exit status 1
+97 verbose stack     at EventEmitter.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/lifecycle.js:213:16)
+97 verbose stack     at EventEmitter.emit (events.js:110:17)
+97 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/lib/utils/spawn.js:14:12)
+97 verbose stack     at ChildProcess.emit (events.js:110:17)
+97 verbose stack     at maybeClose (child_process.js:1008:16)
+97 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:1080:5)
+98 verbose pkgid raw-socket@1.2.2
+99 verbose cwd /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2
+100 error Darwin 14.1.0
+101 error argv "node" "/usr/local/bin/npm" "install" "raw-socket"
+102 error node v0.12.0
+103 error npm  v2.7.1
+104 error code ELIFECYCLE
+105 error raw-socket@1.2.2 install: `node-gyp rebuild`
+105 error Exit status 1
+106 error Failed at the raw-socket@1.2.2 install script 'node-gyp rebuild'.
+106 error This is most likely a problem with the raw-socket package,
+106 error not with npm itself.
+106 error Tell the author that this fails on your system:
+106 error     node-gyp rebuild
+106 error You can get their info via:
+106 error     npm owner ls raw-socket
+106 error There is likely additional logging output above.
+107 verbose exit [ 1, true ]
+108 verbose unbuild node_modules/raw-socket
+109 info preuninstall raw-socket@1.2.2
+110 info uninstall raw-socket@1.2.2
+111 verbose unbuild rmStuff raw-socket@1.2.2 from /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules
+112 info postuninstall raw-socket@1.2.2
+113 verbose gentlyRm vacuuming /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+114 silly gentlyRm purging /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules/raw-socket
+115 silly gentlyRm removing /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2/node_modules
+116 silly gentlyRm finished vacuuming up to /Users/tylerjackson/Classes/Spring2015/AdvNetworkandSystemSecurity/HW2

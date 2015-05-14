@@ -1073,29 +1073,1032 @@ modern day examples of steganography?
 -------------------------------------------------------
 
 Advanced System and Network Security Lecture 7 Notes
+(8 in the list)
+
+Mar 26th = midterm
+Apr 2nd = project # 4 assigned
+Apr 9th = Taped on April 1st
+April 16th = Project #4 Due
+April 30 = Review
+May 7 = Test #2 6:30PM
+
+Current Events
+-Flip 1 specific DRAM bit to get access to a system
+
+
+MiM attack
+-trick servers into using weaker encryption
+
+health insurance company 
+
+-huffman encoding quiz I reversed the bits
+
+
+A 35-----------------------0
+B 25---------------0       |------90
+C 10----------0    |------55
+   0      0   |    | 		1
+D 5______10   |---30 		
+E 5 	  |- 20    1
+   1      |    1
+F 10------1    
+
+A = 0
+B = 10
+C = 110
+D = 11100
+E = 11101
+F = 1111
 
 
 
 
 
+huff enc on test
+
+
+
+hash cracking
+
+brute force
+
+b = bits in password
+e = entries in password file
+p = probability a password is in the dictionary
+d = 2^n = dictionary size
+
+MD5 
+b = 56
+1024 = 2^10
+1/4
+d = 20
+
+no salt- no dictinoary -specific password- 2^n/2 = 2^55
+salt - no dictionary-specific password = 2^55
+no salt - no dictionary -any passwird = 2^(b-1-e)
+
+Remember 9 phases
+
+-diff b.w. threat and vul
+-risk , likelihood
+-risk is measure in $$
+
+
+ABABAB e.o.f.
+-review LZ encoding
+
+set w = nil
+loop
+	read a character k
+	if wk exists in the dictionary
+		w = wk
+	else
+		output the code for w 
+		add wk to the dictionary 
+		w = k
+endloop
+
+A = 65
+B = 66
+256 B of Dict.
+-need to be able to make dictionary and output code
+
+ABABAB eof
+
+Char 		K 		W 		OUTPUT
+A 		 	A 		
+ 					A
+B 			B 		 		A (65)
+					B
+A 			A 		 		B (66)
+ 					A
+B 			B  		AB
+
+A 			A 		 		AB (256)
+					A
+B 			B 		AB
+eof 		eof 	 		AB (256)
+
+Dictionary
+A 	= 65
+B 	= 66
+.	  .
+.     .
+	 255
+---
+AB 	 256
+BA   257
+ABA  258
+
+
+S 									R 	 		Keep 
+ 			arrow sent					0/1 		 y/n
+0+ 				up				x 		 0       N
+1x 				upleft			x 		 1       Y
+1x 				upleft			+  		 1       N
+0x 				upright			x 		 0       Y
+0+ 				up 				+ 		 0       Y
+0+ 				up  			x 		 1       N
+1x 				up left			x 		 1       Y
+1+ 				right			+ 	 	 1       Y
+0x 				upright			+ 		 1	     N
+1x 				upleft			x 		 1       Y
+
+up is 0
+up diagonal right is 0
+   
+if what receiver uses and what sender uses for polarity differ then you just guess the bit received
+	-this bit then gets thrown out later
+
+So what is used is
+1
+0
+0
+1
+1
+1
+-would never use this to send because people can see what you are sending, and half your bits don't get received
+
+-guy on the end knows if someone in the middle is messing it up by sacrificing a few bits
+	-you verify a few bits and see if what was sent matches - if too many don't match (as in it is not within your range of acceptable error)
+	you throw it out saying someone was listening
+	-you have to throw out the bits you used to verify
+-this is designed to share a one-time pad with someone while verifying that no one is listening
+
+TCP 				UDP
+backoff 			connectionless
+ACK 				less overhead
+throttling 			Datagram
+stream 				multicast
+ordering 			
+point to point
+
+Machines and MAC addresses and be able to draw the network
+-know what the MAC address is and what the IP address is based on each hop in the network
+-know ARP - mac addresses on the packet (broadcast dest)
+		  - know the response says I have this MAC addr.
+
+IP192.168.3.5 						192.168.3.1
+MAC	0C:...:02 							0F:...:09
+
+	Machine ---->through network ----->other machine
+
+knows IP address but doesn't know MAC address
+-packet needs dest. MAC address for packet
+-sends out a packet to everyone
+	FF:...:FF | :02 | ARP Req who has 3.1
+-receives
+	:02 | 09    | I have 3.1 I am :09
+
+
+2nd example with 2 hops
+
+comp 1 IP = 192.168.3.5
+comp 2 IP = 192.168.3.1 (on comp 1 side)
+comp 2 IP = 192.168.6.4 (on comp 3 side)
+comp 3 IP = 192.168.6.7
+
+MAC of comp1 = :02
+MAC of comp2 = :09 (on comp 1 side)
+MAC of comp2 = :08 (on comp 3 side)
+MAC of comp3 = :0C
+
+comp1 sends out 
+destMAC| MACsrc| dest. IP |   src IP
+
+FFFF.. | : 02  | ARP who has 3.1 
+	
+	-because needs 3.1 to forward it out
+gets response back from router
+:02 | :09  | I have 3.1 I am :09
+
+so comp1 sends to comp2
+:09 | :02  | 6.7  |  3.5 	
+
+comp2 says
+FFFF.. | : 08  | ARP who has 6.7
+
+comp3 says back
+:08  | :0C  | I have 6.7 I am : 0C
+
+comp2 sends to comp3
+
+:0C  | :08   |   6.7    |  3.5
+
+
+
+lossless vs. lossy
+-lossless
+	-fix quality, but size will vary
+		-will even get larger in some cases
+	-huffman and lzw
+-lossy
+	-guarantee smaller size, but will lose information in some cases
+
+
+-duplicating a cd or dvd will sometimes result in better quality, because there is a lot of error correction
+	-a scratched disc could be recovered
 
 
 
 
 
+-------------------------------------------------------
+review for test ()
+
+system asset characterization
+threat identification
+vulnerability identification 
+control analysis
+likelihood determination
+impact analysis 
+risk determination
+control recommendations
+documentation
+
+lzw 
+received
+65 66 67 256 258 257
+
+k 		w 		output 		entry 	Dict
+A 		A 		A
+B 		B 		B			 B 		AB
+C 		C 	 	C			 C 		BC
+AB      AB 		AB			 AB     CA
+CA      CA      CA           CA     ABC
+BC 		BC 		BC 			 BC     CAB
+
+ABC ABC ABC
+-------------------------------------------------------
+Advanced System and Network Security Lecture 8 Notes
+(9 was test so this is 10 on the list)
+steganography
+-hiding data in another 
+
+steganography is hiding data
+-could be a way of implementing a covert channel
+
+images are really popular for steg
+
+BMP
+-pixel = picture element
+-resolution= # of points
+	36 Megapixel = 5253 x 7182
+
+	R 		G 		B
+  0-255    0-255   0-255
+
+  255 		0 		0 		Red
+  	0 		0 		255 	Blue
+  255 	  255 		0 		yellow
+  255 		0 	  255 		magenta
+    0 	  255 	  255 		cyan
+  255 	  128 	  128 		pink -> adding some of 
+  									other 2 adds white to red
+  255     255     255 		white
+    0       0       0 		black
+  128	  128     128 		gray
+
+  hide data in low order bits b/c your eye wouldn't notice it
+
+  GIF/TIFF
+
+  0 	black
+  1 	white
+  2 	red
+  3 	green
+  3 bits for each
+  -changing low order bits here would change color completely
+
+  JPEG
+  -histogram
+0-255 		grayside
+
+-histogram equalization
+-put some number of pixels at every spot
+
+-tries to spread out pixels to even distribution, but if it can't spread you out, it gives you space saying if you were spread out, this is where you would spread out to
+
+-discrete cosine transform basis functions (n=8)
+	-do it in 2D
+
+-run DCT over image you see how much something is represented
+1.) scaled image (p = p-128) - centers you at 0 
+2.) run DCT & get values
+	
+	top left represents solid white - as you go down high frequency in horizontal stripes
+
+	as you go right high freq. in vertical stripes
+
+	Quantization - where lossy part comes in 
+
+	B_j+k = round((A_j,k)/(Q_j,k)
+
+Quantization matrix
+-defines what quality of image you want
+-embeds this w/image
+
+divide by 16, round, and multiply by 16 & read out diagonal
+
+-remember always do this with 8x8 chunks of image
+-don't want to do too much from compressing
+-overlay the 8x8 grid over each of the 64 blocks
+	-however much gets stored in that block
+-each value represents how well your 8x8 block matches each of blocks in quantization
+
+-value of Q shows quality of quantization matrix - 6 higher quality than 9
+
+DCT 		Q
+8 			16 	-> 1  => 16
+7 			16  -> 0  => 16
+20 			16  -> 1  => 16
+25 			16  -> 2  => 32     0
+5 			9   -> 1  => 9      6  => 2 => 12
+
+if you lose quality with quantization then you won't gain that quality back by quantizing at a higher quality
+-if image isn't uniform you can make some assumptions about history
+
+JPEG compression throws away high frequencies
+-not easy to hide things in JPEG b.c. if removes things that aren't visually important
+
+Proj. 4
+-they will have straight forward encoding but that won't be scrambled
+
+1 message/file
+-determine password 97 for E.C.
+-due 4/23
+
+
+-------------------------------------------------------
+
+
+Advanced Network and System Security Lecture 11 Notes
+
+-current events
+	-some twitch accounts were hacked
+	-hippa didn't take security audits seriously enough
+
+Project # 3
+-dont use word for password
+	-even salted made no difference
+-w0rd
+	-words with some letters changed to #s
+-wordnumber
+	-easy to find
+-capitalizing first letter word
+	-easy
+-phrases
+	-need to be random words not phrases
+-only bruteforcable - random lowercase letters
+
+-entropy is a really good measure of how hard your password will be to crack
+
+password security the slow way
+-salts won't save you
+
+-admin should be running password cracker
+	-either need to educate people on weak passwords, or prevent them from ever being created, and change the weak ones
+
+Guide to Bluetooth Security
+by NIST (National Institute of Standards and Technology)
+
+V1.2 2003 1mB 			basic rate 			GFSK
+V2.0 2004 2-3 MB	  enhance data rate 	DPSK
+											8DPSK
+V2.1 2007  '' 		  EDR 					''
+V3.0 2009  24 mB 	 	ifs 				OFSM
+V4.0 2010  1 MB       LE (low energy) 		GFSK
+
+OOK
+-on-off keynote
+0 	1 	0 	1 	1 	0
+---wave ----wavewave----
+-frequency is 1/P
+-amp is height
+
+ASK 	amplitude shift keynote
++++++wave+++++Wave+++++++++
+-little waves around big waves
+-am radio
+-can do altered ASK with 4 different waves sizes instead of 2
+	-lets you send 2 bits per baud
+		-baud is change in signal
+
+frequency	
+-adds security
+	-frequency hopping
+    -frequency based hopping pattern they will have a harder time 
+    -avoid jammers
+
+frequency shift key
+0 	1 	0 	1 	1 	0
+slow fast slow fast fast slow
+-slow means less cycles over a time period (less bumps)
+-this corresponds to sound waves of FM radio
+
+Gaussian FSK
+-shape wave form with a gaussian filter
+-gradual change from 0 to 1
+-makes radiator pattern nicer
+	-change spot involves a bunch of high frequencies to shift from high frequency to low frequency - this smooths that out
+
+Binary Phase Shift Keying BPSK
+-wave form 
+-a second wave form which is shifted by 180 degrees
+-first wave is 1, second wave is 0
+-you would just transmit the wave corresponding to 1 and 0 for whichever bit you want
+
+QPSK Quadrature Phase Shift Key
+-have first wave 
+-second wave has completely out of phase version (shift by 180)
+-third wave is 90 degree shift
+-4th wave is 270 deg. shift
+-each wave can now represent 2 bits
+	-can send same amount of data in half the time
+
+8PSK
+-has 8 waves
+-original with 7 shifts
+-each wave has 3 bits of information
+
+-as the number of PSK goes up you need better signal to noise ratio
+
+-normally qpsk has everything shift by 45 degrees
+     *
+	 |
+  *--|--*
+	 |
+     *
+
+  *     *
+	 |
+   --|--
+     |
+  *     *
+
+DPSK - differential psk
+-change matters for the original 4 dots
+	-i.e. there might be a 90 degree change matter 
+		- * on pos horiz would be pos verti
+		- * on neg vertical would be pos horiz
+
+-16 QAM and 64 QAM
+-changing phase and amplitude
+
+Types 		power 		range  		sample device
+-class 1 	100 mW 		100m 		usb adapters,
+									access points
+-class 2    2.5 mW 		10M 		mobile devices
+									-speakers, keyboard (most)
+-class 3 	1 mW 		1 M 		bluetooth adapters
+bluetooth LE 10mW 		50m
+
+
+-------------------------------------------------------
+
+Advanced Network and System Security Lecture 12a Notes
+
+For final study stuff from first test, and second test
+
+start with jpeg image 
+
+subtract 128 from every pixel value to center it at 0
+
+do discrete cosine transform (DCT)
+-for top right value you look at how white the image is
+-for 1,2 check how much something is white to black
+-the more negative a value for all these the less of a match it is
+
+-each block as you move left to right adds a half period of a cosine wave
+
+i.e. top left is freq.=0
+	 1,2 = 1 full period
+	 1,3 = 1.5 periods, etc.
+	-thats why it is called a discrete cosine transformation
+
+use quantization matrix-there is no standard
+	the Lossy step is B_j,k = round((A_j,k)/Q_j,k)
+
+	round(-415/16)
+	-you end up getting something with a lot of zeros
+
+	-if you want more compression then Quantization gets larger
+
+	EX: after DCT
+
+		9 						16
+
+			image 			-> 	Quantization
+			matrix
+
+
+		1 						16
+			quantized 		-> 		regenerated image
+
+if you want higher quality then the quantization value goes down (on final)
+	-this is because there are more values, so you are rounding up and down less
+EX: 	
+ 	16 			 10 				2
+ 			->  quantization 	->  quantized matrix ->
+ 				matrix
+  img matrix
+
+-> 20
+ 		regenerated
+
+
+**never recompress a jpeg
+		-even if its a higher quality it will still add noise to your image
+		-never help you and usually hurt you
+
+X   -> Q = 11 -> regenerate -> Q=5 	-> 		y
+ 	  quantize 				 quantize
+
+-on final
+if had just quantized by 5 and renerated you would get
+y included {0,5,10,15,20,25,30.....100}
+
+if you had originally quantized by 11 then regenerated and quantized by 5 what can you get
+
+y included {0,10,20,35,45,55,65,75,90,100}
+ 		     			
+
+x incl in [0,100] -> quantized by 11 and regenerated =
+								z = 0,11,22,33...99
+
+
+steps 1. have pixels
+steps 2. pixels -128
+steps 3. DCT of pixels
+	(0-100)
+steps 4. Quantize (divide and round)
+steps 5. regenerate (multiply by quantization matrix)
+
+-you expect a distribution in your possible values 
+	-want it to be evenly distributed buckets
+	-10s but no 5s mean the image has a previous history of compression
+	-if it hasn't been compressed then it would have uniform possible values
+
+-if part of image has a compression history that the other part doesn't then you can tell it was tampered with
+-based on possible values you could try to figure out what type of camera was used based on quantization matrix
+
+Ex: quantized and regenerated
+-> then quantized at 5 and regernated and you go
+
+0 15 25 40 50 65 80 90 105
+-what was it originally quantized at 
+
+what gives you a 15
+13-17 (13/5 = 3*5)
+what gives you 25
+23-27 (23/5 = 5*5)
+
+common multiple in these 2 is 13
+
+TIFF 186 kb
+
+
+original image and blur it
+-(could do gaussian or uniform)
+original image -  blurry image = non-blurred of image 
+original image + non-blurred image (high boost filtering)
+
+can use gradient to see angle light is hitting each face
+-plot gradients to see if something was photo shopped in
+	-if light was hitting one person's face at a different angle then it was added in separately
+
+
+-could show that the laplacian is the unsharp mask
+
+
+----------start of 12b
+
+
+Quiz
+1. What is steganography?
+2. How much entropy does a double-headed coin have when flipped playing "heads and tails"
+3. Give an example of the wave forms for encoding 0 0 1 0 with the following modulations
+	a. OOK
+	b. ASK
+	c. FSK
+	d. BPSK
+4. Public writings, in steganography, embed messages between allies; researchers report also seeing "secrets" in nonpublic gifts.
+	Give 3 examples of steganography in every day life
+5.  Consider a bit-mapped image and an indexed color image
+	what steganography techniques will apply to both of them?
+
+	Which ones will differ between them?
+
+
+-------------------------------------------------------
+
+Advanced Network and System Security Lecture 13 Notes
+
+Quiz answers
+
+1. What is steganography?
+-covered writing
+-hiding a message, or data in another message or data
+-how would it differ from covert channels
+	-you could use stego to implement a covert channel
+	-covert channels have tranmission properties
+		-not static
+		-still hiding, but has transmission
+
+2. entropy in a double headed coin
+	-always same answer, so randomness or surprise is 0
+
+3. Give an example of the wave forms for encoding 0 0 1 0 with the following modulations
+	a. OOK - on off key
+		usually you have a carrier moving at a certain GHertz and you modify it
+		-either you do have it or you don't have it
+
+		______|  |   __
+				| 
+		0   0   1     0 
+		0GH
+		0GH
+		2.4GH
+		0GH
+		ex: tv remote with infrared (on or off for 500 micro seconds)
+
+		ex2: constellation
+			   |
+			___*___*
+			   |
+
+
+	b. ASK - amplitude shift keying
+	0101
+	   		   |
+			___ __*__*
+			   |
+            | |     | |
+		    | |     | |
+		| | | | | | | |
+		 | | | | | | | |
+		 	 | |     | |
+             | |     | |
+        2.4GH soft
+        2.4GH Loud
+        2.4GH soft
+        2.4GH loud
+		-always little waves and higher waves at peaks
+		-take wave form and multiply it by your carrier
+		-puts an envelope around wave and moves it out to Megabyte
+			-first thing you do when you receive it is bring it back down
+	c. FSK - frequency shifting
+		-5k 15k 5k 15k
+	after shift get
+		2.4G+5k  2.4G+15K  2.4G+5k 2.4G+15K
+		|    |   | | |     |   | |
+		   |    | | |   |     | | |
+		slow 	fast 	slow 	fast
+		0 		1 		0 			1
+		-no constellation for this one
+	
+	d. BPSK- binary phase shift keying
+
+	   you have carrier
+	   |   |   |   |   |
+         |   |   |   |   |
+       
+       |   |     |     |
+         |   | |   | |   |
+ 	    -0---- 1-----0-----
+ 	    0 stays in phase with it, and 1 is out of phase with it
+
+ 	    constellation is either in phase or completely out of phase      |
+ 	    				*_ _* 	BPSK
+ 	    				  |
+
+ 	    				  QPSK
+ 	    				* | *
+       					__ __
+ 	    				  |
+ 	    				*   *
+
+ 	    					16 QAM
+ 	    				hs 4 bods in each quadrant
+ 	    				-each bod represents 2 bits
+
+ 	    					64 QAM
+
+ 	    				has 16 bods in each quadrant
+-benefits of having more Megahertz
+-more bandwidth means the faster you can switch b.w. 0 to 1
+
+-differential doesn't tell you whether its 0 or 1, but rather the change
+
+-how many wave form changes do you need to change 16 bits to send
+	-with BPSK how many wave form changes do we need
+		-15 - each change represents 1 bit
+	-with QPSK
+		-8 because each change represents 2 bits
+	-with ASK with 8 amplitudes
+		-with 8 amplitudes, each change represents 3 bits
+		- 6 changes (3 3 3 3 3 1)
+
+-way to get most data though pipe
+	encode with as much forward error correction as possible and use as high data rate as you can to compensate for more error correction
+	-as you push bit rate to more you need more forward error correction because you will lose more
+		-so the error correction makes up for the increase in lost
+		-entropy stays the same, but you will send faster
+			-same bandwidth but symbol rate increases
+
+
+4. from quiz
+	Public writings, in steganography, embed messages between allies; researchers report also seeing "secrets" in nonpublic gifts.
+	Give 3 examples of steganography in every day life
+	-printer watermarks
+	-dollar bills have hidden watermark type things
+	-use first letter of each word
+
+5.  Consider a bit-mapped image and an indexed color image
+	what steganography techniques will apply to both of them?
+
+	Which ones will differ between them?
+
+	different
+		-cant use LSB encoding on indexed file but can on BMP
+		-on index file you can duplicate colors or hide message in index table which
+
+	Same
+		-image shading
+
+Bluetooth
+
+FSK versions 1.1   1 Mbit for both
+			 1.2
+
+			 2.0 	Enhance data rate 
+			 		D QPSK (diff Quad PSK)
+			 			2 Mbits/s
+			 2.1	also use 8 DPSK (3 Mbits/s)
+
+			 		LE 	-low energy
+			 			Guassian FSK (1Mb)
+			 			-instead of instant change b.w. high and low frequency it is a slower transition (more of a curve)
+2.1 has better security and auth
+
+
+4 Modes
+	mode 1 = no security -supported by 2.0 and earlier
+
+	mode 2 = service level enforced
+			 -after link is established
+			 -discovery in clear
+			 -2.0 (supported by 2.1 but not reccommended)
+	mode 3 = link level
+			 mandates auth and encryption
+			 secure discovery
+			 	-means negotiating all cryptography before security
+			 		-gives higher risk of DoS
+	mode 4 = 2.1 currently used
+			 - back to service level
+			 -uses SSP (secure simple pairing)
+			 -Elliptic curve Diffie Hellman
+			 -requires encryption for all but discovery
+
+-both mode 2 and 3 use a PIN for pairing
+
+
+Secure Simple Pairing
+-4 modes of simple pairing
+	mode 1: 2 displays
+			-pair it and then it uses Diffie Hellman Key exchange
+			-each person displays their exchanged Diffie Hellman secret and if match it says yes they match
+			-you would hash your G^a and G^b and display them.  If the 2 displays don't show the same value then there was MiM attack
+	mode 2: 1 display, 1 input
+			- paskey
+	mode 3: Just Works
+			no comparison
+			   headset
+	mode 4: out of band (OOB)
+			-assumes you have another communication channel (i.e. NFC)
+
+blue snarfing
+	-force a device to pair with you and then intercept class 
+	-getting Mobile identifier
+blue jacking
+	-sending unsolicited messages to a bluetooth device
+	-could perform some sort of phishing attack
+blue bugging
+	-uses commands of phone without letting person know
+	-place phone calls, listen to calls, send messages
+	-accessing
+car whisperer
+	-exploits key implementation in hands free car blue tooth
+	-lets an attacker send and receive audio from car kit
+
+
+-------------------------------------------------------
+
+
+Advanced Network and System Security Lecture 14 Notes
+
+Exam Review
+
+Passwords and Math of passwords
+
+b = bits in the password
+e = s.t. 2^e entries in the password file
+p = probability single password is in the dictionary
+d = s.t. 2^d is size of dictionary in entries
+
+
+Salt 	Dict 	Password 		Effort
+Y/N 	N 		Admin 			2^(b - 1)
+N 		N 		Any 			2^(b-e-1)
+	-you do 2^(b-1) calculations and have 2^e to compare to
+-sort list of hashes and do a binary search on them
+	-50 % 50 chance it is above or below (so 1 bit of entropy)
+	-if you split it 75 25 then you would have to do more calculations because you get less than 1 bit of entropy for each
+Y 		N 		Any 			2^(b-1)
+Y/N 	Y 		Admin 		 P*(2^(d-1)) + (1-p)2^(b-1)
+N 		Y 		Any 		  1*(2^(d-1)) + 0*2^(d-1)
+Y 		Y 		Any 		  2^d/p
+
+
+1 3 1 2 1 1 2 3 1 2 3 1 1 2 3 1
+
+What is the average = sum of all / #
+What is the total = sum of all
+
+LEts say this is a count of the # of widgets a worker makes in each hour?
+
+Lets say 
+
+P(A) = 1/2
+P(B) = 1/4 		Total bits of entropy = 28
+P(C) = 1/8
+P(D) = 1/8
+
+				Average Entropy per hour = 1.75
+
+1/2*log(1/1/2) + 1/4*log(1/1/4) + 2*1/8*log(1/1/8)
+=.5log(2) + .25log(4) + .25log(8)
+=.5 + .5 + .75 = 1.75
+
+log(1/1/2) = 1 bit per A (1s)
+log(1/1/4) = 2 bits per B (2s)
+log(1/1/8) = 3 bits per C and D (half of 3s each)
+
+
+1 bit password how many tries to you have to try to gaurantee you have found it
+
+2 tries
+2 minutes if 1 minute/try
+
+2 bit password you need 4 tries
+4 minutes
+
+3 bit password you need 8 tries
+8 minutes
+
+how large of a password can you brute force in 64 minutes
+
+6 bit password requires 64 tries
+64 minutes
+
+if it takes 1 day to do 4 bits how many days does it take to do 5 bits?
+2 days
+
+if it takes a year to do 3 bits how many years does it takes to do 5 bits
+4 years
+
+1 bit in a day how many can you do in a week about?
+4 bits in 8 days
+
+if 2^32 passwords = 1 second
+
+2^33 = 2 seconds
+2^34 = 4 seconds
+
+how long would 2^70 take = 4*2^36 second
+ 						 = 2^38 seconds
+ 						 = 8 million years
+
+how much entropy would 10 lowercase random characters have?
+
+	log(1/1/26) = 4.5 bits/char*10 characters = 45 bits
+
+	9 characters and 1 number w/set position
+							  = 9*4.5+log(1/1/10)
+							  = 40.5 + 3.2 = 43.7 bits
+	if number is at end or beginning = 44.7
+	if it goes anywhere = 40.5 + 3.2 + log(1/1/10) = 46.9
+
+
+if 64 items in bucket
+-upper case, lower case, numbers, and some symbols
+
+grab an item randomly out of bucket
+entropy in the 1 item = log(1/1/64) = log(64) = 6bits
+if you throw it back in and draw another one you get another 6 bits.
+-each time you do this you get another 6 bits.
+
+Huffman encoding
+-identify which diagrams are valid or invalid
+
+A 00
+B 01
+C 110
+D 111
+E 011
+F 010
+G 10
+						Draw it working backwards
+-You know it won't work because 01 could be B or F
+
+A 10
+B 11
+C 01
+D 000
+E 0010 
+F 0011
+
+Can tell it will work because no ambiguity
+-draw to double check
+
+
+if split with 60 40 split how many would you have to order to get 250 bits of entropy
+- know formula
+- figure out how much bit of entropy each has and then do 250/that number
+log(1/1/.6) + log(1/1/.4) = 
+
+
+baud = wave changes per second
+	
+FHSS - Freq. hopping spread spectrum
+	-wnat to transmit with broader spectrum (less noise)
+	-every 500 microseconds switch frequency
+	-pseudo random
+	-put forward correction on it so that lossy is unnoticed
+DSSS - direct sequence spread spectrum
+	 - there is a frequency that each original bit gets XORed with - with error correction there is a less likelihood of losing a bit
+	 - takes more bandwidth
+	 - protected on physical layer
+
+
+Q 4 - figure out how many 1s and 0s you can encode in each waveform change
+
+
+LZW decompression
+
+READ 65,66,67,128,130,129,131
+
+ABCABCABCABC
+
+
+Social Engineering
+
+Reciprocation
+-have someone watch your stuff and then steal theirs if they ask you to watch theirs next
+
+Commitment and consistency
+-get promises
+
+Social Proof
+-celebrities are doing things, so it seems cool
+-laugh track
+
+Authority
+-seated above you
+
+Scarcity
+-limited time offer
+
+
+Sender
+0 x 		dr 			+ 	up 			1 		
+1 + 		up 			+   up 			1 		1
+0 + 		right 		x   upright 	1 		
+0 x 		dr 			x   dr 			0 		0
+1 + 		up 			+   up 			1 		1
+0 x 		dr 			x   dr 			0 		0
+1 + 		up 			x   dr 			0 
+0 + 		right 		+   right 		0 		0
+0 1
+ x
+
+  1
+ 0+
+
+
+to make sure no one is listening sacrifice some of the bits you were going to keep
+-if enough match then you can say probably nobody is listening
+-the ones you didn't sacrifice that you used the same filter is the one time pad you will use
 
 
 
+Test 2 = may 7th 6:30PM
 
 
+_______________________________________________________
 
 
-
-
-
-
-
-
+End of class
 
 
 

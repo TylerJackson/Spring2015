@@ -1,0 +1,5 @@
+gcc -fno-stack-protector -o server server.c -lcrypto -lpthread
+gcc -fno-stack-protector -o client client.c
+gcc -fno-stack-protector -o attack attack.c
+
+//The goal is to use a buffer overflow to cause the thermonuclear missile to be launched.  May need to disassemble the server file.

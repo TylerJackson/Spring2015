@@ -2648,7 +2648,2216 @@ Before Moving on...
 
 -------------------------------------------------------
 
-Data Mining Lecture 14 Notes
+Data Mining Lecture 14 Notes --- snow day
+
+-------------------------------------------------------
+
+Data Mining Lecture 15 Notes
+
+For the ROC curve
+-a good classifier has a curve that is almost horizontal
+-that means the true positive rate stays high while the false positive rate can be decreased
+
+ensemble methods
+
+-Construct a set of classifiers from the training data
+-predict class label of previously unseen records by aggregating predictions made by multiple classifiers
+
+General Idea
+-Original training data D
+1. create multiple data sets D1...Dt from D
+2. Build multiple classifiers on the data sets
+C1 .. Ct
+3. Combine classifiers into C*
+
+Why does it work?
+-why is this better than SVM 
+-suppose we have 25 base classifiers
+	-each classifier has error rate, e = .35
+	-assume classifiers are independent so they make errors on different samples from dataset
+	-probability that the ensemble classifier makes a wrong prediction
+Sum(i = 13 to 25) of 25Ci * e^i * (1-e)^(25 - i) = .06
+-thats the error rate of the ensemble
+
+-these classifiers arent independent
+-in practice our classifiers are correlated, so it does not work this well
+
+Why does it work?
+-how much does this horse weigh?
+	-average of the guesses from many people is close to the true value
+	-average of many people is better than AN expert's guess
+
+-best classification methods use ensembles
+
+Examples of Ensemble methods
+-how to generate an ensemble of classifiers
+	-bagging
+	-boosting
+	-stacking
+	-cascading
+
+Bagging
+-Bag = bootstrap aggregation
+Ex:
+	-10 instances of data
+	-will build 3 classifiers
+-Build classifiers from random subsamples of data
+-take majority vote of the resulting classifiers
+	-thats it... more models is better
+	-like 1000s
+	-maybe we could be smarter than just random subsamples from the dataset
+-can run mapreduce in parallel
+
+Self test
+-what is the probability of selecting a particular instance exactly twice when you have a sample size of 2000, 40 rounds of bagging, and selecting 100 instances for each bag?
+	-you will be selecting 40 rounds x 100 instances =
+	4000 times
+	-Bernoulli trial with p = 1/2000, q = 1999/2000, n=4000, k=2
+
+	P(2) = 67.7% = n_C_k * p^k * q^(n-k)
+
+	Boosting and Bagging
+	-weak learner: a learner with better than chance accuracy (error < 50% for 2 class problem)
+		i.e. classifier has high bias
+		like a pruned decision tree
+	-strong learner: arbitrarily small error rate
+
+
+Boosting
+-an iterative procedure to adaptively change distribution of training data by focusing more on previously misclassified records
+	-initially, all N records are assigned equal weights
+	-unlike bagging, weights may change at the end of boosting round
+	-samples with a higher weight are more likely to be chosen
+	-if an instance starts showing up more that means it is harder to classify
+		-its weight gets higher as it goes on
+
+Example: AdaBoost
+-base classifiers: C1,...,CT
+-weighted error rate of Ci is:
+e_i = 1/N * Sum(j=1 to N) of W_j*delta(Ci(x_j)!=y_j)
+
+delta = 1 when error, 0 when not error
+1/N is for average 
+W_j is jth instance weight
+Take jth instance (x_j) and put through ith classifier Ci(x_j) and if those are not equal (y_j) then add up the weight of that instance
+	-weighted error rate
+
+-use this weighted error rate to come up with an importance
+
+alpha_i = 1/2*ln( (1-e_i)/e_i )
+-alpha gets bigger as e gets smaller
+
+
+Weight update:
+- if you were correct don't adjust weight, but if you were wrong
+			| 1 				if Ci(x_j) = y_i
+wj <- wj *  |
+ 			|(1-e_i)/e_i 		if Ci(x_j)!= y_i
+
+-Rescale weights to sum up to 1
+-Classification
+	C*(x) = argmax sum(j=1..T) of 
+			   y				alpha_j*delta(Cj(x)=y)
+-so you boost the weights where you were wrong
+-so by not adjusting the weights you were correct at this dilutes their weight
+	-this is much faster than bagging
+
+Illustrating
+-Original Data (sorted on x):
+	 +  +  +  -  -  -  -  -  +  +
+	.1 .1 .1 .1 .1 .1 .1 .1 .1 .1
+
+-try to find a threshold where on 1 side it is positive, and on the other its a negative class
+-we have 10 data points, so each data point gets initial weight 1/10
+-suppose we sample six points
+-which makes 2 errors with weight .1
+
+	-threshold with lowest error rate is after 3rd instance
+	-2 errors on the 9th and 10th instance with weight of .1
+	-go back to equations
+	- so e = 2*.1 = .2, alpha = ln( (1-.2)/.2 ) = ln4
+												~ 1.38
+	-so weights of incorrect answers get multiplied by 4
+	-then weights are rescaled to 1
+
+	+ + + - - - - - + +
+	|--.0625-------| .25
+	-now those 8 have a weight of .0625 and the 2 that had been wrong have a weight of .25
+
+	take 6 new samples
+
+		+ - - - + +
+		so the 2 with the high weights got chosen again and there were 4 random others
+
+	-repeat process
+	-choose threshold with smallest error
+
+	-after 4th instance
+		+ - - - + +
+		   -   | +
+
+	-sometimes error stump might be on an edge
+-so after performing a few classifiers
+-if the importances are all right around each other then you take the majority vote for an instance
+
+Stacking and Cascading 
+-train an intial classifier (or ensemble)
+-use the output probabilities of each class (from each classifier, if ensemble), as features for another classifier
+-train final classifier on inferences from previous classes
+	-typical this last classifer is logistic regression
+
+Common types of ensemble classifiers
+-random forests
+	-select random subset of samples
+	-select random subset of the features
+	-build a tree
+	-build many trees
+	-actually a whole forest of trees
+
+Random Forest
+-decision trees are built
+-but at each stage a random subset of the features is selected (random subspace)
+	-if "f" features, look at "np.sqrt(f)" features at each iteration
+	-approximately probably correct
+-generalization built in :out-of-bag
+-variable importance:
+	-random feature permutation
+	-look at out-of-bag samples
+	-randomly permute the values of nth feature
+	-see how performance degrades
+
+-outback error rate on random forests
+
+features of random forests
+-produce high accuracy on many real world datasets
+-run efficiently on large databases (each tree is an easy prediction, easily extensible to map reduce)
+-can handle 1000s of input variables w.o variable deletion
+-give estimates of what variables are important in the classification
+-generate an internal unbiased estimate of the generalization error as the forest building progresses
+-have effective method for estimating missing data
+-have methods for balancing error in class population for unbalanced sets
+
+self test
+-how many features (Attributes) does scikit-learn use in each iteration of bagging for a random forest?
+	max_features = sqrt(n_features)
+-which best completes this statement : in scikit, the number of features considered changes:
+	a: once for each tree in the forest
+	b: once for each split in each tree
+		-B
+
+Assignment 3: Classification Finale
+-modeling and eval
+	-whatever you choose for part 1 just back it up
+	-part 2 use all of your data
+	-use at least 3 models for 3
+	-discuss the advantages of each model and use the statistics to discuss this
+
+-------------------------------------------------------
+
+Flipped Module 3
+
+Classification using k nearest neighbors
+
+Nearest Neighbor Classifiers
+-Basic idea:
+	-if it walks like a duck, quacks like a duck, then its probably a duck
+-if it has about the same values, and matches something in our dataset then that's probably what it is
+
+example:
+	-we have an unknown record (Red dot)
+	-its three nearest neighbors are + so 
+-requires 3 things
+	-the set of stored records
+	-distance metric to compute distance b.w. records
+	-the value of k, the number of nearest neighbors to retrieve
+-to classify an unknown record:
+	-compute distance to other training records
+	-identify k nearest neighbors 
+	-use class labels of nearest neighbors to determine the class label of unknown record
+	(e.g., by taking majority vote)
+
+definition of nearest neighbor
+-1-nearest neighbor
+	-doesn't account for noise
+-2-nearest neigbor
+	-could have a tie and no majority class
+-3-nearest neighbor
+	-accounts for noise and has majority
+
+-compute the euclidean distance b.w. 2 points
+	-d(p,q) = sqrt(sum(i) of ((p_i-q_i)^2))
+-determine the class from nearest neighbor list
+	-take the majority vote of class labels among the k-nearest neighbors
+	-weigh the vote according to distance
+		-weight factor, w= 1/(d^2)
+-decision boundaries can be intricate and complicated
+-increasing k makes the boundary more and more linear
+
+-self test
+	-how would KNN classify the test point for 
+		k=1 - green
+		k=3 - green
+		k=5 - pink
+-choosing the value for k:
+	-if k is too small then sensitive to noise points
+	-k too large then neighborhood may include points from other classes
+		-use grid search to determine good value for k
+
+problem with euclidean measure:
+	-high dimensional data
+		-curse of dimensionality
+	-can produce counter-intuitive results
+
+Ex: binary data
+
+	1 1 1 1 1 1 1 1 1 1 1 0 vs 1 0 0 0 0 0 0 0 0 0 0
+	0 1 1 1 1 1 1 1 1 1 1 1    0 0 0 0 0 0 0 0 0 0 1
+	the distance between the 2 sets is identical which we can tell they are not even close to the same distances apart
+
+	-semi-solution: normalize the vectors to unit length
+	-semi-solution: scale features
+
+scaling issues
+	-attributes may have to be scaled to prevent distance measures from being dominated by one of the attributes
+		-height of a person may vary from 1.5m to 1.8m
+			-so value < 1
+		-weight of a person may vary from 90lb to 300lb
+			-value in 10s
+		-income of a person may vary from $10k to $1M
+			-value in 1000s
+
+	-so the income will have the highest importance and our data will be most sensitive to income
+	-you must scale the data dimensions
+	-otherwise large attributes appear more important
+		-must give 0-mean and st. dev.
+
+self test
+	-would decision trees or KNN be better for the following dataset?
+	-answer for this dataset is decision trees
+	-all the noise attributes will skew the distance score for KNN
+
+self test 2
+	-would decision trees or KNN be better for the following dataset?
+	-answer: KNN!
+	-the arbitrary decision lines will be better for the KNN classifier
+
+	-the decision tree will have lots of boundaries to make and likely get stuck in a local optimum
+
+KNN distances and similarities
+
+similarity/dissimilarity for simple attributes
+-p and q are the attribute values for a data object
+Attribute Type 		Dissimilarity 		Similarity
+					| 0 if p=q            | 1 if p=q 
+Nominal 	     d= |                  s= |
+					| 1 if p!= q          | 0 if p!= q
+
+
+Ordinal 		d = (| p-q |)/ (n-1)
+				(values mapped to      s=1-(| p-q |)/ 
+				integers 0 to n-1,  			  (n-1)
+				where n is the # of 
+				values)
+
+Interval or       d = |p-q|            s=-d, s= 1/(1+d)
+Ratio 								   or 
+									s=1- d-min(d)/
+									  (max(d) - min(d))
+
+Euclidean Distance
+	dist = sqrt(sum(k=1..n) of ((p_k-q_k)^2))
+
+	where n is the # of dimensions (attributes) and p_k
+	and q_k are, respectively the kth attributes (components) or data objects p and q
+-standardization is necessary if scales differ
+
+Minkowski Distance
+-a generalization of euclidean distance
+
+	dist = (sum(k=1..n) of ((|p_k-q_k|)^r))^(1/r)
+-so if r = 2 it is euclidean 
+- r is a parameter n is the # of dimensions (attributes) and p_k and q_k are respectively the kth attributs (components) or data objecst p and q
+
+r = 1 City block (manhattan, taxicab, L1 norm) distance
+	-a common example of this is the Hamming distance, which is just the # of bits that are different b.w. two binary vectors
+r = 2 Euclidean distance
+r -> infinity. "supremum" (L_max norm, L_inf norm) 
+				distance.
+	-this is the maximum difference b.w. any component of the vectors
+-do not confuse r with n, i.e. all these distances are defined for the number of dimensions
+
+-when you really care about one attribute being really far away, you might use infinity norm
+-l1 and l2 are somewhat interchangeable
+
+Mahalanobis Distance
+
+mahalanobis(p,q) = (p-q)* sig^-1 * (p-q)'
+
+sig is the covariance matrix of the input data X
+
+-scale data in dimension that corresponds to the variance
+
+-common properties of a similarity
+	-similarities also have some well known properties 1. s(p,q)=1 (or maximum similarity) only if p=q
+	2. s(p,q)=s(q,p) for all p and q (symmetry)
+
+	where s(p,q) is the similarity b.w. points (data objects), p and q
+
+Similarity b.w. binary vectors
+-common situation is that objects, p and q, have only binary attributes
+-compute similarities using the following quantities
+	M01 = the # of attributes where p was 0 and q was 1
+	M10 = the # of attributes where p was 1 and q was 0
+	M00 = the # of attributes where p was 0 and q was 0
+	M11 = the # of attributes where p was 1 and q was 1
+-simple matching and jaccard coefficients
+	-SMC = # of matches / # of attributs
+
+	J = # of 11 matches / # of not-both zero attributes values
+
+SMC versus Jaccard: example
+
+p = 1000000000
+q = 0000001001
+
+M01 = 2
+M10 = 1
+M00 = 7
+M11 = 0
+	SMC = (M11+M00)/(M01+M10+M11+M00) = (0+7)/(2+1+0+7)
+									  = .7
+	J = M11/(M01 + M10 + M11) = 0/(2+1+0) = 0
+-can still use jaccard for continuous data
+
+Cosine Similarity
+-want to take 2 vectors and look at angle b.w. vectors
+-used a lot in document classification
+	-like summarize a document based on words in document
+-saying each sentence has a document frequence we can associate with it
+	-can say how similar are these 2 sentences to each other
+	-can look at the angles of each sentence
+		-if they use the same words they will have angles close to each other
+if d1 and d2 ar 2 document vectors, then 
+	cos(d1, d2) = (d1 . d2)/||d1|| ||d2||
+	where . indicates vector dot proecut and ||d|| is the length of vector d
+
+example:
+	d1 = 3 2 0 5 0 0 0 2 0 0
+	d2 = 1 0 0 0 0 0 0 1 0 2
+
+	d1 . d2 = 3*1 + 2*0 +... 0*2 = 5
+	||d1|| = (3*3 + 2*2 + 0*0 ... + 0*0)^.5 = 42^.5=6.4
+	||d2|| = (1*1 + 0*0+...+2*2)^.5 = 6^.5 = 2.245
+
+	cos(d1,d2) = .315
+
+Correlation
+-correlation measures the linear relationship b.w. objects
+-to compute correlation, we standardize data objects, p and q, and then take their dot product
+	p'_k = (p_k - mean(p))/std(p)
+	q'_k = (q_k - mean(q))/std(q)
+	correlation(p,q) = p' . q'
+
+general approach for combining similarities
+	-sometimes attributes are of many different types, but an overall similarity is needed
+1. for the kth attribute, compute a similarity s_k in the range [0,1]
+2. define an indicator variable, delta_k, for the kth attribute as follows
+		  | 0 if the kth attribute is a binary 
+		  |	  asymmetric attribute and both objects 
+delta_k = |   have a value of 0, or if 1 of the objects
+		  |   has a missing values for the kth attribu.
+		  |
+		  | 1 otherwise
+
+3. Compute the overall similarity b.w. the 2 objects using the following formula
+
+		similarity(p,q) = sum(k=1..n) of delta_k*s_k /
+						  sum(k=1..n) of delta_k
+
+Using weights to combine similarities
+-may not wnat to treat all attributes the same.
+	-use weights w_k which are b.w. 0 and 1 and sum to 
+	 1. 
+
+	similarity(p,q) = sum(k=1..n) of w_k*delta_k*s_k /
+					  sum(k=1..n) of delta_k
+
+ 	distance(p,q) = (sum(k=1..n) of 
+ 								w_k*|p_k-q_k|^r)^(1/r)
+
+
+Regression - k nearest neighbor
+
+KNN regression
+-knn can also be used for regression problems where we want to predict a numeric value
+-use the avg. y value of the k nearest neighbors as the predicted value
+-this estimates E(y|x), the average y value at x, which minimizes mean squared error
+
+KNN Regression: example
+-in a clinical study of risk-factors for cardiovascular disease
+	-independent variable x is a patient's waist circumference
+	-the dependent variable y is a patient's deep abdominal adipose tissue (more complicated to measure)
+-researchs want to predic the y variable using the x
+
+graphed waist circumference vs the deep abdominal adipose tissue
+
+KNN regression: alternatives to mean
+-we don't need to just take the mean of the points
+
+-find the neighbors in feature space
+-use regression of feature subset using only nearest neighbors
+
+-encapsulated knn or knn with a linear fit
+-1 of most effective regression methods you can use
+
+self-test
+-find the 5-NN points from this data for the given test point?
+-draw the linear regression best fit line that estimates the value of the test point from attribute A1
+
+k-NN classifiers are "lazy" learners
+	-in pure form, model has no parameters
+	-classifying records can get computationally expensive
+	-this is unlike decision tree induction and rule-based systems
+	-so prediction becomes more costly
+
+bigish data: KD Trees for kNN
+-a way to make the space of kNN more tractable
+	-brute force
+	-kd tree:
+		-partition search space using tree
+		-examine nearby points
+
+kd tree construction
+-start with d-dimensional space
+-start with box around data points
+-choose to split on x or y
+	-lets say x (vertical line) (left branch)
+-choose next to split
+	-lets say split left (horizontal line on the left side)
+-choose next to split
+	-lets say left = bottom half (vertical line)
+
+-save the bounding rectangle for each node
+
+kd Tree construction
+-which dimesion to split?
+	-split on dimension which has higher dynamic range (normalized)
+-which value to split?
+	-median or mean of everything in that box 
+		-typically median
+-stopping criteria
+	-points in node < threshold
+	-minimum dynamic range in box (volume/area)
+
+self test for k = 1
+-save the distance to the nearest point
+	-sometimes that isn't in the same box you are in
+	-need to recursively back track to compare current nearest neigbor distance to the distance b.w. our point and the nodes bounding box
+		-then we iterate through all points for that node and update nearest neighbor accordingly
+
+what if k > 1
+-same algorithm, save minimum distance to most distant neighbor point in container box
+-need to calculate more distances to container boxes, but still better than brute force
+-can get this even lower though
+
+Approximate KDTree for KNN (when k >1)
+-do not visit nodes when
+	-exact algorithm: r < dist. to bounding box
+	-new algorithm :r < alpha (dist. to bounding box)
+	-suboptimal, but still works well
+	-no one point close than r/alpha
+
+	alpha < 1
+
+KDTree for KNN complexity
+-query for NN, balanced tree
+	O(log N) usual case
+	O(N) worst case
+-query for kNN
+	O(k log N) (approximate almost always this)
+	O(N log k) worst case
+
+KNN summary
+-get dimensions down
+	-choose only relevant features
+-normalize features
+-use KDTree to optimize query
+-high dimensions (if you cannot reduce)
+	-ball tree is better, but suffers from curse of dimensionality
+	-use locality sensitive hashing functions
+	-or choose a different classifier!
+
+Classification: Naive Bayes
+-a probability framework for solving classifications
+-conditional probability
+	P(C | A) = P(A,C)/ P(A)
+	P(A | C) = P(A,C)/ P(C)
+	A is attributes
+	C is Class
+	P(A,C) is a joint probability
+-bayes thm:
+		P(C | A) = P(A,C)*P(C)/ P(A)
+	P(A,C) = conditional
+	P(C) = prior
+	P(C|A) = posterior
+	P(A) = marginal
+
+Example:
+	P(blue) = 40/60 = 2/3
+	blue blocks take up 40 of the 60 peg area (we're still counting the pegs covered by the yellow block)
+
+	P(red) = 20/60 = 1/3
+
+	P(blue) + P(red) = 1
+
+What about the yellow brick
+	p(yellow) = 6/60 = 1/10
+
+	P(Y | R) ?
+	-split red section off from blue
+	-get the area of the remaning red space (2x10)
+	-get teh area of the yellow block on th red space(4)
+	-divide the area of the yellow block by the are of the red block
+	P( y | r ) - 4/20 = 1/20
+
+	P( r | y ) = 4/6 -> 4 of the 6 yellow blocks are on red
+
+	-using formula -> p(yellow)*totalpegs = 1/10*60=6
+	#of red pegs = P(red)*totalpegs = 1/3*60=20
+	numberofred under yellow = p(y|r)*#ofR = 1/5*20=4
+
+	P(r|y) = # of red under yellow/number of yellow
+		   = 4/6 = 2/3
+
+		   = P(y|r)* (#of red Pegs)/ (P(y)*totalpegs)
+
+		   = p(y|r)*p(r)*totalPegs/(p(y)*totalPegs)
+
+		   = p(y|r)*p(r)/p(y)
+
+self-test bayes thm
+
+-given 
+	-doctor known meningitis causes a stiff neck in 50% of people
+	-prior p(meningitis) = 1/50000
+	-prior p(stiff neck) = 1/20
+
+	P(M | stiff neck) ?
+
+	= P(stiff neck | M) * P(M) / P(stiff neck)
+	= 1/2*1/50000/(1/20) = 1/5000
+
+Bayesian Classifiers
+-consider each attribute and class label as random variables
+-given a record with attributes (A1,A2,...,An)
+	-goal is to predict class C
+	-specifically, we want to find the value of C that maximizes P(C | A1, A2, ... An)
+-can we estimate P(C | A1,...An) directly from data?
+	-classification decision, whichever is greater:
+		P(evade=yes|No refund, married,75k)
+		P(evade=no|no refund,married,75k)
+		-take the one that is greater
+
+Bayesian Classification
+-approach
+	-compute the posterior porbability P(C|A1,...An) for all values of C using Bayes thm
+
+	P(C|A1A2....An) = P(A1A2...An|C)P(C)/(P(A1A2..An))
+
+	-choose values of C that maximizes P(C|A1,A2,..An)
+	-equivalent to choosing value of C that maximizes
+		P(A1,A2,...,An|C)P(C)
+
+-how to estimate P(A1,A2,...,An|C)?
+
+Naive Bayes Classifier
+-assume independence among attributes Ai when class is given:
+	P(A1,A2,...,An|C) = P(A1|Cj)*P(A2|Cj)*..*P(An|Cj)
+	-use training data to estimate P(Aj|Cj) for all Aj and Cj.
+	-new point is classified to Cj if P(Cj) prod(P(Aj|Cj)) is maximal
+		
+		argmax P(Cj) prod (P(A_j | C_j))
+		   j
+
+P(C) = N_c/N
+P(Aj | Ck) = |Ak|/Nc
+where |Ak| is # of instances having attribute A and belongs to class Ck
+-this is for ordinal or discrete
+
+Estimate Probabilities for Continuous Data
+
+-for continuous attributes:
+	-discretize the range into bins
+		-one ordinal attribute per bin
+		-violates independence assumption
+	-two-way split: (A<v) or (A > v)
+		-choose only one of the 2 splits as new attribute
+	-probability density estimation:
+		-assume attribute follows a distribution (usually Gaussian)
+		-use data to estimate parameters of distribution (e.g. mean and standard deviation)
+		-once probability distribution is known, can use it to estimate the conditional probability P(Aj|c)
+		-could also use kernel density estimation to figure out the probability
+
+how to estimate probabilities from data?
+	-normal distribution:
+		P(A_i|c_j)=1/(sqrt(2*pi*sigma^2))*
+							e^(-1*(A_i-u_ij)^2/
+							      (2*sigma^2)
+							  )
+	example = Ai = Income = x
+			Cj = Evading = y
+			u_ij = sample mean
+			sigma = st. deviation
+	P(income = 120 | No) ?
+	sample mean = 110
+	sample variance = 2975 = sigma^2
+
+  P(income=120|No) = 1/(sqrt(2*pi*2975))*
+  						e^(-(120-110)^2/(2*2975))
+  				   = .0072
+
+naive bayes classifier, smoothing
+-problem: if 1 conditional probability is 0 then the entire expression becomes 0
+-probability estimation
+	-original, laplace, m-estimate, lidstone
+	-all want to remove that 0 appearance
+
+Naive Bayes (summary)
+-robust to isolated noise points
+-handle missing values by ignoring the instance during probability estimate calculations
+-robust to irrelevant attributes
+-independence assumption may not hold for some attributes
+	-use othe techniques such as Bayesian Belief Networks (BBN)..
+	-training and inference get complicated quickly (toolkits exists, i.e. gmtk)
+-but that does not really matter! all we need to worry about is whether the probability estimate correctly identifies the class (P(X) > .5)
+-similar argument for more than 2 classes, but "margin of error" is smaller
+-an example...
+
+-look at some examples in scikit learn
+
+-------------------------------------------------------
+
+Data Mining in class assignment
+
+-most of values are 0
+
+-------------------------------------------------------
+
+Data Mining Lecture 17 Notes
+
+classification notebook demo
+
+-image data for data mining
+	-break it into features (pixels)
+	-stack rows one after the other 
+	-classify the person who's face is there
+
+lfw_people = fetch_lfw_people(min_faces_per_person=20, resize=0.4)
+-fetches at least 20 of each person, and makes the faces a little smaller so data set isnt huge
+
+lfw_people.data.shape
+	-numpy matrix has .shape property
+	-tells rows and columns (instances and features)
+
+lfw_people.target_names
+	-target_names are actual unique people
+
+size (3023,1850)
+-3023 instances (3023 images)
+-1850 features (pixels in a row) (in an image)
+	-each value is 0-255 (some level of gray)
+
+plt.hist(lfw_people.target,bins=len(lfw_people.target_names))
+	-count how many instances there are of each person and put it in a histogram (each person is a class)
+
+-what metric would be a good measurement of performance for this data set?
+	-accuracy - you want to know how accurate you are on the whole dataset
+	-low false positive rate - for very frequent faces
+		-high precision (on a per class basis)
+			-calculate precision on all classes above this threshold of frequency
+	-high true positive rate - very infrequent faces
+		-no false negatives
+		-high recall
+
+-start with a classifier
+	-doesn't matter which one
+
+-k neighbors
+
+x = lfw_people.data
+y = lfw_people.target
+yhat = np.zeros(y.shape)
+
+cv = StratifiedKFold(y, n_folds=10)
+-way to pick training data - 10 folds and in each fold it will have the same class distribution as whole data in each fold
+-train model using 9 folds and train on 10th
+-this will happen 10 times
+-use entire data set for both training and testing
+-real good measure of performance
+
+clf = KNeighborsClassifier(n_neighbors=1)
+
+for train, test in cv:
+	clf.fit(x[train],y[train])
+	yhat[test] = clf.predict(x[test])
+
+total_accuracy = mt.accuracy_score(y,yhat)
+-use mt for all metrics
+-1/3 was accuracy - chance is 1/N classes = 1/62 faces
+-try adjusting k neighbors
+
+-use principle component analysis to reduce dimensionality
+	-gives you eigen faces to reduce number of features
+		-you take less pixels into account to determine who's face it is
+		-there might be some noise 
+
+-need to be careful to never using testing data when training - be careful with randomized pca not to do this
+
+-have 10 folds - take 9 folds calculate and fit a pca to that data - then fit a classifier based on these features and fit it on 
+
+clf_pipe = Pipeline(
+	[('PCA_TJ',RandomizedPCA(n_componenets=300)),('CLF_TJ',KNeighborsClassifier(n_neighbors=1))])
+
+-takes dimensions from 1800 to 300 weights
+	-can tune this
+-can also tune # of neighbors
+
+-then use same code as before
+
+for train, test in cv:
+	clf_pipe.fit(x[train],y[train])
+	yhat[test] = clf_pipe.predict(x[test])
+
+-could also do feature union
+	-puts a few things together before putting into a classifier
+
+-this trained faster but not better
+-try changing classifier or other parameters
+	-because it didn't work so well
+
+clf_pipe = Pipeline(
+	[('PCA_TJ',RandomizedPCA(n_componenets=300)),('CLF_TJ',RandomForestClassifier(max_depth=50, n_estimators=150,n_jobs=-1))])
+
+-can tune these again
+-n_jobs = -1 means use all cores available
+
+-repeat loop again from above
+
+try just random forest classifier
+
+clf = RandomForestClassifier(max_depth=50, n_estimators=150,n_jobs=-1,oob_score=True);
+
+-out of bag score
+	-calculate how well it is generalizing on the data it is not using currently to train the forest
+-run loop again
+-advantage of not using random pca is we can graph out feature importances
+
+-can grab last time it was fit
+	-feature importances calculate by randomly permuting feature values and sticking it back through the classifier to see whether or not it does well
+	-if a feature is very important you would expect its score to drop off a lot when you randomly permute the values
+plt.barh(range(len(clf.features_importances_)),clf.feature_importances_)
+plt.show()
+
+print clf.oob_score_
+	-want out of bag score to be very close in accuracy to pipeline
+	-this would mean your data is generalizing well
+	-a random forest is an unbiased estimator of generalization error if these numbers match
+		-underestimate might be okay
+			-if a lot of trees then a lot of training iterations
+		-overestimate is bad because 
+
+-importance graph
+	-could display feature importance as an image instead
+	-would expect a weird circle around face 
+
+-could do an adaboostclassifier
+	-in python book
+
+-could do nearest centroid to use cosine metric
+	-remember cosine takes angle distance between vectors
+	-will have a centroid per class
+
+-can play with n_components
+
+-do SVC, logistic regression, SGDClassifer
+
+-do Gaussian Naive Bayes
+	-keep doing clf_pipe code
+	-using continuous weights b.c. of r pca
+	-won't be sensitive to noise
+
+-decision trees are pretty good with noise also
+
+-KNN can be sensitive to noise b.c. distance measure
+
+-now use metrics
+	-we already have accuracy on whole data we've been calculating
+
+-create threshold for how many faces is frequent enough
+
+freq_infreq_threshold = 30
+
+-turn into binary classification problem
+for class in unique values of y, calculate indices where y = that class
+	-set these = to 1 and the rest to 0
+	-then get predicted values and wherever you predicted the correct value set predicted = 1
+
+	-then get number of times that you predicted correctly for that class and if it is < threshold
+		calculate recall
+		-otherwise calculate precision
+		-append the value onto array
+	-do this for every class (Face)
+
+Total acc = 53 %
+number of infrequent faces = 28 with recall of .35
+number of frequent faces = 34 with precision of .55
+- so when our class was frequent enough we were 55% accurate
+-whenever we don't have very many examples we have more trouble
+-this makes sense because the more dense, the better gaussian dist will do
+	-remember precision mostly takes into account low false positives
+	-can adjust threshold
+
+-compute ROC curve
+	-receiver operating characteristic
+	-want it to be steep up in the beginning and then flatten
+	-can't calculate for multiclass dataset
+		-no need binary data
+		-could do ROC curve for every individual class
+
+-remember with ROC curve you get the probability for every single class
+	-for every instance you pull out a record and say what is the probability it came from each class
+	-use these probabilities to score roc curve
+		-y_hat_score
+
+	-grab score at ith class - positive_label = i
+	-will give false positive and true positive rates
+		-for every single class
+	then get area under roc curve
+
+-get one hot encoding of every class and make it a giant vector
+-take thresholds for every class and put that in 1 giant vector
+-lets you calculate an ROC curve for all of classes combined
+	-like an average ROC across all of your classes
+
+
+-then randomly grab 6 classifiers and graph them
+-also shows micro-average ROC curve area = .91 (not bad)
+
+-get to naive base classifiers on different number of components
+-see which is better
+	-comparing performance of 2 different algorithms
+
+-we can do cross validation and see accuracy for each individual fold
+	-can get overall standard dev. and do +- that quantity and see if it includes 0
+	-if it includes 0 then with 95% confidence we don't know they are different
+
+clf1 = Pipeline(
+	[('PCA',RandomizePCA(n_components=100)),('CLF',GaussianNB())]
+)
+
+clf2 = Pipeline(
+	[('PCA',RandomizePCA(n_components=50)),('CLF',GaussianNB())]
+)
+
+cv = StratifiedKFold(y, n_folds=10)
+acc1 = cross_val_score(clf1,x,y=y,cv=cv)
+acc2 = cross_val_score(clf2,x,y=y,cv=cv)
+-give test attributes x, labels (y) and cross validation object cv
+
+-give me the accuracy of every single fold as an array
+-trains 2 classifiers with Naive Gaussian Bayes and gives accuracy scores
+
+
+t = 2.26/np.sqrt(10)
+-multiply by st. dev.
+then do +- dbar (which is just the average)
+
+e = (1-acc1) - (1-acc2)
+stdtot = np.std(e)
+dbar = np.mean(e)
+
+print 'Range of:', dbar-t*stdtot, dbar+t*stdtot
+
+-doesn't include zero so we can say with 95% confidence they are different
+	-there is still a possibility they are from the same distribution
+
+2.26 came from 95% confidence interval with 10 folds
+
+-------------------------------------------------------
+
+Data Mining Lecture 18 Notes -- no class
+
+-------------------------------------------------------
+
+Data Mining Flipped Module 4 Notes
+
+Basics of Clustering Analysis
+	Algorithms
+		-k-means clustering
+		-agglomerative clustering
+		-DBSCAN
+
+What is clustering analysis
+-clustering
+	-finding groups of objects s.t. the objects in a group will be similar (or related) to one another and different from (or unrelated to) the objects in other groups
+-want to minimize the intra cluster distances
+-want to maximize inter cluster distance
+
+Applications of Cluster Analysis
+
+Prototypes 
+	-group related documents for browsing
+	-group genes and proteins that have similar functionality
+
+-Summarization
+	-reduces the size of large data sets
+	-efficient PCA (Reduction)
+	-efficient KNN (quantization)
+
+	-Marketing on social media
+
+Self Test
+-is this clustering
+	-dividing students up alphabetically
+		-no this is just ordering
+	-paritioning a graph by cutting links
+		-most likely, depending on how you decide to cut the links
+
+
+Types of clusters
+-a clustering is a set of clusters
+
+Partitional Clustering
+-a division data objects into non-overlapping subsets (clusters) s.t. each data object is in exactly one subset
+	-assuming clusters are disjoint from e.o
+
+Hierarchical Clustering
+-a set of nested clusters organized as a hierarchical tree
+
+-defining clusters can be ambiguous
+	-well-separated clusters
+	-conter-based clusters
+	-contiguous clusters
+	-density based clusters
+	-property of conceptual
+	-described by an objective function
+
+Types of Clusters: Well-separated
+-center-based
+	-a cluster is a set of objects s.t. an object in a cluster is closer (more similar) to the "center" of a cluster, than to the center of any other cluster
+	-the center of a cluster is often a centroid, the average of all the points in the cluster, or a medoid, the most "representative" points of a cluster
+
+-contiguous cluster (nearest neighbor or transitive)
+	-a cluster is a set of points s.t. a point in a cluster is closer (or more similar) to one or more other points in the cluster than to any point not in the cluster
+
+-density-based
+	-like a contiguous cluster in noise
+	-a cluster to a dense region of points, which is separated by low-density regions, from other regions of high density
+	-used when the clusters are irregular or intertwined, and when noise and outliers are present
+
+-Clusters defined by an objective function
+	-finds clusters that minimize or maximize an objective function
+	-enumerate all possible ways of dividing the points into clusters and evaluate the 'goodness' of each potential set of clusters by using the given objective function (NP Hard)
+	-can have global or local objectives
+		-hierarchical clustering algorithms typically have local objectives
+		-partitional algorithms typically have global objectives
+	-a veriation of the global objective function appraoch is to fit the data to a parameterized model
+		-parameters for the mdoel are determined from the data
+		-mixture models assume that the data is a "mixture" of a number of statistical distributions
+
+-transformed objective
+	-map the clustering problem to a different domain and solve a related problem in that domain
+		-proximity matrix defines a weighted graph, where the nodes are the points being clustered, and the weighted edges represent the proximities b.w. points
+		-clustering is equivalent to breaking the graph into connected components, one for each cluster
+		-want to minimize the edge weight b.w. clusters and maximize the edge weight w.in clusters
+
+self test
+-how many cluster would contiguous clustering find?
+	2
+-how many clusters would center based clsutering find?
+	1
+
+Common clustering Algorithms
+	-k-means and its variants
+	-hierarchical clustering
+	-density-based clustering
+
+K-means clustering
+-partitional clustering approach
+	-no overlap b.w. clusters and no hierarchy
+-each cluster is center based (there is a centroid)
+-each point is assigned to the cluster with the closest centroid
+	-euclidean
+	-cosine if sparse
+	-jaccard if binary inputs
+
+-number of clusters, K, must be specified
+-the basic algorithm is very simple
+
+1. Select K points as the initial centroids
+2. repeat
+3. 		form K clusters by nudging all points to the closest centroid
+4. 		recompute the centroid of each cluster
+5.  until the centroids don't change
+
+Self-test K-means clustering
+-for the k cluster algorithm how many times does each point get accessed in memory
+	-k times to comapre it to each centroid to find which it is closest to
+
+K-means clustering - details
+-initial centroids are often chosen randomly
+	-clusters produced vary from one run to another
+-the centroid is (typically) the mean of the points in the cluster
+-'Closeness' is measured by Euclidean distance, cosine, similarity, correlation, etc.
+-K-means will converge for common similarity measures mentioned above
+-most of the convergence happens in the first few iterations
+	-often the stopping condition is changed to 'until relatively few points change clusters'
+-complexity is O(n*K*I*d)
+	-n = nuber of points
+	-K = number of clusters
+	-I = number of iterations
+	-d = number of attributes
+-initialize is very key
+	-choosing centroids must have some randomness
+-want way of evaluating what clusters are better than others
+
+
+2-different k-means clustering
+-suboptimal vs optimal clustering
+	-mathematical eq. to quantify this
+
+Comparing K-means clusterings
+-most common measure is Sum of Squared Error (SSE)
+	-for each point, the error is the distance to the nearest cluster
+	-the SSE of a model is given by
+
+		SSE =  sum sum dist^2(m_i,x)
+
+	-x is a data point in Cluster C_i and m_i is the representative point for cluster Ci
+		-can show m_i corresponds to the center (mean) of the cluster
+	-given 2 clusterings, we can choose the 1 with the smallest error 
+	-1 easy way to reduce SSE is to increase K
+		-Note: A good clustering w/smaller K can have a lower SSE than a poor clustering w/greater K
+
+K-means optimizes the SSE
+-SSE pf the entire clustering
+	x: point
+	m_i = centroid of Cluster C_i
+	K = # of clusters
+
+	if distance is euclidean distance
+
+	SSE = sum sum( (m_i - x)^2)
+
+want to know optimal values of m_k
+
+d/d(m_k) of SSE = 0 = d/d(m_k) sum sum ((m_i - x)^2)
+
+
+use chain rule for (m_i-x)^2
+
+	2(m_i -x)* d/d(m_k) (m_i - x)
+	-this goes away unless k = i 
+	because d/d(m_k)(m_i-x) = 0 if k!= i
+	-if k = i then it equals 1
+	so  this becomes
+
+	0 = 	sum   (m_k -x)
+		x inc C_k
+
+
+	Sum m_k = sum x 
+
+	m_k = 1/abs(C_k) * sum x
+	-new m_k = the mean of all the parts we have in the cluster
+
+-k-means will find that optimal clustering even if you choose the wrong initial clustering	
+	-hopefully
+	-sometimes you get caught in the local optimum
+		-local min of SSE
+
+Solutions to initial centroids problem
+-multiple runs
+	-helps, but probability is not on your side
+-Kmeans ++
+	-select initial point and select initial centroids w/more probable selection proportional to distance
+	-slightly more probable to find optimal clustering
+-bisecting k-means
+	-not as susceptible to initialization issues
+
+Bisecting K-means
+	-variant of k-means that can produce a partitional or a hierarchical clustering
+
+1. Initialize the list of clusters to contain the cluster containing all points
+2. repeat
+3. 		select a cluster from the list of clusters
+4. 		for i = 1 to number of iterations do
+5. 			bisect the selected clusters using basic k-
+			means
+6. 		end for
+7.  	Add the 2 clusters from the bisection with the 
+		lowest SSE to the list of clusters
+8. until Until the list of clusters contains K clusters
+
+will bisecting k-means always produce the same clustering?
+	-yes! there is no randomness to it
+	-almost guaranteed to find optimal bisection
+
+will bisecting k-means always globally find the minimum SSE solution
+	-no, no guarantees, but for most data usually yes
+
+Updating centers incrementally
+-an alternative is to update the centroids after each assignment (i.e. stochastic update)
+	-each assignment updates zero or two centroids
+	-fast but not necessarily accurate
+-an alternative: mini-batch k-means
+	-randomly select "x" points at each iteration and update the clusters based on sampling
+
+Mini-batch K-means
+init centers, c randomly
+init counts per center, v[c] = all zeros
+
+for t iterations:
+	choose M points from data
+	for each x in M
+		c = closest center to x
+		update per center count:v[c]++
+		set learning rate n = 1/v[c]
+		update center towards x, c= (1-n)c + nx
+
+-minibatch k-means runs the fastest with objective function values really good
+	-good trade off
+
+Limitations of K-means
+-has problems when clusters are of differing
+	-sizes
+	-densities
+	-non-globular shapes
+-has problems when the data contains outliers
+
+-one solution is to use many clusters
+	-find parts of clusters but need to put together
+
+-does bisecting k-means also suffer from globularity?
+	-yes, it doesn't change the underlying k-means assumption of center-based clusters
+
+Hierarchical Clustering
+-produces a set of nested clusters organizd as a hierarchical tree
+-can be visualized as a dendrogram
+	-a tree like diagram that records the sequences of merges or splits
+
+strengths of hierarchical clustering
+-do not have to assume any particular number of clusters
+	-any desired # of clusters can be obtained by 'cutting' the dendrogram at the proper level
+-they may correspond to meaningful taxonomies 
+	-example in biological sciences (e.g. animal kingdom, phylogeny reconstruction, ...)
+
+agglomerate clustering
+	-start with the points as individual clsuters
+	-at each step merge the closest pair until only one cluster (or k clusters) left
+
+-traditional hierarchical algorithms use a similarity or distance matrix 
+	-merge or split one cluster at a time
+
+Agglomerative clustering algorithm
+-most popular hierarchical technique
+-basic algorithm is straightforward
+	-compute the proximity matrix
+	-let each data point be a cluster
+	-repeat
+		-merge 2 closest clusters 
+		-update the proximity matrix
+	-until only a single cluster remains
+-key operation is the computation of the proximity of two clusters
+	-different approaches to defining the distance b.w. clusters distinguish the different algorithms
+
+how to define inter-cluster similarity
+-MIN (single link)
+	-euclidean distance b.w. 2 individual points (the closest)
+-MAX
+	-same as min but the 2 farthest points
+-group average
+-distance b.w. centroids
+-other methods driven by an objective function
+	-Wards method uses squared error
+
+Cluster Similarity: Ward's Method
+-similarity of 2 clusters is based on the increase in squared error when 2 clusters are merged
+	-similar to group average if distance b.w. points is distance squared
+-less susceptible to noise and outliers
+-biased towards globular clusters
+-hierarchical analogue of K-means
+	-can be used to initialize K-means
+
+Time and Space requirements
+-O(n^2) space since it uses the proximity matrix
+	-N is the number of points
+-O(N^3) time in many cases
+	-there are N steps and at each step the size, N^2 proximity matrix must be updated and searched
+	-complexity can be reduced to O(N^2log(N)) time by using kd-tree
+
+
+Problems and Limitations of Hierarchical Clustering
+-once a decision is made to combine 2 clusters it cannot be undone
+-no objective function is directly minimized
+-different schemes have problems with one or more of the following
+	-sensitivity to noise and outliers
+	-difficulty handling different sized clusters and convex shapes
+	-breaking large clusters
+
+Density Based Clustering 
+
+DBSCAN
+-density-based algorithm
+	-density=number of points w.in a specified radius (Eps)
+	-a points is a core point if it has more than a specified number of points (MinPts) w.in Eps
+	-a border point has fewer than MinPts w.in Eps, but is in the neighborhood of a core point
+	-a noise point is any point that is not a core point or a border point
+
+DBSCAN Algorithm
+-eliminate noise points
+-perform clustering on the remaining points
+	-current_cluster_label = 1
+	for al core points do
+		if the core point has no cluster label then
+			current_cluster_label = ccl + 1
+			Label the current core point with cluster
+			label current_cluster_label
+		end if
+		for all points in the Eps-neighborhood except the ith point itself do
+			if the point does not have a cluster label then
+				label the point with cluster label current_cluster_label
+			end if
+		end for
+	end for
+
+When DBSCAN works well
+-resistant to noise
+-can handle clusters of different shapes and sizes
+
+When DBSCAN does not work well
+-lot of different densities
+-high dimensional data
+	-notion of distance becomes less and less meaningful
+
+DBSCAN: Determining Eps and Min points
+-idea is that for points in a cluster, their kth nearest neighbors are at roughly the same distance
+-noise points have the kth nearest neighbor at farther distance
+-so, plot sorted distance of every point to its kth nearest neighbor
+
+-if minpoints = 4 then we grab the fourth nearest neighbor for a point
+-graph all the points' distances to their 4th nearest neighbor
+	-look for the natural drop off in the graph 
+	-point where it begins to climb very fast
+	-that is what the Eps should be
+
+-look over kmeans and DBSCAN for test
+
+
+
+-------------------------------------------------------
+
+Data Mining Lecture 19 Notes
+
+-in class assignment
+
+-------------------------------------------------------
+
+Data Mining Lecture 20 Notes
+
+final assignment
+-crisp-dm capstone
+
+cluster validity
+-for supervised classifications we ahve a variety of measures to evaluate how good our model is
+	-accuracy, precision, recall
+-for cluster analysis, the analogous question is how to evaluate the "goodness" of the resulting clusters?
+-but "clusters are in the eye of the beholder"!
+-then why do we want to evaluate them?
+
+Different aspects of cluster validation
+-Question we might want answered:
+1. Determining the clustering tendency of a set of data, i.e., distinguishing whether non-random structure actually exists in the data
+2. Comparing the results of a cluster analysis to externally known results, e.g. to externally given class labels
+3. evaluating how well the results of a cluster analysis fit the data without reference to external information
+4. Comparing the results of 2 different sets of cluster analyses to determine which is better
+5. Determining the "correct" number of clusters
+
+For 2, 3, and 4, we can further distinguish whether we want to evaluate the entire clustering or just individual clusters
+
+-easy in 2D, but we want something that scales to multiple Ds
+
+Method One: Using Simularity MAtrix
+-order the similarity matrix w.r.t cluster labels and inspect visually
+	-for each row you take the correlation of one row to every othe row
+	-you can then cluster them by the similarity
+-clusters in random data are not so crisp
+	-if not center based or density based then its not great for clustering (DBSCAN)
+	-if K-means it gets a little better
+	-hierarachical conglomerative with complete links
+-drawback: does not scale well to non-globular density 
+	-it assumes some degree of center based data
+-similarity looks at distance measure-if a cluster is 2 intertwined Us then it will appear that some points in the clusters are more similar to points in other clusters
+
+Can we do better with visual inspection?
+
+External Measures
+-external index: used to measure the goodness of a clustering structure with respect to external information
+	-homogeneity
+		-percentage of instances where each assigned cluster contains only members of a single class
+	-completeness
+		-all members of a given class are assigned to the same cluster
+	-drawback: if we randomly assign labels, what is the expected value for these?
+
+-a clustering that might have labels could be genetics with phenotypes, stars with stages, etc.
+
+External Measures: Adjusted Rand Index
+-external index, but normalized (helps fix the issue of not comparing apples to apples regarding different clusters)
+-let a = # of pairs of elements in both the ground truth class and the assigned clustering
+-let b = # of pairs in different ground truth classes and in different assigned clusterings
+-let c = total # of pairs in the dataset
+	- unadjusted RI = (a+b)/c
+	- adjusted RI (ARI) = (RI - E[RI])/(max(RI) - E[RI])
+	-E[RI] is the expected valude for a random assigned clustering
+		-depends on the size of the dataset
+
+External Measures: Adjusted Mutual Information
+-let U = ground truth assignment
+-let V = clustering assignment
+-N = total # of points
+
+	H(U) = sumi=1..|U| of (P(i)log(P(i)))
+					- P(i) = |U_i|/N
+
+	H(V) = sumj=1..|V| of (P'(j)log(P'(j)))
+					- P(j) = |V_j|/N
+
+	MI(U,V) = sumi=1..|U| sumj=1..|V| of P(i,j)*
+								log(P(i,j)/(P(i)P'(j)))
+			-P(i,j) = | U_i intersection V_j|/ N
+
+	AMI = (MI- E[MI])/(max(H(U),H(V))-E[MI])
+		-this would be an adjusted normalized value
+
+External Measures: tradeoffs
+-advantages
+	-easy to interpret
+	-no assumption about the underlying clusters
+-disadvantages
+	-requires ground truth
+
+Internal Measures: SSE
+-clusters in more complicated figures aren't well separated
+-internal index: used to measure the goodness of a clustering structure w.o.r.t. external information
+	SSE
+-SSE is good for comparing 2 clusterings or 2 clusters (average SSE)
+-can also be used to estimate the # of clusters
+-really good if we expected our data to be globular we could cluster it with different # of clusters, and check the sum squared error with each value
+	-when it evens off that is the ideal clustering
+
+internal measure: SSE
+-SSE curve for a more complicated data set
+	-it assumes globular data...
+	-SSE is not good if the data isn't center based
+
+internal measures: cohesion and separation
+-cluster cohesion: measures how closely related are objects in a cluster 
+	-ex: SSE
+-cluster separation: measure how distinct or well-separated a cluster is from other clusters
+-EX: Squared Error
+	-cohesion is measured by the w.in cluster sum of squares (SSE)
+		WSS = sumi sumx-includedin-C_i of ((x-m_i)^2)
+	-separation is measured by the b.w. cluster sum of squares
+		BSS = sumi of (|C_i|*( (m-m_i)^2) )
+		-where |C_i| is the size of cluster i
+		-takes distance of all the clusters normalized by the size of the cluster
+
+-a proximity graph based approach can also be used for cohesion and separation
+	-cluster cohesion is the sum of the weight of all links w.in a cluster
+	-cluster separation is the sum of the weights b.w. nodes in the cluster and nodes outside the cluster
+
+internal measures: silhouette coefficient
+-silhouette coefficient combine ideas of both cohesion and separation, but for individual points, as well as clusters and clusterings
+-for an individual point, i
+	-Calculate a = avg. dissimilarity of i to the points in its cluster
+	-Calculate b = min (average dissimilarity of i to the points in another cluster)
+	-the silhouette coefficient for a point is then given by
+
+	s = 1 - a/b if a<b, (or s = b/a -1 if a>=b, not 
+										the usual case)
+	-if a>=b then throw that clustering algorithm away
+	-typically b.w. 0 and 1
+	-the closer to 1 the better
+-can calculate the avg. silhouette width for a cluster or clustering
+-O(n^2)
+
+Demo-----------
+
+cell 2
+-gets 2D data - good for visualizations
+-make blobs create center based data sets
+
+cell 3
+-k-means and .fit
+-estimate some different measures of how good it is
+	-homogeneity score
+	-completeness
+	-v-measure
+	-adj rand index
+	-adjusted mutual info
+	-silhouette coeff.
+	-take all these and do some plottings
+-all of them were 1 (perfect clustering)
+	-except silhouette coefficient
+		-this is b.c. it just an agglomeration of distances so close to 1 is good - no sense of labels
+
+use agglomerative clustering
+-smaller sil coeff and adj rand index and adj mut info
+-so k-means would be better
+
+use dbscan
+-adj. eps to help it find the coeffs
+
+moons with k-means
+-pretty bad
+
+moons with DBSCAN
+-good - excepth for sil coeff b.c. non-globular
+
+run similarity matrix 
+-take pairwaise data of clusters
+-wasn't horrible- some clustering even though non-globular
+
+graph sil coeff by num clusters
+
+
+grid_to_graph of lena
+-vectorize each pixel and stick into matrix
+-using k-means it doesn't assume any connectivity
+-use agglomerative with connectivity
+	-any pixels connected have a graph link of 1
+	-if not connected to other pixels then don't merge clusters
+
+-------------------------------------------------------
+
+Data Mining Lecture 21 Notes
+
+
+Expectation maximization
+
+mixture models
+-assumption: data has been generated fromsome underlying statisitical distribution
+-we can model that process in order to find the most likely "statistical distributions" that generated the points we are seeing
+
+Mixture models as probabilities
+-gaussian distribution multiplied by a weight
+-we assume that somehow we can observe x from an unknown (or latent) variable z:
+	- z_(0): some unknown class labeling
+	- x_(0) the instance from the model
+
+	p(x_(i),z_(i)) = p(x_(i) | z_(i))P(z_(i))
+	-assume x_(i) is a gaussian (normal) distribution
+	-z_(i) is the class prior
+	- p(z_(i) = j) = w_j
+-basically we say the underlying distribution is modeled well by drawing x_(i) from one of k gaussian distributions with a prior
+
+sum j=1..k of w_j
+-k clusters
+
+
+Self Test: Mixture models as probabilities
+-what is the probability that x came from each mixture if:
+	p(x|z=0) = .25 		z = 0: .25*.6 = .15
+	p(z=0) = .6
+
+	p(x|z=1) = .36 		z = 1: .36*.4 = .144
+	p(z=1) = .4
+
+
+if no labels...
+
+-so the likelihood of each x is given by marginalization (i.e., the sum of all mixtures)
+
+l(x_(i)) = sum j=1..k of p(x_(i)| z_(i) = j)*p(z_(i)=j)
+
+
+total likelihood of a set of X = {x_(1)...m}:
+	l - product i=1..m of sum j=1..K of
+						p(x_(i)| z_(i) = j)*p(z_(i)=j)
+	-left side are just gaussians
+	-right part are just scalars that sum to 1
+
+Self Test:
+What is the probability that x from a previous example was generated by the model?
+p(x|z=0) = .25
+p(z=0) = .6 		z=0: .25*.6 = .15
+
+p(x|z=1) = /36 		z=1: .36*.4 = .144
+p(z=1) = .4
+
+Answer /(x) .15 + .144 = .294
+
+
+-simplifying from previous notation, we get:
+	l = prod i=1..m sum j=1..k p(x_(i)|z_(i) = j)*w_j
+-as always we want to maximize this likelihood from the instances we have observed!
+-that means estimating parameters of each Gaussian distribution and each prior weight w_i
+-bad news: this has no closed form solution
+-more bad news: each gaussian might have a bunch of parameters
+-good news: it does have an iterative solution
+
+mixture models, multivariate
+-for the multivariate case, each Gaussians looks like this
+	= 1/(sqrt((2*pi)^k|SIGMA|)
+			exp(-.5*(x-mu)'SIGMA^-1(x-mu))
+
+if N is the # of attributes (i.e. the length of each vector x)
+	mean: has N parameters
+	covariance: has N^2 parameters that you need to estimate
+
+	so if we have K gaussians,
+	we have K*N + K*N^2 parameters to estimate
+
+	= 1/(sqrt((2*pi)^k|SIGMA|)
+		exp(-.5*(x-mu)'SIGMA^-1(x-mu))
+-we can simplify the # of parameters by limiting the expressiveness of each Gaussian:
+	spherical
+-assume all variances ar the same and all along the diagonal
+
+covariance: has 1 parameter
+
+
+diagonal
+-only variances on diagonal but not necessarily equal
+covariance: has N parameters
+-ellipse
+
+full covariance
+-full covariance matrix need to be estimated 
+	-covariance: has N^2 parameters
+
+self test:
+-given this 2D data set, what type of covariance would you select?
+-answer = it depends
+	-there is either one mixture with full covariance
+	-or 2 mixtures with spherical (or diagonal) covariance
+
+expectation maximization
+-turns out the maximum likelihood solution has no closed form solution, so we need to solve it literally...
+
+-init centers of each gaussian mixture (e.g. run k-means)
+-repeat
+	-expectation: calculate probability that point belongs to every cluster, re-normalize weights w_ik
+	-maximization: given the new weights, find new weighted mean and weighted covariaance that center gaussians over the weighted points, maximizing the probabilities
+-until parameters do not change
+
+Tradeoffs for gaussian mixtures
+	negative
+-scalability is a concern for large dimensional datasets
+	-covariance and determinant calculations are time consuming
+-can only handle globular clusters
+-small clusters of cluster on a line are not easily captured
+-spurious singularities can be a problem without limiting the variance
+	positive
+-positively, more general than many other clustering types
+-robest to density difference
+-clusters are easy to characterize from parameters
+-many processes are the result of a gaussian process
+
+How many gaussians?
+-bayesian information criterion
+	-use total likelihood to determine goodness
+	-penalize complex models
+	-smaller is better
+		BIC = -2ln(l) + k*ln(m)
+
+	as likelihood goes up BIC becomes more and more negative
+	-first ln is total log likelihood
+	-second ln is penalize number of gaussians
+	-want BIC to be a small value
+
+DEMO
+More advanced clustering
+	mixture.GMM(n_components=n_components,covariance_type=...)
+
+-remember no cross validation with clustering
+-can graph number of components by BIC
+	-the lower the BIC the better
+-BIC is lower for spherical covariance b.c. it penalizes the complexity (# of gaussians and number of parameters)
+-plot gaussian mixtures it found
+
+---demo over
+
+Graph-based clustering
+-like agglomerative hierarchical clustering...
+-graph based clustering uses the proximity graph
+	-start with the proximity graph
+	-consider each point as a node in a graph
+	-each edge b.w. 2 nodes has a weight which is the proximity b.w. the 2 points
+	-initially the proximity graph is fully connected
+	-MIN (single-link) and MAX(complete-link) can be viewed as starting with this graph
+-in the simplest case, clusters are connected components in the graph
+
+Graph-based clustering: sparsification
+-the proximity matrix can be made sparser!
+-the amount of data that eneds to be processed is drastically reduced
+	-sparsification can eliminate more than 99% of the entries in the proximity matrix
+		-as many values to be zero as possible
+		-less values to have to make comparisons to and less clusters to merge together
+		-the amt. of time required to cluster the data is drastically reduced
+		-the size of the problems that can be handled is increased (more room in memory)
+-clustering may work better
+	-chameleon
+
+easiest method for sparsification is the k-neighbors graph
+
+self-test
+-k-neighbors graph
+	-make the connections on this graph for a sparse 2-NN connections
+
+Limitations of current merging schemes
+-existing merging schemes in hierarchical clustering algorithms are static in nature
+	MIN:
+		-merge 2 clusters based on their closeness (or minimum distance)
+	Group-average:
+		-merge 2 clusters based on their average connectivity
+
+Chameleon: clustering using dynamci modeling
+-adapt to the characterisitics of the data set to find the natrual clusters
+-use a dynamic model to measure the similarity b.w. clusters
+	-main property is teh relative closeness and relative interconnectivity of the cluster
+	-2 clusters are combined if the resulting cluster shares certain properties with the constituent clusters
+	-the merging scheme preserves self-similarity
+-1 of the areas of application is spatial data
+
+Aside: Spatial Data Sets
+-clusters are defined as densely populated regions of the space
+-clusters have arbitrary shape, orientation, and non-uniform sizes
+-difference in densities across clusters and variation in densities w.in clusters
+-existence of special artifacts (streaks) and noise
+	-like sine wave
+the clustering algorithm must address the above characteristics and also require minimal supervision
+
+Chameleon: Steps
+1. Make it sparse:
+Represent the data by a sparse graph
+	given a set of points, construct the k-nearest neighbor (k-NN) graph to capture the relationship b.w. a point and its k nearest neighbors
+	-concept of neighborhood is captured dynamically (even if region is sparse)
+2. Over-cluster: use a multilevel graph partitioning algorithm on the graph to find a large # of clusters of well-connected vertices
+	each cluster should contain mostly points from one "true" cluster, i.e. is a sub-cluster of a "real" cluster
+3. Merge clusters: use hierarchical agglomerative clustering to merge sub-clusters
+	2 clusters are combined if the resulting cluster shares certain properties with the constituent clusters
+
+	2 key properties to model cluster similarity
+	3.a - relative interconnectivity: absolute interconnectivity of 2 clusters normalized by the internal connectivity of the clusters
+	RI(C_i,C_j) = |EC_{C_i,C_j}|
+				 _____________________
+				 |EC_(C_i)| + EC_(C_j)
+				 _____________________
+				 			2
+	|EC| = # of edges in a given cluster only
+	-tells you how much interconnectivity will change after merging
+
+	3.b - relative closeness: absolute closeness of 2 clusters normalized by the internal closeness of the clusters
+
+	RC(C_i,C_j) = 			
+
+					Sbar_(EC_{C_i,C_j})
+ _____________________________________________________
+ 	|C_i|					  |C_j|
+ ________*Sbar_(EC_(C_i))+_____________*Sbar_(EC_(C_j))|C_i|+|C_j| 				|C_i| + |C_j|
+
+
+4. Get "fused" similarity: merge closest self similar clusters
+	RC*(RI^a)
+
+-choose whichever clusters that give you the values as close to 1 as possible
+
+
+------------------------------------------------------
+
+Data Mining Lecture 22 Notes
+
+Spectral Clustering
+-using eigen vectors
+-lets treat proximity matrix like an actual matrix
+-top down: start with all the data in one giant cluster, then decide how to break the clusters
+-the problem of clustering becomes: how do we cut the graph to make separate clusters
+
+Spectral clustering: adjacency
+-adjacency matrix: like a proximity matrix with edges indicating a link (i.e. the sparse matrix from k neighbors graph)
+-how can we cut this graph such that the resulting clustering are highly interconnected and the cut breaks as few links as possible?
+
+Spectral Clustering: degree
+-degree matrix: diagonal matrix with number of edges for each node
+
+Spectral Clustering: Laplacian
+-Laplacian Matrix: D-A
+	-sum along any row or any column should be zero
+
+
+Spectral Clustering: Eigenvectors of Laplacian
+-now find the eigenvectors of the Laplacian matrix
+	-second eignenvector is called the Fiedler Vector
+	-tells us where to palce the vertices on a line
+-graph on a 1D line where each node falls based on the first eigenvector
+-move a vertical line along number line and this tells you potential spots to cut the graph
+	-1 is optimal
+-this sorting tells you where to make candidate cuts!
+-and we can evaluate the quality of each cut: like doing the normalized cut
+	Volume: # edges in cluster that do not connect the 2 clusters - want high volume
+	Cut: # edges that interconnect the clusters
+		-want this low
+	Normalized Cut: combines each measure. Fairly common
+-could also look at RI and RC to have resulting clusters preserve self-similarity based on where it is cut
+
+Spectral Clustering Eigenvectors of Laplacian
+-don't stop at first eigenvector, but grab the second 1 as well
+-instead of graphing in 1D, graph in 2D
+-run k-means or any clustering method
+	can use all the methods of clustering for globular clusters, but the actual clusters are not necessarily globular in the feature space, only in the spectral space
+-this is called embedded this large problem into its spectral space to make it easier
+
+spectral clustering: similarity
+-but there is not reason to just use the adjacency matrix, we can use proximity matrices based upon any similarity measure that exists!!
+-we could even just use kernels that represent the similarity of 2 points...
+-this is typically called the "Affinity" of the pairs of points in the spectral cluster
+
+Spectral Clusterin Demo-------
+-sklearn has spectral clustering framework
+
+-make sure to have py amg installed to speed up eigen_solver
+
+use fit_predict instead of fit and then predict
+
+
+-------------------------------------------------------
+
+Flipped Module 5
+
+Association Rule Mining
+-given a set of transactions find rules that will predict the occurrence of an item based on the occurrences of other items in the transaction
+
+Example of Association Rules
+
+	(Diaper)-> (Beer)
+	(Milk,bread)->(Eggs,Coke)
+	(Beer,Bread)->(Milk)
+
+implication means co-occurence not causality
+-this is more than "buying power"
+(H,BP)->(Stress)
+
+Assocation Rule Mining
+-also make many implications for reccomendation systems
+
+Definition: Frequent Itemset
+-itemset
+	-a collection of one or more items 
+		ex: (milk,bread,diaper)
+	-k-itemset
+		-an itemset that contains k items
+-support count (sigma)
+	-frequency of occurence of an itemset
+		e.g. sigma(Milk,bread,diaper) = 2
+-support
+	-fractin of transactions that contain an itemset
+		e.g. s([milk,bread,diaper]) = 2/5
+
+
+Definition : Assocation rule
+-Association Rule
+	-an implication expression of the form X
+		-> Y where X and Y are itemsets
+	-example:
+		(milk,diaper) -> (beer)
+-rule evaluation metrics
+	-support (S)
+		-fraction of transactions that contain both X and Y
+	-confidence (c)
+		-measures how often items in Y appear in transactions that contain X
+
+Self Test : association rule
+....
+
+
+Assocation Rule Mining Task
+-Given a set of transactions T, the goal of association rule mining is to find all rules having
+	support >= minsup threshold
+	confidence >= minconf threshold
+-brute-force approach
+	-list all possible association rules
+	-compute the support and confidence for each rule 
+	-prune rules that fail the minsup and minconf thresholds
+	=>computationally prohibitive
+
+Mining Association Rules
+-2-step approach
+	-frequent itemset generation
+		-generate all itemsets whose support >= minsup
+	-rule generation
+		-generate high confidence rules from each frequent itemset, where each rule is a binary partitioning of a frequent itemset
+-frequent itemset generation is still computationally expensive
+
+
+Frequent Itemset Generation
+-given d items, there are 2^d possible candidate itemsets
+-brute-force approach:
+	-each itemset in the lattice is a candidate frequent itemset
+	-count the support of each candidate by scanning the database
+	-match each transaction against every candidate
+	-complexity - O(NMw)=> expensive since M=2^d
+
+
+Frequent Itemset generation strategies
+-reduce the number of candidates (M)
+	-complete search: M=2^d
+	-use pruning techniques to reduce M
+-reduce the # of transactions (N)
+	-reduce size of N as the size of itemset increases
+	-used by direct hashing and pruning (DHP) and vertical-based mining algorithms (database storage)
+-reduce the # of comparisons (NM)
+	-use efficient data structures to store the candidates or transactions
+	-no need to match every candidate against every transaction
+
+Reducing the # of candidates
+-apriori principle
+	-if an itemset is frequent then all of its subsets must also be frequent
+-support of an itemset never exceeds the support of its subsets
+	-the anti-monotone property of support
+
+
+Apriori Algorithm
+-method
+	-Let k = 1
+	-generate frequent itemsets of length 1
+	-repeat until no new frequent itemsets are identified
+		-generate length (k+1) candidate itemsets from length k freqent itemsets
+		-prune candidate itemsets containing subsets of length k that are infrequent
+		-count the support of each candidate by scanning the DB
+		-eliminate candidates that are infrequent, leaving only those that are frequent
+
+Reducing # of comparisons
+-candidate counting:
+	-scan the db of transactions to determine the support of each candidate itemset
+	-to reduce the # of comparisons, store the candidates in a hash structure
+		-instead of matching each transaction against every candidate, match it against candidates contained in the hashed buckets
+
+generate hash tree
+-suppose you have 15 candidate itemsets of length 3
+-you need:
+	-hash function
+	-max leaf size: max # of itemsets , stored in a leaf node (if # of candidate itemsets exceed max leaf size, split the node)
+
+Factors Affecting Complexity
+-choice of minimum support threshold
+	-lowering support threshold results in more frequent itemsets
+	-this may increase number of candidates and max lenght of frequent itemsets
+-dimensionality (# of items) of the data set
+	-more space is needed to store support count of each item
+	-if # of frequent items also increases, both computation and I/O costs may also increase
+-size of database
+	-since apriori makes multiple passes, run time of algorithm may increase with # of transactions
+-average transactions width
+	-transaction width increases with denser data sets
+	-this may increase max length of frequent itemsets and traversals of hash tree (number of subsets in a transaction increases with its width)
+
+Association: COmpact representation
+
+compact representation of frequent itemsets
+-some itemsets are redundant b.c. they ahve identical support as their supersets
+-if we know A1-A10 is frequent we might not care A1-A5 is also frequent
+-is there a way to reduce the redundancy of subets?
+
+maximal frequent itemset
+-an itemset is maximal frequent if none of its immediate supersets is frequent
+
+Closed itemset
+-an itemset is closed if none of its immediate supersets has the same support as the itemset
+
+MAximal vs closed itemsets
+-biggest circle is frequent itemsets
+	-first nest is closed frequent itemsets
+		-second nest is maximal frequent itemsets
+
+-will go through notebook and generate frequent itemsets
+-be able to judge what is maximal and what is closed
+
+
+-------------------------------------------------------
+
+Data Mining Lecture 23 Notes
+
+-in class exam
+
+---------------------------------------------------------
+
+Data Mining Lecture 24 Notes
+
+-to generate rules need to find out what is frequent first and then generate rules
+
+maximal means all of supersets are infrequent
+
+Association Rules Generation
+
+Association Rule
+-if you bought milk and diapers you would also buy beer
+-Rule evaluation metrics
+	-support(s)
+		-fraction of transactinos that contain both X and Y
+	-Confidence (C)
+		-measures how often items in Y appear in transactions that contain X
+		-always less than 1
+
+Rules Generation
+-given a frequent itemset L, find all non-empty subsets f subset L s.t. f-> L without subset f satisfies the minimum confidence requirement
+-for every single itemset we can develop 2^k rules where k = items in itemset
+-need confidence for every rule
+
+Rules Generation
+-how to efficiently generate rules from frequent itemsets?
+	-in general, confidence does not have an anti-monotone property
+		c(ABC->D) can be larger or smaller than c(AB->D)
+	-but confidence of rules generated from same itemset have anti-monotone property
+
+Rules generation for Apriori Algorithm
+-in rules lattice prune subtrees that will also be below confidence level
+
+Self Test
+	-if {Male,3rd Class, Did not survive} is a frequent itemset, what does the candidate lattice look like?
+-root of tree is the 3 imply nothing
+-next level is 3 leaves with each item on the right hand side of the other 2
+
+Merging Rules for Apriori Algorithm
+-candidate rule is generated by merging 2 rules that share the same prefix in the rule consequent
+-join (CD=>AB,BD=>AC) would produce the candidate rule D=>ABC
+-prune rule D=>ABC if its subset AD=>BC does not have high confidence
+
+Pattern Evaluation
+-Association rule algorithms tend to produce too many rules
+	-many of them are uninteresting or redundant
+	-redundant if {A,B,C}->{D} and {A,B}->{D}
+		-{1st class, child, female}->{survived}
+		-{1st class, child}->{survived}
+-interestingness measures can be used to prune/rank the drived rules
+-in mining association rules, support and confidence are the only measures used
+
+Contingency Tables
+-given a rule X->Y, information needed to compute rule interestingness can be obtained from a contingency table
+-confidence doesn't capture relation of conditional probability and the given probability
+
+Statistical-base measures
+-measures that take into account statistical dependence
+	Lift = P(Y|X)/P(Y) = c(X->Y)/s(Y)
+	Interest = P(X,Y)/(P(X)*P(Y)) = N*f_11/(f_(1+)*f(+1))
+
+Example of lift/interest
+-assocation rule of tea->coffee
+
+Confidence = P(Coffee|Tea) = .75
+but P(Coffee) = .9 so confidence is misleading
+
+=>Lift = .75/.9 = .8333 (<1, therefore is negatively associated)
+	-aka the rule is bad
+
+#students<80% -> Pop Quiz
+Confidence = P(PopQuiz|Students<80%) = .33
+Lift = Confidence/P(PopQuiz) = .33/.25 = 1.65 which is >1 so the rule is good
+
+Interest = P(X,Y)/(P(X)P(Y)) = 1.66 which is good as well b.c. it is not 1
+
+if list = 1 then statistically independent (not a good rule)
+
+bias in lift towards things that are more rare in the dataset
+
+Properties of a good measure
+-3 properties a good measure M must satisfy:
+	M(A,B) = 0 if A and B ar statistically independent
+
+	M(A,B) increase monotonically with P(A,B) when P(A) and P(B) remian unchanged
+
+	M(A,B) decreases monotonically with P(A) [or P(B)] when P(A,B) and P(B)[or P(A)] remain unchanged
+
+Subjective Interestingness Measure
+-objective measure:
+	-rank patterns based on statistics computed from data
+		e.g. 21 measures of association (support, confidence, Laplace, Gini, Mutual information, Jaccard, etc.)
+-subjective measure:
+	-rank patterns according to user's interpretation
+		-a pattern is subjectively interesting if it contradicts then expectation of a user
+		-a pattern is subjectively interesting if it is actionable
+
+Interestingness via unexpectedness
+-need to model expectations of users (domain knowledge)
+-need to combine expectation of users with evidence from data (i.e. extracted patterns)
+
+Demo
+
+
+---------------------------------------------------------
+
+Data Mining Lecture 25 Notes
+
+
+Collaborative Filtering
+-much like association rule mining and much like clustering
+-except we wnt a potential item to suggest to someone, base on what we know about the past
+	-could be past transaction history of the item
+	-or history of other users compare to this user
+
+Collaboraitve fltering: user based
+-user-based filtering
+	-data is stored in a user-item matrix with ratings
+	-objective: find similar users and try to fill in the missing ratings from them
+		use KNN to get similar users
+	-distance measure is important -> Correlation, Manhattan, Cosine
+		-cosine sparse
+		-correlation user bias
+	-doen't scale very well
+		-computationally intensive
+	-we need to run KNN every time to get a user's recommendation
+-item-based matrix
+	-data is stored in an item-item matrix, where we computed the item-item similarity in each entry of the matrix
+	-(usually only store K most similar items)
+	S(x,y) = Freq(x,y)
+			 _________
+			 Freq(x)
+	-precompute the matrix and then...
+
+Collaborative filtering: model based
+-problem: user based filtering is more optimal, but too computational to store all teh data and run queries on it...
+-solution: can we project a giant user-item matrix down to a smaller matrix (i.e. reduce the number of dimensions)?
+	-Matrix Factorization: there are k "hidden" factors
+
+	user-item matrix ~ user-factor matrix * factor-item matrix
+
+	matrix factorization
+-other variants on the factorization also exist
+
+Steps: 
+	1. Factorize matrix into these smaller matrices
+	2. Complete the user-item matrix from low rank representations
+	3. Pick recommendations for each user from filled in matrix!
+		a. Recommendation becomes very fast
+	4. Profit
+
+Collaborative Filtering: evaluationg
+-cross validation
+-what should folds look like?
+	-stratified across users and ratings
+-easy to use cross validation with
+	-precision, recall, and RMSE
+-can look at RMSE per-item, per-user, or total
+	Root means square error
+
+Collaborative Filtering Evaluation
+-precision and recall:
+-need to look "per-user" rating for both user-item and item-item
+	-let p_k be a vector of the k highest ranked recommendations for a particular user, and let a be the set of items for that user in the groundtruth dataset
+	-per user recall at cutoff "k"
+			R(k) = |a n Pk|
+				   ________
+				   	|a|
+
+	-per user precision at cutoff "k"
+					|a n Pk|
+			P(k) = ___________
+					   k
+
+
+Dato: easy, production level recommendations
+-Problem : user item matrices are absolutely gigantic
+-Solution: use data representations that allow the matrices to be stored on the hard drive or completely subsumed from the data analysis itself
+	
+Demo on collaborative filtering
+
+
+---------------------------------------------------------
+
+Data Mining Lecture 27 Notes
+
+
+Assignment 4 - lecture 20 has demo
+
+
+Big Data
+-refers to the exponential size of data creation
+-but also should look at the stagnant processor speed
+
+Big data and mining on parallel architecetures
+-scalable learning is hard b.c. of
+	-programmability
+	-failures
+	-distributing data to parallel processes
+
+Data Parallel (embarrassingly parallel)
+-simplest type of parallelism and many times one of the most useful/easy to exploit
+	-problems can be broken into smaller, independent sub-problems
+	-like running prediction on a data set of independent instances
+
+Data parallel Map Reduce
+-Map
+	-data parallel over the elements (like images)
+	-emit key/values (like image features)
+
+		input-> list(key,value)
+-Reduce
+	-aggregate over the keys
+	-must be commutative and associative operations
+	-data parallel over keys
+	-emit reduced output
+		
+		list(key,value)->output
+
+
+Map reduce in Data Mining
+-much of data mining is iterative
+-though not always
+	-random forests (or any bagging)
+	-multi-class LR and SVM (for large classes)
+	-rule mining transaction comparison
+	-kNN distance calculations
+	-Naive Bayes conditionals estimation
+-data getes moved around your cluster, possibly replicated, overhead might eliminate benefits
+-mostly, Map Reduce is great for embarrassingly parallel
+	-feature extraction
+	-grid searching
+	-cross validation
+	-computing statistics
+
+
+Grid searching
+-try to find the best parameters
+
+
+Demo on Parallel Parameter Tuning--------
+
+
+
+
+
+---------------------------------------------------------
+
+End of Class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,10 @@
+;; Dribble of #<IO TERMINAL-STREAM> started on 2015-03-28 18:37:04.
+#<OUTPUT BUFFERED FILE-STREAM CHARACTER #P"hw3_mergeSort_result.txt">
+[2]> (load "hw3.lisp")
+;; Loading file hw3.lisp ...
+;; Loaded file hw3.lisp
+T
+[3]> (mergeSort '(5 3 4 3 3 7 2 5))
+(2 3 3 3 4 5 5 7)
+[4]> (dribble)
+;; Dribble of #<IO TERMINAL-STREAM> finished on 2015-03-28 18:39:57.

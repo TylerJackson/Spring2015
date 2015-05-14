@@ -1,7 +1,7 @@
 CSE 7320 Artificial Intelligence Lecture Notes
 
 
---------------------------------------------------------
+-------------------------------------------------------
 
 Artificial Intelligence Lecture 1 
 
@@ -100,7 +100,7 @@ problem with turing test:
 Turing test extra credit
 -convince the examiner he is a machine
 
-----------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 
 Artificial Intelligence Lecture 2 Notes
 
@@ -1240,7 +1240,7 @@ F# Projects and Writing F# Code
 -Code organization
 	-namespaces
 	-modules
--F# file extensio: .fs (compiled into .dll/.exe)
+-F# file extension: .fs (compiled into .dll/.exe)
 
 Application entry point
 [<EntryPoint>]
@@ -1561,7 +1561,8 @@ Example the 8-puzzle
 
 Example: Robotic Assembly
 ● states??
-	● real-valued coordinates of robot joint angles ● parts of the object to be assembled
+	● real-valued coordinates of robot joint angles 
+	● parts of the object to be assembled
 ● actions??
 	● continuous motions of robot joints 
 ● goal test??
@@ -2598,7 +2599,1866 @@ Glossary of Terms
 
 -------------------------------------------------------
 
-Artificial Intelligence Lecture 7 Notes
+Artificial Intelligence Lecture 8 Notes
+
+Adversarial Search
+
+Games-on final
+● Multi-agent environments
+	● Unpredictability of the opponent(s)
+	● Contingencies are introduced into the agent’s problem-solving process
+	● Cooperative vs. Competitive
+● Adversarial search problems = Games
+● Mathematics: game theory 
+	● The impact of each agent on the others is “significant” regardless if cooperative of competitive (!economies)
+● A.I.: deterministic, turn-taking, two-player, zero-sum games of perfect information.
+	● Deterministic, fully observable, multi-agent environments (alternating actions)
+
+Games in AI
+● Early start: 1950
+	● Chess: Konrad Zuse
+	● Claude Shannon (information theory) 
+	● Norbert Wiener (control theory)
+	● Alan Turing
+● Too hard to solve
+	● Chess: b=35, 50 moves per player (d=100) 
+	● ->35^100 approx. 10^153 nodes (only approx. 10^40 distinct nodes)
+● -> Real world: must make some decision, even if impossible to make the optimal one
+● -> Penalties if inefficient (thinking too much) 
+● Solution:
+	● Use pruning to reduce the search space 
+	● Use heuristic evaluation functions to approximate the true utility of a state
+
+
+Games vs. search problems
+● "Unpredictable" opponent -> specifying a move for every possible opponent reply
+● Time limits -> unlikely to find goal, must approximate
+● Games that include an element of chance (rolling of dice)
+● Games with imperfect information (hidden)
+
+
+Games Classification
+
+				Deterministic 				Chance
+Perfect  		chess  					Backgammon
+information 	checkers				Monopoly
+				Go
+				Othello
+
+imperfect		Battleships 			Bridge
+information 	Blind tic-tac-toe 		Poker
+										Scrabble
+
+Optimal Decisions in Games
+
+Search Problem Formulation
+● Initial State:
+	● Board position
+	● Player to move next
+● Successor function:
+	● f(crt_state) = List<Tuple<Move, State>> 
+		● Move = a legal move allowed
+		● State = the resulting state after the move
+● Terminal test
+	● Is the game over? (Terminal states)
+● Utility function (objective function or payoff function) 
+	● Assigns numeric values to terminal states
+	● +1 (WIN), 0 (DRAW), -1 (LOSS)
+
+
+Game Tree = initial state + the legal movecs for each side
+
+Optimal Strategies
+● Can we simply identify a sequence of moves leading to a goal state (WIN terminal state)?
+	● NO, because of MIN
+● -> MAX must identify a contingent strategy:
+	● MAX’s move in the initial state
+	● MAX’s moves in the states resulting from all possible moves of MIN
+￼￼￼￼● MAX’s moves in the states resulting from every possible response by MIN to those moves, ETC
+	● -> Game tree becomes too complex to draw
+
+A two-ply game tree
+-MAX nodes: MAX moves next
+-MIN nodes: MIN moves next
+-utility function value of a min node is the minimum value of its successors
+-utility function value of a max node is the max value of its successors
+
+Minimax
+● Perfect play for deterministic games
+● Idea: choose to move to a position with the highest
+	minimax value = best achievable payoff against best play
+● The minimax value of a node is the utility (for MAX) of being in the corresponding state
+● Assumption: both players play optimally
+
+Properties of Minimax
+Complete? 		Yes :– if tree is finite
+Optimal? 		Yes :– against an optimal opponent
+
+Time 			O(bm)
+complexity
+
+Space 			O(bm) :– if all successors are 
+					generated at once 
+				O(m) :– if successors are generated 
+					one at a time
+
+b = average branching factor
+
+● For chess, b ≈ 35, m ≈100 for "reasonable" games 	
+	-> exact solution completely infeasible
+
+
+Minimax for multi-player games
+-utility = vector of values, one for each player
+	-> modify the utility function (return vector with max value for current player)
+
+Alliances
+● Formal or informal
+● Are made and broken as the game proceeds
+● May be a natural consequence of optimal strategies for each player
+	● Collaboration may emerge from purely selfish behavior
+	● Agreements may be later violated 
+● Explicit or implicit
+	● There may exist a social stigma to breaking an alliance
+	● -> Must balance the immediate advantage of breaking an alliance against the long-term disadvantage of being perceived as untrustworthy
+● May occur even in a 2-ply game, if the game is not zero-sum
+	● players may cooperate to achieve a mutually desired goal
+
+Alpha-beta pruning
+● Problem with Minimax:
+	● Too many game states to examine 
+		● Exponential in the number of moves
+● Compute the correct minimax value/decision without looking at every node in the game tree
+● Alpha-Beta pruning:
+	● If applied to a minimax tree, returns the same move as minimax
+	● Prunes away branches that cannot influence the final decision
+
+alpha - beta pruning example - explained
+
+MINIMAX-VALUE(root)
+	= max(min(3,12,8), min(2,x,y), min(14,5,2)) 
+	= max(3, min(2,x,y), 2)
+	= max(3, z, 2) where z ≤ 2
+	=3
+The value of the root and the minimax decision are indepenent of the values of the pruned leaves x and y
+
+Why is it called alpha - beta
+● α is the value of the best (i.e., highest- value) choice found so far at any choice point along the path for MAX
+● Ifvisworsethanα, max will avoid it
+!prune that branch
+● Define β similarly for
+MIN
+
+Transpositions
+● Repeated states -> exponential increase in search cost 
+● Frequent in games because of transpositions
+	● =Permutations of the move sequence that end up in the same position
+		● -> save the evaluation of a position in a hashtable (transposition table)
+
+Imperfect, Real-Time Decisions
+
+Resource limits
+
+Suppose we have 100 seconds & explore 104 nodes/sec
+	-> 106 nodes per move [] 358/2 -> alpha - beta reaches depth 8
+		-> pretty good chess program
+Standard approach:
+	-cutoff text (instead of terminal-test)
+		e.g., depth limit (perhaps add quiescence search)
+	-evaluation function (intead of true utility)
+		= estimated desirability of position (or features of a given state)
+
+
+For chess typically weighted linear sums of features
+	Eval(s) = w1f1(s) + w2f2(s) + ... + wnfn(s)
+
+no chess problems on final
+
+Cutting off search
+
+MinimaxCutoff is identical to MinimaxValue except 
+	1.	Terminal? is replaced by Cutoff?
+	2. 	Utility is replaced by Eval 
+
+Does it work in practice?
+	b^m = 10^6, b=35 -> m=4
+
+4-ply lookahead is a hopeless chess player!
+	-4-ply ≈ human novice
+	-8-ply ≈ typical PC, human master 
+	-12-ply ≈ Deep Blue, Kasparov		
+
+Exact Value vs. Order
+
+● Behavior is preserved under any monotonic 
+	transformation of EVAL
+● Only the order matters, not the exact values!
+● Payoff in deterministic games acts as an ordinal 
+	utility function
+
+Deterministic games in practice
+● Checkers: Chinook ended 40-year-reign of human world champion Marion Tinsley in 1994. Used a pre-computed endgame database defining perfect play for all positions involving 8 or fewer pieces on the board, a total of 444 billion positions.
+● Chess: Deep Blue defeated human world champion Garry Kasparov in a six-game match in 1997. Deep Blue searches 200 million positions per second, uses very sophisticated evaluation, and undisclosed methods for extending some lines of search up to 40 ply.
+● Othello: human champions refuse to compete against computers, who are too good. The Logistello program (1997) defeated human champion Takeshi Murakami by 6:0
+● Go: human champions refuse to compete against computers, who are too bad. In go (19x19), b > 300, so most programs use pattern knowledge bases to suggest plausible moves.
+
+
+Element of Chance
+● What if we don’t know what the result of an action will be?
+	● Examples: solitaire, pacman, minesweeper, games involving dice rolls, ...
+● Counting:
+	● How many ways to roll 2 dice? ● How many unique ways?
+	● Technique used: expectiminimax search ● Maximize the average score
+● Chance nodes
+	● Like MIN nodes, except the outcome is uncertain
+	● Calculate expected utilities
+	● MAX nodes, similar to minimax search
+
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 9 Notes
+
+
+Key Concepts
+● Representation of knowledge 
+● Reasoning processes
+● Knowledge & Reasoning
+	● Enable successful behavior
+	● Dealing with partially observable environments
+		● Infer hidden aspects of the current state 
+	● Enable flexible behavior
+		● Receive new tasks (explicitly described goals)
+		● Achieve competence (learning)
+		● Adapt to changes (updating relevant knowledge)
+
+
+Knowledge bases
+● Knowledge base = set of sentences in a formal language
+● Declarative approach to building an agent (or other system):
+	● TELL it what it needs to know
+● Then it can ASK itself what to do - answers should
+￼￼follow from the KB
+-inference engine = domain-independent algorithms
+-knowledge base = domain-specific content
+
+A simple knowledge-based agent
+	function KB-Agent(percept) returns an action
+		static: KB, a knowledge base
+				t, a counter, initially 0, indicating 
+												time
+		TELL(KB,Make-Percept-Sentence (percept,t))
+		action<- Ask (KB,Make-Action-Query(t))
+		TELL(KB,MAKE-ACTION-SENTENCE(action,t))
+		t<- t+1
+		return action
+
+● The agent must be able to:
+	● Represent states, actions, etc.
+	● Incorporate new percepts
+	● Update internal representations of the world
+	● Deduce hidden properties of the world
+	● Deduce appropriate actions		
+
+The Wumpus World
+-final will have describe PEAS for an agent in a particular world
+
+Wumpus World PEAS Description
+● Performance measure
+	● gold +1000, death -1000
+	● -1 per step, -10 for using the arrow
+● Environment
+	● Squares adjacent to wumpus are smelly
+		-not including diagonal adjacent
+	● Squares adjacent to pit are breezy
+	● Probability that a square is a pit = 0.2
+	● Glitter iff gold is in the same square
+	● Shooting kills wumpus if you are facing it
+		-you will hear a scream if he's killed
+	● Shooting uses up the only arrow
+	● Grabbing picks up gold if in same square
+	● Releasing drops the gold in same square
+● Sensors:
+	● Stench, Breeze, Glitter, Bump, Scream
+		-bump if you try to walk into wall
+● Actuators:
+	● Left turn, Right turn, Forward, Grab, Release, Shoot
+	● Die if entering a square with a pit or a live wumpus
+
+
+Wumpus world characterization
+-know this for final
+-fully observable?
+	-no, only local perception
+-deterministic?
+	-yes - outcomes exactly specified
+-episodic?
+	-no - sequential at the level of actions
+-static?
+	-yes - wumpus and pits do not move
+-discrete?
+	-yes - not sure why maybe b.c. not unlimited size board?
+-single-agent?
+	-yes - wumpus is essentially a natural feature
+
+
+Exploring a Wumpus World
+-coordinates = (col,row) from bottom left corner = (1,1)
+-first location you are at (bottom left) is safe
+	|	 |	  |
+----|----|----|----
+	|	 |	  |
+----|----|----|----
+	|	 |	  |
+----|----|----|----
+  A	|	 |	  |
+-no stench or breeze so above and to the right is okay
+	|	 |	  |
+----|----|----|----
+	|	 |	  |
+----|----|----|----
+  A	|	 |	  |
+----|----|----|----
+  A	| A	 |	  |
+
+-go up and sense breeze
+	-you know pit above or to the right
+	|	 |	  |
+----|----|----|----
+ P?	|	 |	  |
+----|----|----|----
+  A	| P? |	  |
+----|----|----|----
+  A	| A	 |	  |
+
+-go back to starting point and go right instead
+	-you sense a stench and no breeze
+	-that means you know above is not a pit and to the right must be a wumpus
+
+	|	 |	  |
+----|----|----|----
+  P	|	 |	  |
+----|----|----|----
+  A	|    |	  |
+----|----|----|----
+  A	| A	 | W  |
+
+-so now move up
+	-dont sense breeze or stench so we know above and right are safe
+
+	|	 |	  |
+----|----|----|----
+  P	|	 |	  |
+----|----|----|----
+  A	| A  |	  |
+----|----|----|----
+  A	| A	 | W  |
+
+-move to right
+	-sense breeze, glitter, and stench (BGS)
+	-wumpus below is stench, breeze means pit either above or to the right, and glitter means Im in a box with gold
+
+	|	 |	  |
+----|----|----|----
+  P	|	 |	  |
+----|----|----|----
+  A	| A  | A  |
+----|----|----|----
+  A	| A	 | W  |
+
+If we had gotten to 2,1 and sense breeze there also would have been no safe action
+	-use probability of each 1 being a pit to know where to go
+
+If in 1,1 there had been a stench then we would have had to use coercion strategy
+	-shoot straight ahead
+	-wumpus was there -> dead other wise move to other one since only 1 wumpus
+
+
+Logic
+
+Logic in general
+● Logics are formal languages for representing information such that conclusions can be drawn
+● Syntax defines the sentences in the language 
+● Semantics define the "meaning" of sentences;
+	● i.e., define truth of a sentence in a world
+● E.g., the language of arithmetic
+	● x+2 ≥ y is a sentence; x2+y > is not a sentence
+	● x+2 ≥ y is true iff the number x+2 is no less 
+						  than the number y
+	● x+2 ≥ y is true in a world where x = 7, y = 1
+	● x+2 ≥ y is false in a world where x = 0, y = 6
+
+Entailment
+
+● Entailment means that one thing follows from another:
+KB ╞ α
+● Knowledge base KB entails sentence α if and
+only if α is true in all worlds where KB is true 
+	● E.g., x + y = 4 entails 4 = x + y
+		4 = x + y is true in all cases x + y = 4
+	● Entailment is a relationship between sentences (i.e., syntax) that is based on semantics
+
+
+Models
+● Logicians typically think in terms of models, which are formally structured worlds with respect to which truth can be evaluated
+● We say m is a model of a sentence α if α is true in m
+● M(α) is the set of all models of α
+● ThenKB╞α
+iff M(KB) C_ M(α)
+
+Entailment in the Wumpus World
+	|	 |	  |
+----|----|----|----
+	|	 |	  |
+----|----|----|----
+  ?	| ?	 |	  |
+----|----|----|----
+  A	| A	 |	? |
+
+● Situation after detecting nothing in [1,1], moving right, breeze in [2,1]
+● Consider possible models for KB assuming only pits
+● 3 Boolean choices =>
+	8 possible models (2^3)
+-KB = wumpus-world rules + observations
+α_1 = "[1,2] is safe", KB ╞ α_1, proved by model checking
+	- the knowledge base entails α_1 b.c. in all cases that the KB is true, α_1 is true
+
+α_2 = "[2,2] is safe", KB does not ╞ α_2 b.c. in some cases of the KB α_2 is false
+
+Logical Inference
+● Definition:
+	● = the process of deriving conclusions 
+● Model checking
+	● Inference algorithm based on enumerating all possible models to check that a sentence is true in all models in which KB is true.
+	● Works if the space of models is finite 
+	● Arithmetic ???
+		● How many models are for the sentence x + y=4?
+
+Inference
+● KB ├i α = sentence α can be derived from KB by procedure i
+● Consequences of KB are a haystack; α is a needle.
+● Entailment = needle in haystack; inference = finding it
+Inference algorithm (i):
+● Soundness: i is sound if
+	whenever KB ├i α , it is also true that KB╞ α
+● Completeness: i is complete if
+	whenever KB ╞ α , it is also true that KB ├i α
+-preview: we will define a logic (first-order logic) which is expressive enough to say almost anything of interest, and for which there exists a sounds and complete inference procedure.
+-that is, the procedure will answer any question whose answer follows from what is known by the KB
+
+Reasoning
+● If KB is true in the real world, then any sentence α derived from KB by a sound
+inference procedure is also true in the real world.
+● Sentences = physical configurations of the agent
+● Inference operates on the syntax of sentences
+● Reasoning = the process of constructing new sentences from old ones
+	● Reasoning should ensure that the new configurations represent aspects of the world that actually follow from the aspects that the old configurations represent
+
+Propositional Logic
+
+Propositional Logic: Syntax
+● Propositional logic is the simplest logic
+● Syntax: defines allowable sentences
+● The proposition symbols P1, P2 etc are sentences
+● True and False proposition symbols
+● If S is a sentence, 	-S is a sentence  (negation)
+● If S1 and S2 are sent., S1^S2 is a sent.(conjunction)
+● If S1 and S2 are sent., S1 downarrow head S2 is sent.
+						  -(disjunction)
+● If S1 and S2 are sent., S1 => S2 is a sent. 
+							-(implication)
+● If S1 and S2 are sent., S1 <=> S2 is a sent. 
+							-(biconditional)
+
+Propositional Logic: Semantics
+●Each model specifies true/false for each proposition symbol 
+	E.g. P_(1,2) P_(2,2) P_(3,1)
+		 false 	  true    false
+	-boolean representing true or false on if there is a pit at coordinates (1,2),(2,2), (3,1) respectively
+
+● With these symbols, 8 possible models, can be enumerated automatically. (we did that earlier)
+●Rules for evaluating truth with respect to a model m:
+ -S (not S) is true iff S is false
+ S_1 ^ S_2 (S_1 and S_2) is true iff S1=true & S2=true
+ S_1 upside S_2 (S_1 or S_2) is true iff S1=true or 
+ 	 down									S2=true
+ 	 arrow
+ 	 head
+ S_1=>S_2 (S_1 implies S_2) is true iff S_1=False or 
+ 									    S_2 is true
+ 	-the statement as a whole is true if S_1 is false or S_2 is true
+ S_1 <=> S_2 is true iff S_1=>S_2 is true and 
+ 						 S_2=>S_1 is true
+● Simple recursive process evaluates an arbitrary sentence (e.g.)
+	-P_(1,2) ^ P_(2,2) or P(3,3)) = true and (true or false) = true and true = true
+
+Truth Tables for Connectives
+-know for final
+P 	Q 	| -P   P^Q 	PorQ 	P=>Q 	P<=>Q
+F   f      t    t    f       t        t
+F   t      t    f    t       t        f
+T   f      f    f    t       f        f
+T   t      f    t    t       t        t
+
+Wumpus World Sentences
+● Let Pi,j be true if there is a pit in [i, j].
+● Let Bi,j be true if there is a breeze in [i, j].
+Not P_(1,1)
+Not B_(1,1)
+	B_(2,1)
+● "Pits cause breezes in adjacent square"
+	B_(1,1) <=> (P_(1,2) or P_(2,1))
+	B_(2,1) <=> (P_(1,1) or P_(2,2) or P_(3,1))
+● "A square is breezy iff there is an adjacent pit"
+
+	|	 |	  |
+----|----|----|----
+	|	 |	  |
+----|----|----|----
+  ?	| ?	 |	  |
+----|----|----|----
+  A	| A	 |	? |
+
+● Situation after detecting nothing in [1,1], moving right, breeze in [2,1]
+
+Inference
+● Goal of logical inference:
+● To decide whether KB ╞ α
+● One possible way:
+	● To enumerate all models and check if α is T or F in every model in which KB is true
+	● If the symbols are:
+		● B11, B21, P12, P11, P22, P21, P31 (7 symbols)
+	● Then we have 27 = 128 models
+	● (Truth table) -> KB is true in 3 of these 128 models
+
+Truth Tables for inference
+-slide 37
+-enumerate rows (different assignments to symbols), if KB is true in row, check that alpha is too
+
+Inference of Enumeration
+-Depth-first enumeration of all models is sound
+
+Logical Equivalence
+-2 sentences are logically equivalent iff true in same models
+	alpha = B iff alpha ╞ B and B ╞ alpha
+	-will provide this for final but would help to understand 
+	-slide 39
+
+Validity and Satisfiability
+-on test to figure out if valid and/or satisfiable
+● A sentence is valid if it is true in all models,
+	● e.g. True, A or not A, A => A, (A^(A=>B))=B
+● Validity is connected to inference via the Deduction Theorem:
+ 	KB ╞ alpha iff (KB => alpha) is valid
+● A sentence is satisfiable if it is true in some model
+	● e.g. A or B, C
+● A sentence is unsatisfiable if it is true in no model
+	● e.g. A ^ notA
+● Satisfiability is connected to inference via the following:
+	 KB ╞ alpha iff (KB and not alpha) is unsatisfiable
+
+Reasoning Patterns in Propositional Logic
+
+Inference Rules
+● Patterns of inference used to derive chains of conclusions that lead to the desired goal
+-modus ponens: alpha => B, alpha
+				________________
+					B
+
+-and-elimination   alpha ^ B
+				  ___________
+				  	alpha
+
+Proof - Wumpus World
+-be able to do something like this on final
+-sentences from KB
+	R1 : not P_(1,1)
+	R2 : B_(1,1) <=> (P_(1,2) or P_(2,1))
+	R3 : B_(2,1) <=> (P_(1,2) or P_(2,1) or P_(3,1))
+	R4 : Not B_(1,1)
+	R5 : B_(2,1)
+-proof that neither [1,2] nor [2,1] contains PIT
+	R6 : (B_(1,1) => (P_(1,2) or P_(2,1))) ^
+		 ((P_(1,2) or P_(2,1)) => B_(1,1))
+    R7 : ((P_(1,2) or P_(2,1)) => B_(1,1))
+    R8 : (NOT B_(1,1) => NOT(P_(1,2) or P_(2,1)))
+    R9 : NOT(P_(1,2) or P_(2,1))
+    R10: NOT P_(1,2) and NOT P_(2,1)  	q.e.d.
+
+Resolution
+-inference rule
+-yields a complete inference algorithm when coupled with any complete search algorithm
+-Wumpus World
+	Agent: [1,1] -> [2,1] -> [1,1] -> [1,2] : {S,Not B}
+	R11 : Not B_(1,2)
+	R12 : B_(1,2) <=> (P_(1,1) or P_(2,2) or P_(1,3))
+	R13 : Not P_(2,2)
+	R14 : Not P_(1,3)
+	R15 : P_(1,1) or P_(2,2) or P_(3,1)
+	R16 : P_(1,1) or P_(3,1)
+	R17 : P_(3,1)
+
+
+Complimentary literals
+ (P_(1,1) or P_(1,3)) and Not P_(1,1)
+ P_(1,3)
+-the resulting clause should contain only 1 copy of each literal -> factoring
+-sound and complete when using a complete search algorithm
+	-can derive any conclusion entailed by any KB in propositional logic
+-applies only to disjunctions of literals
+
+Conjunctive normal function (CNF)
+● Every sentence of propositional logic is logically equivalent to a conjunction of disjunctions of literals
+● Conjunctive Normal Form (CNF - universal) 
+	● conjunction of clauses (clause = disjunctions of
+￼￼￼literals)
+		E.g. (A or Not B) AND (B or Not C or Not D)
+			P_(1,3) or P_(2,2), Not P_(2,2)
+			_______________________________
+						P_(1,3)
+
+
+Conversion to CNF
+-starting with 	R2 : B_(1,1) <=> (P_(1,2) or P_(2,1))
+	1. Eliminate <=>, replacing a<=>B with 
+										(a=>B)^(B=>a)
+    	-> (R6)
+    2. Eliminate => replace a=>B with (Not a) or B
+    	((Not B_(1,1))or (P_(1,2) or P_(2,1))) AND 
+    	( (Not (P_(1,2) or P_(2,1))) or B_(1,1)) 
+    3. Move Not inwards using demorgan's rules and double negation
+       	((Not B_(1,1))or (P_(1,2) or P_(2,1))) AND 
+		( (NotP_(1,2) and  NotP_(2,1)) or B_(1,1)) 	
+	4. Apply distributivity law (and over or) and flatten
+		(NotB_(1,1) or P_(1,2) or P(2,1)) and 
+		(NotP_(1,2) or B_(1,1)) ^ (NotP_(2,1) or B_(1,1))
+
+Foward and BackWard Chaining
+-having at most one positive is faster
+-Horn form (restricted representatino form of a clause)
+	-KB = conjunctino of Horn clauses
+
+	Horn clause = disjunctino of literals
+				  at most one literal is positive
+
+	-Modulus Ponnens (for Horn Form): complete fror Horn KBs
+		alpha1,..,alphan, alpha1^...^alphan => B
+		_________________________________________
+							B
+	-can be used with forward chaining and backward chaining
+	-these algorithms ar very natural and run in linear time
+		(relative to the KB size)
+
+Forward Chaining
+-slide 50s
+-Data-driven reasoning
+-idea
+	-fire any rule whose premisses are satisfied in KB
+	-add its conclusion to the KB, until query is found
+
+-every literal is a node in the graph
+	-and is arc
+	-start from bottom and try to make it up till Q is true
+
+-Backward training
+	-goal driven
+	-more effective
+	-starts with conclusion (Q) and goes down graph and then back up to see what is necessary for Q to be true
+
+Forward vs. Backward Chaining
+-data-driven vs goal driven
+-fd may do lots of work irrelevant to goal
+
+
+Inference based agents in the wumpus world
+-a wumpus-world agent using propositional logic:
+....
+
+Midterm walk through 
+Problem 1. 
+	Books adopts intelligent agent approach 
+	c. Acts rationally
+Problem 2.
+	d. DFS is incomplete
+	e. false -> BFS is complete as long as the branching factor...
+	g. true DFS is an improvement over BFS w.r.t memory
+	j. False -greedy best search is optimal
+Problem 3.
+	 b. if all queens in 1 row then all queens attack each other
+	 	- so the distinct attacks order of pair doesn't matter
+	 	-all in same row - 10=4+3+2+1
+problem 4.
+	a.iii. IDS - numerous sets when searching - one search set for each depth level
+problem 5.
+	- A* search problem on final
+problem 6.
+	- a. maximum number of non-attacking distinct pairs in the n-queens problem is :
+	n choose 2 = n/(2!(n-2)!)= 16 for 6 queens problem
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 10 Notes
+
+
+First-Order Logic
+
+Knowledge Representation
+
+Pros and Cons of Propositional Logic
+-pros
+	-declarative
+		-pieces of syntax correspond to facts
+	-allows partial/disjunctive/negated information
+		-unlike most data structures and databases
+	-propositional logic is compositional
+		-meaning of B_(1,1) ^ P_(1,2) is derived from meaning of B_(1,1) and of P_(1,2)
+	-meaning in propositional logic is context-independent
+		-unlike natural language, where meaning depends on context
+-con
+	-unlike natural language: B_(1,1) <=> 
+									(P_(1,2)orP_(2,1))
+	-E.g. cannot say "pits cause breezes in adjacent squares"
+		-except by writing one sentence for each square
+
+First-Order Logic
+-propositional logic assumes the world contains facts, as oppposed to
+-first-order logic (like natural language), which assumes the world contains
+	-objects: peoples, houses, numbers, colors, baseball games, wars
+	-relations/properties:red, round, prime, brother of, bigger than, part of, comes between...
+	-functions: father of, best friend, one more than, plus, ...
+
+Logics in general
+	-ontological commitment
+		-what it assumes about the nature of reality
+	-epistemological commitment
+		-the possible states of knowledge that it allows w.r.t each fact
+
+Syntax & Semantics
+
+Models for First-Order Logic
+-models for a logical language
+
+Example
+
+Truth in first-order logic
+-sentences are true w.r.t. a model and an interpretation
+-model contains objects (domain elements) and relations among them
+-interpretation specifies referents for
+	-constant symbols -> obejcts
+	-predicate symbols-> relations
+	-function symbols-> functional relations
+-an atomic sent. predicate (term1,...termn) is true iff the objects referred to by term1,...,termn are in the relation referred to by predicate
+
+Syntax of FOL: Basic Elements
+-constants KingJohn,2,SMU
+-predicates Brother>,OnHead,King
+-Funcitons sqrt,LeftLegOf,...
+-variables x,y,a,b
+-connectives not, and, or, <=>,=>
+-equality =
+-quantifiers there exists, for all
+
+Atomic Sentences
+-atomic sentence 	= predicate (temr1,..termn)
+-term 				= function(term1,...termn) or 
+						constant or variable
+Example:
+	Brother(KingJohn,RichardTheLionHeart)
+	Married(Mother(Richard),Father(John))
+
+-atomic sentences state facts
+-an atomic sentence is true in a given model, under a given interpretation, if the relation referred to by the predicate symbol holds among the objects referred to by the arguments
+
+Truth Example
+-consider the interpretation in which
+	Richard-> Richard the Lionheart
+	John->the evil King John
+	Brother->the brotherhood relation
+-under the interpretation, Brother(Richard,John) is true just in case Richard the Lionheart and the evil King John are in the brotherhood relation in the model
+
+Complex Sentences
+-complex sentences are made from atomic sentences using connectives
+	Not S, S1 ^ S2, S1 or S2, S1 => S2, S1 <=> S2
+-Examples:
+	Sibling (KingJohn,Richard)=> Sibling(Richard, KingJohn)
+		NOT Brother(LeftLeg(Richard,John))
+		King(Richard) or King(John)
+
+Universal Quantification
+-For all..
+-For all x at(x,SMU) => Smart(x)
+-for all x P is true in a model m iff P is true with x being each possible object in the model
+-Roughly speaking, equivalent to the conjunction of instantiations of P
+	
+A Common to Mistake to Avoid
+-typically, => is the main connective with For All
+-Common Mustake: using ^ as the main connective with for all
+		For All x At(x,SMU) ^ Smart(X)
+		-means everyone is at SMU and everyone is smart
+
+Existential Quantification
+-There exists <sentence>
+there exists x At(x,SMU) ^ Smart(x)
+	-there exists x at smu s.t. x is smart
+-there exists x P is true in a model m iff P is true with x being some possible object in the model
+
+Another Common Mistake to Avoid
+-typically, ^ is the main connective with there exists
+-common mistake: using => as the main connective with there exists:
+	There exists x At(x,SMU) => Smart(x)
+		is true if there is anyone who is not at SMU
+
+Nested Quantifiers
+	-Forall X For all y is the same as For all Y forallx
+	-there exists X there exists y is the same as there exists Y there exists x
+	-there exists x for all y is not the same as for all y there exists x
+	-there exists x for all y Loves(x,y)
+		-There is a person who loves everybody in the world
+	-for all y there exists x Love(x,y)
+		-everyone in the world is loved by at least one person
+-quantifier duality: each can be expressed using the other
+	For all x Likes(x,Icecream)
+		Not there exists X not Likes(x,Icecream)
+	There exists x Likes(x,Broccoli)
+		-Not For all x Not Likes(x,Broccoli)
+
+Equality
+ term1 = term2 is true under a given interpretation iff term1 and term2 refer to the same object
+ -E.g. Father(John) = Henry
+ -E.g. definition of Sibling in terms of Parent:
+ 		For all x,y Sibling(x,y) <=>
+ 		[Not(x=y)^ there exists m,f Not(m=f)^Parent(m,x)^ Parent(f,x)^PArent(m,y)^Parent(f,y)]
+
+
+Interacting with FOL KBs
+-suppose a wumpus-world agent is using an FOL KB and perceives a smell and a breeze (but no glitter) at t=5
+
+Assertion 	Tell(KB, Percept([Smell,Breeze,None],5))
+Query 		Ask(KB, there exists a BestAction(a,5))
+	-quantified query
+
+-i.e. does the KB entail some best action at t=5
+-answer: yes
+	{a/shoot} <- substitution (binding list)
+-given a sentence S and a substitution sigma, Ssigma denotes the result of plugging sigma into S. e.g.
+		S = Smarter(x,y)
+		sigma = (x/Tom,y/Jerry)
+		Ssigma = Smarter(Tom,Jerry)
+-Ask(KB,S) returns some/all sigma s.t. KB ╞ Ssigma
+
+The kinship Domain
+	-Brothers are siblings
+		For all x,y Brothers(x,y)=> Siblings(x,y)
+	-"Sibling" is symmetric
+		For all x,y Sibling(x,y) <=> Sibling (y,x)
+	-One's mother is one's female parent
+		For all x,y Mother(y,x)<=>Female(x)^Parent(x,y))
+	-a first cousin is a child of a parent's sibling
+		For all x,y FirstCousin(x,y)<=>There exists p, ps Parent(p,x)^Sibling(ps,p)^Parent(ps,y)
+
+-know how to represent sentences in FOL for final
+
+KB for the Wumpus World
+-[A] Perception
+	for all t,s,b Percept([s,b,Glitter],t)=>Glitter(t)
+	for all t,g,b Percept([Stench,b,g],t)=>Stench(t)
+-[B] Action
+	-Turn(right), Turn(Left), Forward, Grab, Release, Shoot
+-Reflex
+	-For all t Gliter(t) => Action(Grab,t)
+-Reflex with internal state: do we have the gold already?
+
+Deducing Hidden Properties
+-[C] Environment (Locations)
+	For all x,t At(Agent, x,t)^Stench(t) => Smelly(x)
+	For all x,t At(Agent, x,t)^Breeze(t) => Breezy(x)
+	(no time argument -> diachronic sentence)
+-squares are breezy near  apit
+	-Diagnostic
+		rule -> infer cause from effect
+		for all y Breezy(y) => there exists x Pit(x)^Adjacent(x,y)
+	-Causal
+		rule -> infer effect from cause
+			For all x,y Pit(x) and Adjacent(x,y)=>Breezy(y)
+		-model-based reasoning systems
+-neither rule (diagnostic or causal) is complete
+	-e.g. the causal rule doesn't say whether squares far away from pits can be breezy
+-definition of breezy
+	forall y Breezy(y) <=> [There exists xPit(x) ^ Adjacent(x,y)]
+
+Keeping track of change
+-facts hold in situations, rather than eternally
+	-e.g. Holding(Gold,Now) rather than just holding(gold)
+-Situation Calculus is one way to represent change in FOL:
+	-adds a situation argument to each non-eternal predicate
+	-e.g. Now in Holding(Gold,Now) denotes a situation
+-situations are conbnected by the result function
+-result(a,s) is the situation that results from doing a in s
+
+Knowledge Engineering
+- = process of building KB
+-Process components
+	-investigating a particlar domain
+	-identify concepts
+	-create formal representation of the objects and relations in the domain (Assocation)
+-knowledge bases:
+	-special-purpose
+		-bounded domain
+		-known range of queries
+	-general-purpose
+		-queries covering the fullrange of human knowledge
+
+Automatic Identification and Analysis of Websites Selling Counterfeit Goods
+
+AI in Mass Media
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 11 Notes
+
+
+Inference in First-Order Logic
+-FOL can be used to state pretty much anything
+	-it may be hard, but not impossible
+	-use universal quantifiers
+
+Universal Instantiation (UI)
+-every instantiation of a universally quantified sentence is entailed by it:
+		
+			FORall v 	alpha
+		________________________
+			SUBST ({v/g},alpha)
+for any variable v and ground term g(= a term w.o variables)
+
+Example:
+Forall x King(x) ^ Greedy(x) => Evil(x) yields:
+	King(John) ^ Greedy(John) => Evil(John)
+	King(Richard) ^ Greed(Richard) => Evil(Richard)
+	King(Father(John)) ^ Greedy(Father(John))=>
+						Evil(Father(John))
+
+Existential Instantiation (EI)
+-for any sentence alpha, variable v, and constant symbol k that does not appear elsewhere in the knowledge base:
+		
+			There exists v alpha
+		____________________________
+			SUBST({v/k}, alpha)
+-means substitifution of variable with ground term into alpha
+
+-Example
+	From the sentence
+		there exists(x)  Crown(x) ^ OnHead(x,John)
+	we can infer the sentence:
+		Crown(C1) ^ OnHead(C1,John)
+	provided C1 is a new constant symbol, called a Skolem constant
+
+
+	UI and EI
+-UI can be applied several times to add new sentences:
+	-the new KB is logically equivalent to the old
+-EI can be applied once to replace the existential sentence:
+	-the new KB is not equivalent to the old, but it satisfiable iff the old KB was satisfiable
+		== inferentially equivalent
+	-the knowledge bases aren't the same, but what you can infer is the same
+
+Reduction to Propositional Inference
+-Suppose the KB contains just the following
+	Forall(x) King(x) ^ Greedy(x) =>Evil(x)
+	King(John)
+	Greedy(John)
+	Brother(Richard,John)
+-Instantiating the universal sentence in all possible ways, we have:
+	King(John) ^ Greedy(John) => Evil(John)
+	King(Richard) ^ Greedy(Richard) => Evil(Richard)
+	King(John)
+	Greedy(John)
+	Brother(Richard, John)
+-the new KB is propositionalized: proposition symbols are King(John), Greedy(John), Evil(John),Brother(John,Richard) etc.
+
+-entailment in FOL is semidecidable
+	-if it is entailed the answer will exist, but if it isn't you may be looking forever for proof that it isn't entailed
+
+
+Problems with Propositionalization
+-propositionalization generates lots of irrelevant sentences
+
+Example:
+Forall(X) King(X) ^ Greedy(X) => Evil(X)
+King(John)
+Greedy(John) 			or ForAll(Y) Greedy(Y)
+
+-it seemds obvious that Evil(John), but propositionalization produces lots of facts such as Greedy(Rciahrd) that are irrelevant
+-with p k-ary predicates and n constants, there are p*n^k instantiations
+
+-1 variable with 3 values then you can produce 3 sentences
+
+variables p1,p2,...,pk
+-each of these could have values from 1..n
+-k variables with n options/variables =n^k sentences
+-analogy is 3 bits so 8 possible combinations
+
+Generalized Modus Ponens (GMP)
+-GMP used with KB of definite clauses (Exactly one psoitive literal)
+-All variables assumed universally quantified
+-GMP - a lifted version of MP:PL -> FOL
+
+Unificiation
+-we can get the inference immediately if we can find a substitution 0 s.t. King(x) and Greedy(x) match King(John) and Greedy(y)
+
+theta = {x/John,y/John} works
+Unify(alpha,Beta) = theta if alpha theta = beta theta
+
+-find a combination of substititions that makes both sentences true
+-standardizing apart:  eliminates overlap of variables, e.g. don't have variables represent different parts of different sentences
+
+
+Forward Chaining (FOL)
+Basics
+	STeps
+	1. Start with atomic sentences in the KB
+	2. Apply Modus Ponens Forward
+	3. Add new atomic sentence
+
+	-Desirable to have only definite clauses
+		-cause => Effect
+		-Situation=> Response
+	-Definite Clauses =
+		-disjunctions of literals of which exactly one is positive
+		-atomic or implication whose antecedent is a conjunction of positive literals and having a single positive literal consequent
+
+Example Knowledge Base
+-the law says it is a crime for an American to sell weapons to hostile nations. The country Nono, an enemy of America, has some missiles, and all of its missiles were sold to it by Colonel West, who is American
+
+-Prove: Col. West is a criminal
+-Approach: represent the KB facts as first-order definite clauses
+
+-it is a crime for an American to sell Weapons to hostile weapons..
+	American(x) ^ Weapon(y) ^ Sells(x,y,z) ^ Hostile(z) => Criminal (x)
+
+-Nono.. has some missiles, i.e., thereExists(x) Owns(Nono,x) ^ Missile (x) : 
+	Owns(Nono,M1) ^ Missile(M1)
+-All of its missiles were sold to it by Colonel West
+	Missile(x) ^ Owns(Nono,x) => Sells(West,x,Nono)
+-Missiles are weapons
+	Missile(x) => Weapon(x)
+-An enemy of America Counts as "Hostile"
+	Enemy(X,America) => Hostile(X)
+-west who is american...
+	American(West)
+-The country Nono, an enemy of America...
+	Enemy(Nono,America)
+
+-building a tree going upwards
+
+
+
+
+Properties of Forward Chaining
+-Sount and complete for first-order definite clauses
+
+Hard Matching Example
+-trying to determine if map is colorable
+-Colorable() is inferred iff the CSP has a solution
+-CSPs include 3SAT as a special case, hence matching is NP-hard
+
+Backward Chaining Example
+-start with conclusion and work down to facts
+
+Logic Programming
+-computatio as inference on logical KB
+-Should be easier to debug Capital (New York, US) than x:=x+2
+
+Logic Programming: Prolog
+-Basis: backward chaining w.Horn clauses + bells & whistles
+	Widely used in Europe, Japan (basis of 5th generation project)
+
+Program = set of clauses = head:-leteral1,...,literaln
+
+
+Conjunctive Normal Form for FOL
+-CNF - Conjunctive Normal Form
+	-the conjunction of cluases, each clause being represented as a disjunction of literals
+		-literals can contain universally quantified variables
+-know how to transform propositional logic or first order logic sentences into the conjunctive normal form
+	-can use proof by contradiction, inference by resolution to prove conclusions
+-Example on slide 47
+-every sentence in FOL can be converted to CNF
+
+CNF
+-CNF sentence will be unsatisfiable just when the orgiinal sentence is unsatisfiable (FAlse)
+	-> basis for doing proofs by contradiction on the CNF sentences
+-resolution proves that KB |= alpha by proving KB ^ not alpha unsatisfiable, i.e. by deriving empty clause
+
+Conversion to CNF
+-example on slide 49
+-walk through this by hand
+-remember steps and process, because we won't be given the steps for final
+
+Conjuctive normal forms is a conjunction of disjunctions
+
+Resolution Proof: Definite Clauses
+
+
+know how to convert knowledge base into CNF for final
+
+---------------
+Presentations
+
+Emulation of Human behavior in Virtual GAmes:
+	The A* Pathfinding Algorithm
+-Taylor Bishop
+
+Soliving Einstein's Puzzle with Prolog
+-Mike Shem
+
+Prolog 
+-declarative programming
+
+Prolog Queries
+-Declarative statements that evaluate to true or false
+	-if it finds an assignment it prints it0
+-cool b.c. you don't have to tell it how to solve Einstein's puzzle, you just give it facts and it comes up with solution
+
+Evolution of AI in Modern Video Games
+
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 12 Notes
+
+Knowledge Representation
+
+Ontological Engineering
+-how to create more general and flexible representations
+	-concepts like actions, time, physical object and beliefs
+	-operates on a bigger scale than K.E.
+-Define general framework of concepts 
+	-upper ontology
+-Limitations of logic representation
+	-Red, green and yellow tomatoes: exceptions and uncertainty
+
+Web Ontology Language (OWL)
+- a way of structuring information
+
+Difference with Special-Purpose Ontologies
+-general-purpose should be applicable in any special-purpose domain
+
+Categories and Objects
+-similar to OOP design strategy
+-interaction happens at object level
+-reasoning at the category level
+-categories play a role in predictions about objects
+	-based on perceived properties
+-Categories can be represented in 2 ways by FOL
+	-predicates: apple(x)
+	-reification of categories into objects: apples
+
+Category Organization
+-relation = inheritance
+	- all instances of food are edible, fruit is a subclass of food and apples is a subclass of fruit then an apple is edible
+-defines a taxonomy
+
+FOL and categories
+-an object is a member of a category
+	-memberOf(BB12.Basketballs)
+-a category is a subclass of another category
+	-subsetOf(Basketball.Balls)
+-All members of a categroy have some properties
+	-for all x (MemberOf(x,Basketballs)=>Round(x))
+-All members of a category can be recognized by some propertires
+	-for all x (Orange(x)^Round(x)^Diameter(x)=9.5in^
+				MemberOf(x,Balls)=>
+							MemberOf(x,Baskebtalls))
+-a category as a whole has some properties
+	-memberOf(Dogs,DomesticatedSpecies)
+
+RElations b.w. Categories
+-2 or more categories are disjoint if they have no members in common
+	- if intersection is empty
+	-example: Disjoint({animals,vegetables})
+-a set of categories s consitutes an exhaustive decomposition of a category c if all members of the set c are covered by categories in s:
+	-E.D. (s,c)<=> (for all i  i inc in C => there exists C2 c2 included in s ^ i included in c2)
+	-ex:
+		ExhaustiveDecomposition({Americans,Canadian,Mexicans},NorthAmericans)
+
+- a parittion is a disjoiint exhaustive decomposition
+	-Partition(s,c)<=> Disjoint(s) ^ E.D.(s,c)
+	-Ex:
+		Partition({Males,Females},Persons)
+-is({Americans,Canadian,Mexicans},North American) a partition?
+	-not necessarily- could be mexican american, so there would be overlap so not a partition
+-Categories can be defined by providing necessary and sufficient conditions for membership
+	-for all x Bachelor(x) <=> Male(x) ^ Adult(x) ^ Unmarried(x)
+
+Natural Kinds
+-Many categories have no clear-cut definitions (chair bush,book)
+-tomatoes: sometimes green, red, yellow, black, mostly round
+-One solution: category Typical(Tomatoes)
+	For all x, x included Typical(Tomatoes)=>Red(x)^spherical(x)
+-can then treat exceptions separately
+
+Physical composition
+-one object may be part of another
+	-PartOf(Bucharest,Romania)
+-the PartOf predicate is transitive
+-often characterized by structural relations among parts
+
+Measurements
+-objects have height, mass,cost, etc..
+VAlues that we assign to these are measures
+-combine unit functions with a number:
+	Length(L1) = Inches(1.5) = Centimeters(3.81)
+-Conversion b.w. units
+	For all i Centimeters(2.54*i) = Inches(i)
+-some measures have no scale
+	-beauty, Difficulty, etc.
+-most important aspect of measures is that they are orderable
+	-don't care about the actual numbers (an apple can have deliciousness .9 or .1)
+
+Actions, Situations, Events
+
+Actions, Events, Situations
+-reasoning about outcome of actions is central to KB-agent
+-how can we keep track of location of FOL?
+	-remember the multiple copies in PL
+-representing time by situations (states resulting from the execution of actions)
+	-situational calculus)
+
+-situational calculus
+	-actions are logical terms
+	-situations are logical terms consisting of
+		-the intnial situation i
+		-all situations resulting from the actions on i
+	-fluent are functions and predicates that vary from one situation to the next
+		-E.g. Holding(G1,S0)
+	-eternal predicates are also allowed
+		-E.g. Gold(G1)
+-projection task: an SC agent should be able to deduce the outcome of a sequence of actions
+
+Result(action,situation)
+
+Metnal Events and Objects
+-relationships b.w. agents and mental objects:
+	believes, knows, wants...
+	-Believes(Lois,Flies(Superman)) with Flies(Superman) being a function... a candidate for a mental object (reificiation)
+
+The Internet Shopping World
+-knowledge engineering example
+-an agent taht helps a buyer to find product offers on the internet
+	-IN = product description (precise or not precise)
+	-OUT = list of webpages that offer the product for sale
+-Environment = WWW
+-Percepts = web pages (character strings)
+	-extracting useful information required
+
+-Find relevant product offers
+	-RelevantOffer(page,url,query)<=> Relevant(page,url,query) ^Offer(page)
+-write axioms to define Offer(x)
+-find relevant pages: Relevant(x,y,z)
+	-start from an intiail set of stores
+	-what is a relevant category?
+	-what are relevant connected pages?
+-require rich category vocabulary
+	-synonymy and ambiguity
+-how to retrieve pages: GetPage(url)
+	-procedural attachment
+-compare offers (information extraction)
+
+Reasoning Systems for Categories
+-how to organize and reason with categories?
+	-semantic networks
+		-visualize knowledge-base
+		-efficient algorithms for category membership inference
+	-description logics
+		-formal language for constructing and combining category definitions
+		-efficient algorithms to decide subset and superset relationships b.w. categories
+
+Semantic Networks
+-logic vs. semantic networks
+-many variations
+	-all represent individual objects, categories of objects and relationships among objects
+-allows for inheritance reasoning
+	-female persons inherit all properties from person
+	-compare to OO programming
+-inference of inverse links
+	SisterOf vs. HasSister
+-Drawbacks
+	-links can only assert binary relations
+	-can be resolved by reification of the proposition as an event
+-representation of default values
+	-enforced by the inheritance mechanism
+
+Description logics
+-are designed to describe definitions and propertires about categories
+	-a formalization of semantic networks
+-principle inference tasks are:
+	-subsumption: checking if one category is the subset of another by comparing their definitions
+	-classification: checking whether an obejct belongs to a category
+	-consistency: whether the category membership criteria are logically satisfiable
+
+Conceptual Model Example
+-should be able to build
+-draw categories and relationships b.w. the categories
+-like OOP designs
+-remember cardinality
+	-1 to many, many to 1, or many to many
+		Ex. *,1,1.*
+			0 to many, 1, 1 to many
+
+		Ex: 				<<use>>
+			File Manager ----------> Configuartion 
+				|						Manger
+				|						(static class)
+				|_______________________|^
+
+
+		<<>> means stereotype
+		<<use>> means fileman uses config manager
+
+
+Introduction to Probability
+
+
+Sample Space
+-statistical data
+	-experimental data
+		-counts (counting)
+		-measurements
+	-categorical data
+		-labeled/classified data rather then numerical
+-observation
+	- = any recording of information (numerical or categorical)
+		-e.g. the numbers 2,0,1,1 representing the numbers of accidents that occurred at the interestion of binkley and smu blvd from january through april 2010
+-Experiment
+	-any process that generates a set of data
+		-e.g. tossing a coin, or pair of dice, etc.
+		-outcomes from these experiments = ?
+-sample sapce (S)
+	- = the set of all possible outcomes of a statistical experiment
+-element (or member, or sample point)
+	-an outcome in a sample space (S)
+-S - finite or infinite
+-coin tossing S = {H,T}
+-Die tossing S1 = {1,2,3,4,5,6}
+			 S2 = {even,odd}
+
+
+Sample Space - statement/rule
+-if S is very large or infinite
+	-S is better described by a statement or rule
+-Ex:
+	-S = { x | x is a city with a population > 1 mill}
+	-S = {(x,y) | x^2 + y^2 <=4}
+
+Events
+-Event
+	-a subset of a sample space
+-Ex #1
+	-given S = {t | t>=0}, where t = life (in years) of a certain electronic component
+	-then, the event A that the component fails before the end of the fifth year, is the subset
+	-A = {t | 0 <= t < 5}
+-Intersection of events
+	A n B = the event containing all elements that are common to A and B
+	-Ex:
+		M = {a,e,i,o,u} N = {r,s,t} M n N = null
+		-mutually exclusive
+-Union of events
+	 A u B = the event containing all the elements that belong to A or B or Both
+	 -Ex: 
+	 	A = {a,b,c} B={b,c,d,e}->A u B = {a,b,c,d,e}
+
+Couting Sample Points
+-counting (w.o listing) the sample points -> multiplication rule:
+	- (thm): Multiplication rule
+		if an operation can be performed in n1 ways, and if for each of these a second operation can be performed in n2 ways, then the 2 operations can be performed together in n1*n2 ways
+	-Ex #1:
+		# sample points when a pair of dice is thrown once? 
+			n1*n2 = 6*6 = 36 possible ways
+	-Ex #2
+		# possible lunches if we select from 4 soups, 3 kinds of sandwiches, 5 desserts, and 4 drinks?
+			4*3*5*4 = 240
+	-Ex #3
+		how many even 3-digit numbers can be formed from the digits 1,2,5,6,9 if each digit can be used only once?
+		units n1=2 {2,6}
+		tens n2 = 4 {1,5,9,(2 or 6)}
+		hundreds: 3 {the 4 from tens minus what was actually used for tens}
+		2*4*3 = 24 possible ways
+
+Permutations
+	-arrangements of all pairs of a set of objects
+		-the number of permutations of n distinct objects is n!
+		-the # of permutations of n distinct objects arranged in a circle = (n-1)!
+		-the # of distinct permutations of n things of which n1 are of 1 kind, n2 are a second kind... - n!/(n1!*n2!*..*nk!)
+Combinations
+	-# of ways of selecting k objects from n without regard to order: (n)       n!
+					 ( ) = _________
+					 (k) 	k!(n-k)!
+
+
+Probability of an event
+-the sum of probabilities of each sample point in S should be 1
+-Ex:
+	toss a coin twice
+	S = {HH,HT,TH,TT}
+	A = the event of at least 1 head occurring
+	A = {HH,HT,TH}
+	P(A) = 3/4
+
+-Ex:
+	A loaded die: an even number is 2x as likely to occur as an odd number
+	 if E = the event that a # < 4 occurs on a single toss of the die. P(E) = ?
+	 E = {1,2,3} -> P(E) = 1/9 + 2/9 + 1/9 = 4/9
+
+	 P(A u B) = P(A) + P(B) - P(A n B)
+
+Poker example
+	-in a poker hand consisting of 5 cards, find the probability of holding 2 aces and 3 jacks:
+	-ways of dealing 2 Aces: 4 C 2 = 4!/(2!*2!) = 6
+	-ways of dealing 3 jacks: 4C3 = 4!/(3!*3!) = 4
+	-6x4 = 24 hands containing 2 aces and 3 jacks
+	-total # of 5-card poker hands:
+		-(equally likely hands)  52 C 5 = 
+										52!/(5!*47!)
+									=2,598,960
+	P(2 aces and 3 jacks) = 24/2,598,960 = .9*10^-5
+
+Additive Rule
+-goal: computing event probabilities from known probabilities of other events
+-additive Rule of probability:
+	P(A u B) = P(A) + P(B) - P(A n B)
+	if A and B are mutually exclusive you don't need the 3rd term
+
+Conditional Probability
+
+P(B|A) = the probability of an event B occuring when it is known that some event A has occurred
+
+	P(B|A) = P(A n B)/ P(A) if P(A) > 0
+
+
+Independent Events
+-Events A and B are independent iff
+	P(A|B) = P(A) and P(B|A) = P(B)
+-multiplicative rule
+	-the probability that 2 events will both occur
+	P(A n B) = P(A) x P(B|A) =
+	P(B n A) = P(B) x P(A|B)
+-2 events A & B are independent iff
+	P(A n B) = P(A) x P(B)
+
+Bayes' Thm - simplified
+-Conditional probability
+	P(A|B) = P(A n B) / P(B)
+-joint probability
+	P(A n B) or P(A,B)
+-Marginal probability
+	P(A) regardless of B
+-Prior probability
+	P(A|I) I = initial information
+-Posterior probability
+	P(A | B, I) = updated probability of A, given I and the outcome of the event B
+-Bayes' Thm: P(B|A) = P(A|B)* P(B)
+							  ____
+							  P(A)
+
+
+Random Variables
+-the field of statistics is concerned with  making inferences about populations and population characteristics
+-experiments-> results that are subject to chance
+-binary random variables, numeric, discrete, continuous
+
+Presentation--------
+
+Object/Facial Recognition
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 13 Notes
+
+Uncertainty
+-Let action A1 = leave for airport t minutes before flight
+Will A get there on time
+
+Problems:
+1. partial observability (road state, other drivers' plans, etc.)
+2. noisy sensors (Traffic reports)
+3. uncertainty in action outcomes (flat tire, etc.)
+4. immense complexity of modeling and predicting traffic
+
+Hence a purely logical approach either
+	1. risks falsehood: A25 will get me there on time or
+	2. leads to conclusions that are too weak for decision making
+	"A25 will get me there on time if theres no accident on the bridge and it doesn't rain and my tires remain intact etc. etc."
+
+	(A1440 might reasonabley be said to get me there on time but I'd have to stay overnight in the aiport...)
+
+Methods for handling uncertainty
+-default or non-monotonic logic:
+	-Assume my car does not have a flat tire
+	-Assume A25 works unless contradicted by evidence
+-Issues: what assumptions are reasonable? how to handle contradiction
+
+rules with fudge factors:
+	A25 |->.3 get there on time
+	Sprinkler |->.99 WetGrass
+	WetGrass |-> .7Rain
+-issues: problems with combination e.g. Sprinkler causes RAin??
+
+-probability: models the agent's degree of belief:
+	-Given the available evidence
+		A25 will get me there on time with probability .04
+
+Probability
+-Probabilisitc assertions summarize effects of
+	laziness
+		-failure to enumerate exceptions, qualifications, etc.
+	ignorance
+		-lack of relevant facts, initial conditions, etc.
+
+subjective or bayesian probability:
+	-probabilities relate propositions to agent's own state of knowledge
+		e.g. P(A25| no reported accidents) = .06
+	-these are not assertions about the world (but might be learned from past experience of similar situations)
+	-probabilities of propositions change with new evidence:
+		e.g. P(A25 | no reported accidents, 5am) = .15
+
+making decisions under uncertainty
+-suppose I believe the following:
+	P(A25 gets me there on time |...) = .04
+	P(A90 gets me there on time | ...) = .7
+
+-which action to choose
+-depends on my preferences for missing flight vs. time spent waiting, etc.
+	-utility theory is used to represent and infer preferences
+	-decision theory = probability theory + utility theory
+
+Syntax
+-basic element: random variable (capitalized)
+	= "Part" of the world whose "Status" is initially unknown
+-Boolean random variable
+	-Cavity (do I have a cavity?) <true,false>
+-Discrete random variables
+	e.g. Weather is one of <sunny,rainy,cloudy,snow>
+-continuous random variables
+	-not on final
+
+Syntax
+-atomic event
+	-a complete specification of the state of the world about which the agent is uncertain
+	E.g. if the world consists of only 2 boolean variables Cavity and Toothache, then there are 4 distinct atomic events
+	Cavity = false ^ toothache = false
+	Cavity = true ^ toothache = false
+	Cavity = false ^ toothache = true
+	Cavity = true ^ toothache = true
+
+2*2 possible events
+
+if weather with 4 was added then
+2*2*4 = 16 possible events
+-atomic events are mutually exclusive and exhaustive
+
+Prior Probability
+-prior or unconditional probabilities of propositions
+	e.g. P(Cavity = true) = .1 and P(Weather = sunny) = .72
+	correspond to belief prior to arrival of any (new) evidence
+-prior Probability distribution gives values for all possible assignments.
+	P(Weather) = <.72,.1,.08,.1> (normalized i.e. sums to 1)
+-joint probability distribution for a set of random variables gives the probability of every atomic event on those random variables
+	P(Weather,Cavity) = a 4x2 matrix of values:
+-Every question about a domain can be answered by the joint distribution because every event is a sum of sample points.
+
+Conditional Probability
+-conditional or posterior probabilities
+	e.g. P(cavity | toothache) =.8
+
+	i.e. given that toothache is all I know
+	NOT "if toothache then 80% chance of cavity"
+-notation for conditional distributions:
+	P(Cavity | Toothache) = 2 element vector of 2 element vectors
+-if we know more e.g. cavity is also given, then we have P(Cavity | toothache, cavity) = 1
+-new evidence may be irrelevant, allowing simplification:
+	P(cavity | toothache, sunny) = P(cavity|toothache)
+								 = .8
+-this kind of inference, sanctioned by domain knowledge, is crucial
+
+product rule
+P(a^b) = p(a|b)*P(b) = P(b|a)*P(a)
+
+A general version holds for whole distributions e.g. 
+	P(Weather,Cavity) = P(Weather | Cavity) P(Cavity)
+		-(View as a set of 4x2 equations not matrix multiplication)
+Chain rule is determined from successive application of product rule
+
+Probabilistic inference by enumeration
+-start with the joint probability distribution
+-for any proposition phi sum the atomic events where it is true: P(phi) = sum P(atomic events)
+
+P(toothache) = .108 + .012 + .016+.064 = .2
+
+Normalization
+-denominator can be viewed as a normalization constant alpha
+ 	P(Cavity|toothache) = alpha * P(Cavity,toothache)
+ -general idea: compute distribution on query variable by fixing evidence variables and summing over hidden variables
+ 	slide 17 with 1:31:30 left in lecture
+
+
+ 	Independence
+ 	A and B are independent iff
+
+ 	P(A|B) = P(A) or P(B|A) = P(B) or P(A,B) = P(A)*P(B)
+
+ 	P(Toothache,Catch,Cavity,Weather)
+ 	=P(Toothache,Catch,Cavity)P(Weather)
+
+ -32 entries reduced to 12; for n independent biased coins, O(2^n)->O(n)
+ -absolute independence powerful but rare
+ -dentistry is a large field with hundreds of variables, none of which are independent What to do?
+
+ 	Cavity 		decomposes to      Cavity,Toothache,
+ 	Toothache   ------------>      Catch
+ 	Catch
+ 	Weather 						Weather
+
+Bayes' Rule
+	P(a|b) = p(b|a)*P(a)/P(b)
+
+	or in distribution form
+		P(Y|X) = P(X|Y)*P(Y)/P(X) = alpha*P(X|Y)*P(Y)
+		P(Y|X,e) = P(X|Y,e)*P(Y|e)
+				   _______________
+				      P(X|e)
+
+	P(Cause|Effect) = P(Effect|Cause)*P(Cause)/P(Effect)
+
+	Bayes' Rule and Conditional Independence
+	P(Cavity|toothache^catch) = alpha<.108,.016> = <.871,.129>
+
+P(Toothache,Cavity,Catch) has 2^3 -1 = 7 independent entries
+
+if I have a cavity the probability that the probe catches in it doesn't depend on whether I have a toothache
+
+Wumpus World
+P_ij = true iff [i,j] contains a pit
+B_ij = true iff [i,j] is breezy
+-include only B11,B12,B21 in the probability model
+
+Specifying the Probability model
+-the probability there is a pit = .2^n * .8^16
+for n pits
+
+Observation and Query
+-We know the following facts:
+	b = not b_11 ^ b_12 ^ b_21
+	known = not p_11 ^ not p_12 ^ not p_21
+
+Query is P(P_14|known,b)
+
+Using conditional independence
+-basic insight: observations are conditionally independent of other hidden squares given neighboring hidden squares
+-Define Unknown = Fringe U Other
+
+
+-------------------------------------------------------
+
+Artificial Intelligence Lecture 14 Notes
+
+
+Probabilistic Reasoning
+
+Bayesian Networks
+-a simple graphical notation for conditional independence assertions and hence for compact specificataion of full joint
+-syntax
+	-a set of nodes, one per variable
+	- a directed acyclic graph( link ~ directly influences)
+	-a conditional distribution for each node give its parents 
+		P(Xi | PArents (Xi))
+-in the simplest case, conditional distribution represented as a conditional probability table (CPT) giving the distribution Xi for each combination of parent values
+
+Ex:
+	-Topology of network encodes conditional independence
+	-weather is independent of the other variables
+	-Toothache and Catch are conditionally independent given Cavity
+
+Ex: 
+	Im at work, neighbor John calls to say my alarm is ringing, but neighbor Mary doesn't call. Sometimes its set off by minor earthquaekes.  Is there a burglar?
+-variables
+	Burglary, Earthquake, Alarm, JohnCalls, MaryCalls
+-network topology reflects "causal" knowledge
+	-A burglar can set the alarm off
+	-an earthquake can set the alarm off
+	-the alarm can cause Mary to call
+	-the alarm can cause John to call
+-each node has 2^(# of parents) entries in their probability topology table
+
+p(a | b,e) = 1-P(not a | b,e)
+
+
+Compactness
+-a CPT fr Boolena Xi with k boolean parents has 2^k rows for the combinations of parent values
+-each row requires one number p for Xi=true
+-if each variable has no more than k parents, the complete network requires O(n*2^k)
+
+Global Semantics
+-the full joint distribution is defined as the product of the local conditional distributions
+P(x1,...,xn) = Prodi=1..n o fP(xi|Parents(Xi))
+
+e.g.
+
+P(j^m^a^not b^not e)
+=P(j|a)*P(m|a)*P(a|notb,note)*P(notb)*P(not e)
+= .9 x .7 x .001 x .999 x .998
+~ .00063
+
+if it had been not a in the left side then not a would have been at every spot instead of a on the right side
+
+Local Semantics
+-each node is conditionally independento fits non-descendants given its parents
+-Thm: local semantics <=> global semantics
+
+MArkov blanket
+-each node is conditionally independent of all others given its Markov blanket
+	-PArents + children + children's parents
+
+be able to determine Markov blanket for final
+
+
+
+Learning
+-learning is essential for unknown environments 
+	-when designer lacks omniscience
+-learning is useful as a system construction method
+	-i.e. expose the agent to reality rather than trying to write it down
+-learning modifies the agent's decision mechanisms to improve performance
+
+Learning AGents 
+-they learn so that they can perform better
+
+Learning element
+-design of a learning element is affected by:
+	-what type of performance element is used 
+	-which (functinoal) component(s) of the performance element is (are) to be learned
+	-what representation is used for the learned information
+	--what kind of feedback is available to learn thesee componenets
+	-the availability of prior knowledge
+-type of feedback defines 3 major paradigms
+	-supervise learning
+		-correct answers for each example
+	-unsupervised learning
+		-correct answers not given
+	-reinforcement learning
+		-occasional rewards
+
+reinforcement
+
+supervised ex:
+inductive learning
+-simplest form: learn a function from examples
+f is a target fucntion
+an example is a pair (x,f(x))
+
+Problem: find a hypothesis h
+	s.t. h ~f
+	given a training set of examples
+-Note: This is a highly simplified model of real learning:
+	-ignores prior knowledge
+	-assumes a deterministic, observable "environment"
+	-assumes examples are given
+	-assumes taht the agent wants to learn f w.o. caring why it wants to learn f
+
+ex. of inductive learning
+	-curve fitting
+	-construct/adjust h to agree with f on training set
+	-h is consistent if it agrees with f on ALL examples
+
+	Ockham's razor:
+	-always take simplest route
+
+Learning Decision Trees
+
+Decision Tree
+-one possible representation for hypothesis
+-E.g. here is the "true" tree for deciding whether to wait:
+
+Problem: decide whether to wait for a table at a restaurant, based on the following attribtues
+.
+.
+.
+.
+Goal: learn the goal predicate WillWait
+
+Attribute based represntation
+-sample data with result
+-classification problem on if willwait
+
+expressiveness
+-decision trees can express any Boolean function
+-E.g. for Boolean functinons, truth table row-> path to leaf
+
+
+Hypothesis Spaces
+-how many distinct decision trees we n boolean attributes
+2^(2^n) with n = number of boolean attributes
+
+End of Class -----------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+├i
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
